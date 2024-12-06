@@ -1,55 +1,73 @@
-import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, useForm } from '@inertiajs/react';
+import {Head, Link, useForm} from '@inertiajs/react';
+import {SlimLayout} from "@/Layouts/SlimLayout.jsx";
+import {TextField} from "@/Components/Salient/Fields.jsx";
+import Logo from "@/Components/Logo.jsx";
+import {Button} from "@/Components/Salient/Buttons.jsx";
+import InputError from "@/Components/InputError.jsx";
 
-export default function ForgotPassword({ status }) {
-    const { data, setData, post, processing, errors } = useForm({
+export default function Login({status}) {
+    const {data, setData, post, processing, errors, reset} = useForm({
         email: '',
     });
+
+    const handleChange = (e) => {
+        const {name, value, type, checked} = e.target;
+
+        setData((prevData) => ({
+            ...prevData,
+            [name]: type === 'checkbox' ? checked : value,
+        }));
+    };
 
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('password.email'));
+        post(route('password.email'), {
+            onFinish: () => reset('password'),
+        });
     };
 
     return (
-        <GuestLayout>
-            <Head title="Forgot Password" />
+        <SlimLayout>
+            <Head title="Lupa Password?"/>
 
-            <div className="mb-4 text-sm text-gray-600 dark:text-gray-400">
-                Forgot your password? No problem. Just let us know your email
-                address and we will email you a password reset link that will
-                allow you to choose a new one.
+            <div className="flex">
+                <Link href="/" aria-label="Home">
+                    <Logo className="h-10 w-auto"/>
+                </Link>
             </div>
-
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600 dark:text-green-400">
+            <h2 className="mt-20 text-lg font-semibold text-gray-900">
+                Lupa Password?
+            </h2>
+            {status ? (
+                <div className="mb-4 mt-2 text-sm font-medium text-green-600">
                     {status}
                 </div>
+            ) : (
+                <p className="mt-2 text-sm text-gray-700">
+                    Masukkan email akun Anda dan kami akan mengirimkan tautan untuk mereset password anda.
+                </p>
             )}
 
-            <form onSubmit={submit}>
-                <TextInput
-                    id="email"
-                    type="email"
+            <form onSubmit={submit} className="mt-10 grid grid-cols-1">
+                <TextField
+                    label="Email"
                     name="email"
-                    value={data.email}
-                    className="mt-1 block w-full"
-                    isFocused={true}
-                    onChange={(e) => setData('email', e.target.value)}
+                    type="email"
+                    autoComplete="email"
+                    onChange={handleChange}
+                    required
                 />
+                <InputError message={errors.email} className="mt-2"/>
 
-                <InputError message={errors.email} className="mt-2" />
-
-                <div className="mt-4 flex items-center justify-end">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Email Password Reset Link
-                    </PrimaryButton>
+                <div className={'mt-8'}>
+                    <Button type="submit" variant="solid" color="blue" className="w-full">
+                        <span>
+                            Reset Password
+                        </span>
+                    </Button>
                 </div>
             </form>
-        </GuestLayout>
+        </SlimLayout>
     );
 }
