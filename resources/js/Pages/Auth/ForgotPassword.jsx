@@ -1,9 +1,9 @@
 import {Head, Link, useForm} from '@inertiajs/react';
-import {SlimLayout} from "@/Layouts/SlimLayout.jsx";
-import {TextField} from "@/Components/Salient/Fields.jsx";
-import Logo from "@/Components/Logo.jsx";
-import {Button} from "@/Components/Salient/Buttons.jsx";
-import InputError from "@/Components/InputError.jsx";
+import {SlimLayout} from "@/Layouts/SlimLayout";
+import {TextField} from "@/Components/Salient/Fields";
+import Logo from "@/Components/Logo";
+import {Button} from "@/Components/Salient/Buttons";
+import InputError from "@/Components/InputError";
 
 export default function Login({status}) {
     const {data, setData, post, processing, errors, reset} = useForm({
