@@ -51,14 +51,27 @@ class User extends Authenticatable
     }
 
     /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    public $appends = [
+        'profile_picture_url',
+    ];
+
+    /**
      * Get the profile picture attribute.
      *
      * @return Attribute
      */
-    public function profilePicture(): Attribute
+    public function profilePictureUrl(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => $value ? asset('storage/' . $value) : 'https://www.gravatar.com/avatar/' . md5(strtolower($this->email)) . '?d=identicon',
+            get: function () {
+                $profilePicture = $this->profile_picture;
+
+                return $profilePicture ? asset('storage/' . $profilePicture) : 'https://www.gravatar.com/avatar/' . md5(strtolower($this->email)) . '?d=identicon';
+            }
         );
     }
 }

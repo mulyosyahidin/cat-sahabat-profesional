@@ -30,11 +30,11 @@ import {usePage} from "@inertiajs/react";
 function AccountDropdownMenu({ anchor }) {
     return (
         <DropdownMenu className="min-w-64" anchor={anchor}>
-            <DropdownItem href="#">
+            <DropdownItem href={route('admin.profile.edit')}>
                 <UserCircleIcon />
                 <DropdownLabel>Akun Saya</DropdownLabel>
             </DropdownItem>
-            <DropdownItem href="#">
+            <DropdownItem href={route('logout')} as={'button'} method={'post'}>
                 <ArrowRightStartOnRectangleIcon />
                 <DropdownLabel>Keluar</DropdownLabel>
             </DropdownItem>
@@ -54,7 +54,7 @@ export default function ApplicationLayout({ children }) {
                     <NavbarSection>
                         <Dropdown>
                             <DropdownButton as={NavbarItem}>
-                                <Avatar src={auth.user.profile_picture} square/>
+                                <Avatar src={auth.user.profile_picture_url} square/>
                             </DropdownButton>
                             <AccountDropdownMenu anchor="bottom end"/>
                         </Dropdown>
@@ -85,7 +85,7 @@ export default function ApplicationLayout({ children }) {
                         <Dropdown>
                             <DropdownButton as={SidebarItem}>
                                 <span className="flex min-w-0 items-center gap-3">
-                                    <Avatar src={auth.user.profile_picture} className="size-10" square alt=""/>
+                                    <Avatar src={auth.user.profile_picture_url} className="size-10" square alt=""/>
                                     <span className="min-w-0">
                                         <span className="block truncate text-sm/5 font-medium text-zinc-950 dark:text-white">{auth.user.name}</span>
                                         <span className="block truncate text-xs/5 font-normal text-zinc-500 dark:text-zinc-400">
