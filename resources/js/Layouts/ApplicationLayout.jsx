@@ -12,7 +12,7 @@ import {
     UserCircleIcon,
 } from '@heroicons/react/16/solid'
 import {
-    HomeIcon,
+    HomeIcon, HashtagIcon
 } from '@heroicons/react/20/solid'
 import {SidebarLayout} from "@/Layouts/Includes/SidebarLayout";
 import {Navbar, NavbarItem, NavbarSection, NavbarSpacer} from "@/Components/Catalyst/navbar";
@@ -20,7 +20,7 @@ import {Avatar} from "@/Components/Catalyst/avatar";
 import {
     Sidebar,
     SidebarBody, SidebarFooter,
-    SidebarHeader,
+    SidebarHeader, SidebarHeading,
     SidebarItem,
     SidebarLabel,
     SidebarSection,
@@ -74,9 +74,17 @@ export default function ApplicationLayout({ children }) {
 
                     <SidebarBody>
                         <SidebarSection>
-                            <SidebarItem href="/admin/dashboard" current={pathname === '/'}>
+                            <SidebarItem href="/admin/dashboard" current={pathname === '/admin/dashboard'}>
                                 <HomeIcon/>
                                 <SidebarLabel>Dashboard</SidebarLabel>
+                            </SidebarItem>
+                        </SidebarSection>
+
+                        <SidebarSection>
+                            <SidebarHeading>Master Data</SidebarHeading>
+                            <SidebarItem href="/admin/positions" current={pathname === '/admin/positions'}>
+                                <HashtagIcon/>
+                                <SidebarLabel>Jabatan</SidebarLabel>
                             </SidebarItem>
                         </SidebarSection>
                     </SidebarBody>
