@@ -26,6 +26,9 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
     Route::patch('/profile/profile-picture', [\App\Http\Controllers\Admin\ProfileController::class, 'updateProfilePicture'])->name('profile.profile-picture');
 
     Route::resource('formations', \App\Http\Controllers\Admin\FormationController::class);
+    Route::group(['prefix' => 'formations/{formation}', 'as' => 'formation.'], function () {
+        Route::resource('positions', \App\Http\Controllers\Admin\FormationPositionController::class);
+    });
 });
 
 Route::middleware('auth')->group(function () {

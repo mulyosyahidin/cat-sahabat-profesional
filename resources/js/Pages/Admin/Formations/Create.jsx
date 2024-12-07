@@ -1,12 +1,12 @@
 import ApplicationLayout from "@/Layouts/ApplicationLayout.jsx";
 import {Head, Link, useForm} from "@inertiajs/react";
-import {ChevronLeftIcon} from "@heroicons/react/16/solid";
 import BackButton from "@/Components/BackButton.jsx";
 import {Heading, Subheading} from "@/Components/Catalyst/heading.jsx";
 import {Button} from "@/Components/Catalyst/button.jsx";
 import {Divider} from "@/Components/Catalyst/divider.jsx";
 import {Input} from "@/Components/Catalyst/input.jsx";
 import InputError from "@/Components/InputError.jsx";
+import {useState} from "react";
 
 export default function AdminFormationCreate({success}) {
     const {data, setData, post, processing, errors, reset} = useForm({
@@ -64,7 +64,13 @@ export default function AdminFormationCreate({success}) {
                     <Divider className="my-10" soft/>
 
                     <div className="flex justify-end gap-4">
-                        <Button type="submit" className={'cursor-pointer'}>Simpan</Button>
+                        {
+                            processing ? (
+                                <Button type="submit" className={'cursor-not-allowed'} disabled>Simpan</Button>
+                            ) : (
+                                <Button type="submit" className={'cursor-pointer'}>Simpan</Button>
+                            )
+                        }
                     </div>
                 </form>
             </ApplicationLayout>

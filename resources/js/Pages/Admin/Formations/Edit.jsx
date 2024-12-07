@@ -64,7 +64,13 @@ export default function AdminFormationEdit({formation, success}) {
                     <Divider className="my-10" soft/>
 
                     <div className="flex justify-end gap-4">
-                        <Button type="submit" className={'cursor-pointer'}>Simpan</Button>
+                        {
+                            processing ? (
+                                <Button type="submit" className={'cursor-not-allowed'} disabled>Simpan</Button>
+                            ) : (
+                                <Button type="submit" className={'cursor-pointer'}>Simpan</Button>
+                            )
+                        }
                     </div>
                 </form>
             </ApplicationLayout>
