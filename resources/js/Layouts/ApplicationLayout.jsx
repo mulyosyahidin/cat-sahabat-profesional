@@ -79,14 +79,6 @@ export default function ApplicationLayout({ children }) {
                                 <SidebarLabel>Dashboard</SidebarLabel>
                             </SidebarItem>
                         </SidebarSection>
-
-                        <SidebarSection>
-                            <SidebarHeading>Master Data</SidebarHeading>
-                            <SidebarItem href="/admin/positions" current={pathname === '/admin/positions'}>
-                                <HashtagIcon/>
-                                <SidebarLabel>Jabatan</SidebarLabel>
-                            </SidebarItem>
-                        </SidebarSection>
                     </SidebarBody>
 
                     <SidebarFooter className="max-lg:hidden">
