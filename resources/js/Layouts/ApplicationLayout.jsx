@@ -79,6 +79,14 @@ export default function ApplicationLayout({ children }) {
                                 <SidebarLabel>Dashboard</SidebarLabel>
                             </SidebarItem>
                         </SidebarSection>
+
+                        <SidebarSection>
+                            <SidebarHeading>Master Data</SidebarHeading>
+                            <SidebarItem href="/admin/formations" current={pathname.startsWith('/admin/formations')}>
+                                <HashtagIcon/>
+                                <SidebarLabel>Formasi</SidebarLabel>
+                            </SidebarItem>
+                        </SidebarSection>
                     </SidebarBody>
 
                     <SidebarFooter className="max-lg:hidden">

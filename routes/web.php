@@ -24,6 +24,8 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
     Route::get('/profile/edit', [\App\Http\Controllers\Admin\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/profile-picture', [\App\Http\Controllers\Admin\ProfileController::class, 'updateProfilePicture'])->name('profile.profile-picture');
+
+    Route::resource('formations', \App\Http\Controllers\Admin\FormationController::class);
 });
 
 Route::middleware('auth')->group(function () {
