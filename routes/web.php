@@ -27,7 +27,11 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
 
     Route::resource('formations', \App\Http\Controllers\Admin\FormationController::class);
     Route::group(['prefix' => 'formations/{formation}', 'as' => 'formation.'], function () {
-        Route::resource('positions', \App\Http\Controllers\Admin\FormationPositionController::class);
+        Route::resource('positions', \App\Http\Controllers\Admin\FormationPositionController::class)->except('index');
+
+        Route::group(['prefix' => 'positions/{position}', 'as' => 'position.'], function () {
+            Route::resource('question-types', \App\Http\Controllers\Admin\FormationPositionQuestionTypeController::class)->except('index');
+        });
     });
 });
 

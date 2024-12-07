@@ -1,11 +1,11 @@
-import ApplicationLayout from "@/Layouts/ApplicationLayout.jsx";
-import {Head, Link, useForm} from "@inertiajs/react";
-import BackButton from "@/Components/BackButton.jsx";
-import {Heading, Subheading} from "@/Components/Catalyst/heading.jsx";
-import {Button} from "@/Components/Catalyst/button.jsx";
-import {Divider} from "@/Components/Catalyst/divider.jsx";
-import {Input} from "@/Components/Catalyst/input.jsx";
-import InputError from "@/Components/InputError.jsx";
+import ApplicationLayout from "@/Layouts/ApplicationLayout";
+import {Head, useForm} from "@inertiajs/react";
+import BackButton from "@/Components/BackButton";
+import {Heading, Subheading} from "@/Components/Catalyst/heading";
+import {Button} from "@/Components/Catalyst/button";
+import {Divider} from "@/Components/Catalyst/divider";
+import {Input} from "@/Components/Catalyst/input";
+import InputError from "@/Components/InputError";
 import {convertToMinutes, validateTimeFormat} from "@/utils/utils.js";
 
 export default function AdminFormationPositionCreate({formation, success}) {
@@ -30,7 +30,6 @@ export default function AdminFormationPositionCreate({formation, success}) {
             [name]: value,
         }));
     };
-
 
     const submit = (e) => {
         e.preventDefault();

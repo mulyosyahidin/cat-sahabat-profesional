@@ -55,7 +55,7 @@ export default function AdminPositionShow({formation, success}) {
                 <Table className="mt-8 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
                     <TableBody>
                         <TableRow key={1}>
-                            <TableCell>Nama</TableCell>
+                            <TableCell>Formasi</TableCell>
                             <TableCell>
                                 <strong>{formation.name}</strong>
                             </TableCell>
@@ -64,7 +64,7 @@ export default function AdminPositionShow({formation, success}) {
                         <TableRow key={2}>
                             <TableCell>Jumlah Jabatan</TableCell>
                             <TableCell>
-                                <strong>0</strong>
+                                <strong>{formation.positions.length}</strong>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -143,7 +143,7 @@ export default function AdminPositionShow({formation, success}) {
                                             outline={true}
                                             size="small"
                                             className="cursor-pointer text-red-500"
-                                            onClick={() => handleDeletePositionDialogOpen(position)} // Open delete position dialog
+                                            onClick={() => handleDeletePositionDialogOpen(position)}
                                         >
                                             <TrashIcon />
                                         </Button>
@@ -166,7 +166,7 @@ export default function AdminPositionShow({formation, success}) {
                     <Button
                         plain
                         className="cursor-pointer"
-                        onClick={() => setIsDeleteFormationDialogOpen(false)} // Close dialog if canceled
+                        onClick={() => setIsDeleteFormationDialogOpen(false)}
                     >
                         Batal
                     </Button>
@@ -174,7 +174,7 @@ export default function AdminPositionShow({formation, success}) {
                         color="rose"
                         className="cursor-pointer text-red-500"
                         onClick={handleDeleteFormation}
-                        disabled={processing} // Disable button while processing
+                        disabled={processing}
                     >
                         {processing ? 'Menghapus...' : 'Hapus'}
                     </Button>
@@ -192,7 +192,7 @@ export default function AdminPositionShow({formation, success}) {
                     <Button
                         plain
                         className="cursor-pointer"
-                        onClick={() => setIsDeletePositionDialogOpen(false)} // Close dialog if canceled
+                        onClick={() => setIsDeletePositionDialogOpen(false)}
                     >
                         Batal
                     </Button>
@@ -200,7 +200,7 @@ export default function AdminPositionShow({formation, success}) {
                         color="rose"
                         className="cursor-pointer text-red-500"
                         onClick={handleDeletePosition}
-                        disabled={processing} // Disable button while processing
+                        disabled={processing}
                     >
                         {processing ? 'Menghapus...' : 'Hapus'}
                     </Button>

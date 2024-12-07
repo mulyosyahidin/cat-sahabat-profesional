@@ -11,14 +11,6 @@ use Inertia\Inertia;
 class FormationPositionController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create(Formation $formation)
@@ -58,6 +50,8 @@ class FormationPositionController extends Controller
      */
     public function show(Formation $formation, Formation_position $position)
     {
+        $position->load('questionTypes');
+
         return Inertia::render('Admin/Formations/Positions/Show', [
             'formation' => $formation,
             'position' => $position,
@@ -108,6 +102,6 @@ class FormationPositionController extends Controller
     {
         $position->delete();
 
-        return redirect()->back()->with('success', 'Berhasil menghapus data jabatan');
+        return redirect()->route('admin.formations.show', $formation)->with('success', 'Berhasil menghapus data jabatan');
     }
 }

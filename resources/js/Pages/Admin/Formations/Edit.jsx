@@ -1,6 +1,5 @@
 import ApplicationLayout from "@/Layouts/ApplicationLayout.jsx";
 import {Head, useForm} from "@inertiajs/react";
-import {ChevronLeftIcon} from "@heroicons/react/16/solid";
 import BackButton from "@/Components/BackButton.jsx";
 import {Heading, Subheading} from "@/Components/Catalyst/heading.jsx";
 import {Button} from "@/Components/Catalyst/button.jsx";
