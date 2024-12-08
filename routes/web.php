@@ -44,6 +44,8 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
             });
         });
     });
+
+    Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class);
 });
 
 Route::middleware('auth')->group(function () {

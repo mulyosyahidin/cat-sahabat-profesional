@@ -81,10 +81,15 @@ export default function ApplicationLayout({ children }) {
                         </SidebarSection>
 
                         <SidebarSection>
-                            <SidebarHeading>Master Data</SidebarHeading>
+                            <SidebarHeading>Data</SidebarHeading>
                             <SidebarItem href="/admin/formations" current={pathname.startsWith('/admin/formations')}>
                                 <HashtagIcon/>
-                                <SidebarLabel>Formasi</SidebarLabel>
+                                <SidebarLabel>Soal Ujian</SidebarLabel>
+                            </SidebarItem>
+
+                            <SidebarItem href="/admin/exams" current={pathname.startsWith('/admin/exams')}>
+                                <HashtagIcon/>
+                                <SidebarLabel>Ujian</SidebarLabel>
                             </SidebarItem>
                         </SidebarSection>
                     </SidebarBody>
