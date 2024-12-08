@@ -50,11 +50,16 @@ class FormationPositionController extends Controller
      */
     public function show(Formation $formation, Formation_position $position)
     {
-        $position->load('questionTypes');
+        $position->load('questionTypes.questions');
+
+        $totalQuestions = $position->questionTypes->sum(function ($questionType) {
+            return $questionType->questions->count();
+        });
 
         return Inertia::render('Admin/Formations/Positions/Show', [
             'formation' => $formation,
             'position' => $position,
+            'totalQuestions' => $totalQuestions,
             'success' => session('success'),
         ]);
     }

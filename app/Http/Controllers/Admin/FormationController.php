@@ -60,6 +60,7 @@ class FormationController extends Controller
     public function show(Formation $formation)
     {
         $formation->load('positions');
+        $formation->loadCount('positions');
 
         return Inertia::render('Admin/Formations/Show', [
             'formation' => $formation,

@@ -1,17 +1,17 @@
-import ApplicationLayout from "@/Layouts/ApplicationLayout.jsx";
+import ApplicationLayout from "@/Layouts/ApplicationLayout";
 import {Head, useForm} from "@inertiajs/react";
-import BackButton from "@/Components/BackButton.jsx";
-import {Heading} from "@/Components/Catalyst/heading.jsx";
-import {Table, TableBody, TableCell, TableRow} from "@/Components/Catalyst/table.jsx";
-import {Button} from "@/Components/Catalyst/button.jsx";
+import BackButton from "@/Components/BackButton";
+import {Heading} from "@/Components/Catalyst/heading";
+import {Table, TableBody, TableCell, TableRow} from "@/Components/Catalyst/table";
+import {Button} from "@/Components/Catalyst/button";
 import {useState} from "react";
-import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog.jsx";
+import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
 
 export default function AdminFormationPositionQuestionTypeEdit({formation, position, questionType, success}) {
     const {delete: destroy, processing} = useForm();
-    const [isDeleteQuestionTypeDialogOpen, setIsDeleteQuestionTypeDialogOpen] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-    const handleDeleteQuestionType = () => {
+    const handleDelete = () => {
         destroy(route('admin.formation.position.question-types.destroy', [formation.id, position.id, questionType.id]));
     };
 
@@ -40,29 +40,44 @@ export default function AdminFormationPositionQuestionTypeEdit({formation, posit
                         </TableRow>
 
                         <TableRow key={2}>
+                            <TableCell>Jenis Pembobotan</TableCell>
+                            <TableCell>
+                                <strong>{questionType.weighting_type}</strong>
+                            </TableCell>
+                        </TableRow>
+
+                        <TableRow key={3}>
                             <TableCell>Jabatan</TableCell>
                             <TableCell>
                                 <strong>{position.name}</strong>
                             </TableCell>
                         </TableRow>
 
-                        <TableRow key={3}>
+                        <TableRow key={4}>
                             <TableCell>Formasi</TableCell>
                             <TableCell>
                                 <strong>{formation.name}</strong>
                             </TableCell>
                         </TableRow>
 
-                        <TableRow key={4}>
+                        <TableRow key={5}>
                             <TableCell>Jumlah Soal</TableCell>
                             <TableCell>
-                                <strong>0</strong>
+                                <strong>{questionType.questions.length}</strong>
                             </TableCell>
                         </TableRow>
                     </TableBody>
                 </Table>
 
                 <div className="flex justify-end gap-1 mt-5">
+                    <Button
+                        color={'violet'}
+                        href={route('admin.formation.position.question-type.questions.index', [formation.id, position.id, questionType.id])}
+                        size="small"
+                        className={'cursor-pointer'}
+                    >
+                        Kelola Soal
+                    </Button>
                     <Button
                         href={route('admin.formation.position.question-types.edit', [formation.id, position.id, questionType.id])}
                         size="small"
@@ -76,7 +91,7 @@ export default function AdminFormationPositionQuestionTypeEdit({formation, posit
                         size="small"
                         outline
                         className={'cursor-pointer'}
-                        onClick={() => setIsDeleteQuestionTypeDialogOpen(true)}
+                        onClick={() => setIsDeleteDialogOpen(true)}
                     >
                         Hapus
                     </Button>
@@ -84,7 +99,7 @@ export default function AdminFormationPositionQuestionTypeEdit({formation, posit
 
             </ApplicationLayout>
 
-            <Dialog open={isDeleteQuestionTypeDialogOpen} onClose={() => setIsDeleteQuestionTypeDialogOpen(false)}>
+            <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
                 <DialogTitle>Hapus Jenis Soal</DialogTitle>
                 <DialogBody>
                     <p>
@@ -95,14 +110,14 @@ export default function AdminFormationPositionQuestionTypeEdit({formation, posit
                     <Button
                         plain
                         className="cursor-pointer"
-                        onClick={() => setIsDeleteQuestionTypeDialogOpen(false)}
+                        onClick={() => setIsDeleteDialogOpen(false)}
                     >
                         Batal
                     </Button>
                     <Button
                         color="rose"
                         className="cursor-pointer text-red-500"
-                        onClick={handleDeleteQuestionType}
+                        onClick={handleDelete}
                         disabled={processing}
                     >
                         {processing ? 'Menghapus...' : 'Hapus'}

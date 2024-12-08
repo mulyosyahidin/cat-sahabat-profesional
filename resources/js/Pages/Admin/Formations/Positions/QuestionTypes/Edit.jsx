@@ -1,12 +1,12 @@
-import ApplicationLayout from "@/Layouts/ApplicationLayout.jsx";
+import ApplicationLayout from "@/Layouts/ApplicationLayout";
 import {Head, useForm} from "@inertiajs/react";
-import BackButton from "@/Components/BackButton.jsx";
-import {Heading, Subheading} from "@/Components/Catalyst/heading.jsx";
-import {Divider} from "@/Components/Catalyst/divider.jsx";
-import {Input} from "@/Components/Catalyst/input.jsx";
-import InputError from "@/Components/InputError.jsx";
-import {Select} from "@/Components/Catalyst/select.jsx";
-import {Button} from "@/Components/Catalyst/button.jsx";
+import BackButton from "@/Components/BackButton";
+import {Heading, Subheading} from "@/Components/Catalyst/heading";
+import {Divider} from "@/Components/Catalyst/divider";
+import {Input} from "@/Components/Catalyst/input";
+import InputError from "@/Components/InputError";
+import {Select} from "@/Components/Catalyst/select";
+import {Button} from "@/Components/Catalyst/button";
 
 export default function AdminFormationPositionQuestionTypeEdit({formation, position, weighting_types, success, questionType}) {
     const {data, setData, put, processing, errors, reset} = useForm({
@@ -35,7 +35,7 @@ export default function AdminFormationPositionQuestionTypeEdit({formation, posit
             <Head title={'Edit Jenis Soal'} />
             <ApplicationLayout>
                 <div className="max-lg:hidden">
-                    <BackButton link={route('admin.formation.positions.show', [formation.id, position.id])}/>
+                    <BackButton link={route('admin.formation.position.question-types.show', [formation.id, position.id, questionType.id])}/>
                 </div>
 
                 <form method="post" className="mx-auto mt-10" onSubmit={submit}>

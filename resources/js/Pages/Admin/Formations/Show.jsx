@@ -5,7 +5,7 @@ import {Heading} from "@/Components/Catalyst/heading";
 import {Button} from "@/Components/Catalyst/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
 import {Dialog, DialogTitle, DialogBody, DialogActions} from "@/Components/Catalyst/dialog";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
 
 export default function AdminPositionShow({formation, success}) {
@@ -64,7 +64,7 @@ export default function AdminPositionShow({formation, success}) {
                         <TableRow key={2}>
                             <TableCell>Jumlah Jabatan</TableCell>
                             <TableCell>
-                                <strong>{formation.positions.length}</strong>
+                                <strong>{formation.positions_count}</strong>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -104,7 +104,6 @@ export default function AdminPositionShow({formation, success}) {
                             <TableHeader>#</TableHeader>
                             <TableHeader>Nama</TableHeader>
                             <TableHeader>Durasi Ujian Maksimal</TableHeader>
-                            <TableHeader className={'text-center'}>Jumlah Soal</TableHeader>
                             <TableHeader></TableHeader>
                         </TableRow>
                     </TableHead>
@@ -121,7 +120,6 @@ export default function AdminPositionShow({formation, success}) {
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell className="text-zinc-500">{position.name}</TableCell>
                                     <TableCell className="text-zinc-500">{position.maximum_test_duration_in_minutes} menit</TableCell>
-                                    <TableCell className="text-zinc-500 text-center">0</TableCell>
                                     <TableCell className="flex justify-end gap-1">
                                         <Button
                                             outline={true}

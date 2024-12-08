@@ -31,6 +31,17 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
 
         Route::group(['prefix' => 'positions/{position}', 'as' => 'position.'], function () {
             Route::resource('question-types', \App\Http\Controllers\Admin\FormationPositionQuestionTypeController::class)->except('index');
+
+            Route::group(['prefix' => 'question-types/{question_type}', 'as' => 'question-type.'], function () {
+                Route::resource('questions', \App\Http\Controllers\Admin\FormationPositionQuestionController::class);
+
+                Route::group(['prefix' => 'questions/{question}', 'as' => 'question.'], function () {
+                    Route::patch('answer-options/{answer_option}/mark-as-correct', [\App\Http\Controllers\Admin\FormationPositionQuestionAnswerOptionController::class, 'markAsCorrect'])->name('answer-option.mark-as-correct');
+                    Route::post('answer-options/store-bulk', [\App\Http\Controllers\Admin\FormationPositionQuestionAnswerOptionController::class, 'storeBulk'])->name('answer-options.store-bulk');
+
+                    Route::resource('answer-options', \App\Http\Controllers\Admin\FormationPositionQuestionAnswerOptionController::class);
+                });
+            });
         });
     });
 });

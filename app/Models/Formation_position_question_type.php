@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Formation_position_question_type extends Model
 {
@@ -17,4 +18,14 @@ class Formation_position_question_type extends Model
         'display_order',
         'weighting_type',
     ];
+
+    /**
+     * Get the questions for the formation position question type.
+     *
+     * @return HasMany
+     */
+    public function questions(): HasMany
+    {
+        return $this->hasMany(Formation_position_question::class);
+    }
 }

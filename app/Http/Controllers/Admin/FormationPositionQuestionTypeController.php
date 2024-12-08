@@ -13,14 +13,6 @@ use Inertia\Inertia;
 class FormationPositionQuestionTypeController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create(Formation $formation, Formation_position $position)
@@ -54,10 +46,12 @@ class FormationPositionQuestionTypeController extends Controller
      */
     public function show(Formation $formation, Formation_position $position, Formation_position_question_type $question_type)
     {
+        $question_type->load('questions');
+
         return Inertia::render('Admin/Formations/Positions/QuestionTypes/Show', [
             'formation' => $formation->only('id', 'name'),
             'position' => $position->only('id', 'name'),
-            'questionType' => $question_type->only('id', 'name', 'display_order', 'weighting_type'),
+            'questionType' => $question_type,
             'success' => session('success'),
         ]);
     }

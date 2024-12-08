@@ -2,13 +2,13 @@ import {Head, useForm} from "@inertiajs/react";
 import ApplicationLayout from "@/Layouts/ApplicationLayout";
 import BackButton from "@/Components/BackButton";
 import {Heading} from "@/Components/Catalyst/heading";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table.jsx";
-import {Button} from "@/Components/Catalyst/button.jsx";
-import {useEffect, useState} from "react";
-import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog.jsx";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
+import {Button} from "@/Components/Catalyst/button";
+import {useState} from "react";
+import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
 import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
 
-export default function AdminFormationPositionShow({formation, position, success}) {
+export default function AdminFormationPositionShow({formation, position, totalQuestions, success}) {
     const {delete: destroy, processing} = useForm();
     const [isDeletePositionDialogOpen, setIsDeletePositionDialogOpen] = useState(false);
     const [isDeleteQuestionTypeDialogOpen, setIsDeleteQuestionTypeDialogOpen] = useState(false);
@@ -81,7 +81,7 @@ export default function AdminFormationPositionShow({formation, position, success
                         <TableRow key={5}>
                             <TableCell>Total Soal</TableCell>
                             <TableCell>
-                                <strong>0</strong>
+                                <strong>{totalQuestions}</strong>
                             </TableCell>
                         </TableRow>
                     </TableBody>
@@ -136,12 +136,13 @@ export default function AdminFormationPositionShow({formation, position, success
                         {position.question_types
                             .sort((a, b) => a.display_order - b.display_order)
                             .map((questionType, index) => {
+
                             return (
                                 <TableRow key={questionType.id}>
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell className="text-zinc-500">{questionType.name}</TableCell>
                                     <TableCell className="text-zinc-500 text-center">{questionType.display_order}</TableCell>
-                                    <TableCell className="text-zinc-500 text-center">0</TableCell>
+                                    <TableCell className="text-zinc-500 text-center">{questionType.questions.length}</TableCell>
                                     <TableCell className="text-zinc-500">{questionType.weighting_type}</TableCell>
                                     <TableCell className="flex justify-end gap-1">
                                         <Button

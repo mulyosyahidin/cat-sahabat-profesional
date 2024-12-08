@@ -6,6 +6,13 @@ import {Button} from "@/Components/Catalyst/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
 import {EyeIcon, TrashIcon, PencilSquareIcon} from "@heroicons/react/24/outline";
+import {
+    Pagination,
+    PaginationList,
+    PaginationNext,
+    PaginationPage,
+    PaginationPrevious
+} from "@/Components/Catalyst/pagination.jsx";
 
 export default function AdminFormationIndex({formations, meta, success}) {
     const [currentPage, setCurrentPage] = useState(meta.current_page);
@@ -115,6 +122,31 @@ export default function AdminFormationIndex({formations, meta, success}) {
                         })}
                     </TableBody>
                 </Table>
+
+                {meta.total_items > meta.per_page && (
+                    <Pagination className="mt-6">
+                        <PaginationPrevious
+                            href={meta.current_page > 1 ? `?page=${meta.current_page - 1}` : null}
+                            onClick={() => handlePageChange(meta.current_page - 1)}
+                        />
+                        <PaginationList>
+                            {paginationPages.map(({page, isCurrent}) => (
+                                <PaginationPage
+                                    key={page}
+                                    href={`?page=${page + 1}`}
+                                    current={isCurrent}
+                                    onClick={() => handlePageChange(page + 1)}
+                                >
+                                    {page + 1}
+                                </PaginationPage>
+                            ))}
+                        </PaginationList>
+                        <PaginationNext
+                            href={meta.current_page < meta.total_pages ? `?page=${meta.current_page + 1}` : null}
+                            onClick={() => handlePageChange(meta.current_page + 1)}
+                        />
+                    </Pagination>
+                )}
             </ApplicationLayout>
 
             <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
