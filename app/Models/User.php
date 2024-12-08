@@ -6,6 +6,8 @@ namespace App\Models;
 use App\Traits\UserRole;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -58,6 +60,26 @@ class User extends Authenticatable
     public $appends = [
         'profile_picture_url',
     ];
+
+    /**
+     * Get the participant profile associated with the user.
+     *
+     * @return HasOne
+     */
+    public function participantProfile(): HasOne
+    {
+        return $this->hasOne(Participant_profile::class);
+    }
+
+    /**
+     * Get the exam participants associated with the user.
+     *
+     * @return HasMany
+     */
+    public function examParticipants(): HasMany
+    {
+        return $this->hasMany(Exam_participant::class);
+    }
 
     /**
      * Get the profile picture attribute.
