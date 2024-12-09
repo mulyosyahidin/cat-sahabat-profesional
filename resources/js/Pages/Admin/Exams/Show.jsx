@@ -23,9 +23,7 @@ export default function AdminExamShow({exam, success}) {
         <>
             <Head title={'Data Ujian'} />
             <ApplicationLayout>
-                <div>
-                    <BackButton link={route('admin.exams.index')}/>
-                </div>
+                <BackButton link={route('admin.exams.index')}/>
 
                 <Heading className={'mt-8'}>Data Ujian</Heading>
                 {success && (
@@ -74,6 +72,14 @@ export default function AdminExamShow({exam, success}) {
                 </Table>
 
                 <div className="flex justify-end gap-1 mt-5">
+                    <Button
+                        href={route('admin.exams.participants.index', exam.id)}
+                        size="small"
+                        outline
+                        className={'cursor-pointer'}
+                    >
+                        Peserta Ujian
+                    </Button>
                     <Button
                         href={route('admin.exams.edit', exam.id)}
                         size="small"

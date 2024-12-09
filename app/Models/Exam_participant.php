@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Exam_participant extends Model
 {
@@ -53,5 +54,15 @@ class Exam_participant extends Model
     public function position(): BelongsTo
     {
         return $this->belongsTo(Formation_position::class, 'formation_position_id');
+    }
+
+    /**
+     * Get the session associated with the Exam_participant
+     *
+     * @return HasOne
+     */
+    public function session(): HasOne
+    {
+        return $this->hasOne(Exam_session::class);
     }
 }
