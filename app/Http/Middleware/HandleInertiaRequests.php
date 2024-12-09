@@ -32,7 +32,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => auth()->check() ? $request->user()->load('participantProfile') : $request->user(),
             ],
         ];
     }

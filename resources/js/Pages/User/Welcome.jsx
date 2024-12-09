@@ -1,7 +1,9 @@
-import {Head, Link} from "@inertiajs/react";
+import {Head, Link, usePage} from "@inertiajs/react";
 import BknLayout from "@/Layouts/BknLayout.jsx";
 
-export default function UserWelcome() {
+export default function UserWelcome({exam, examParticipant}) {
+    const user = usePage().props.auth.user;
+
     return (
         <>
             <BknLayout>
@@ -12,16 +14,16 @@ export default function UserWelcome() {
                         </div>
                         <div className="p-4">
                             <div className="flex">
-                                <div className="w-1/4 font-medium">Nama Ujian</div>
-                                <div className="w-3/4">: SIMULASI</div>
+                                <div className="w-1/4 font-small">Nama Ujian</div>
+                                <div className="w-3/4">: {exam.name}</div>
                             </div>
                             <div className="flex">
-                                <div className="w-1/4 font-medium">Kode Ujian</div>
-                                <div className="w-3/4">: SIMULASI</div>
+                                <div className="w-1/4 font-small">Kode Ujian</div>
+                                <div className="w-3/4">: {exam.token}</div>
                             </div>
                             <div className="flex">
-                                <div className="w-1/4 font-medium">Lokasi</div>
-                                <div className="w-3/4">: -</div>
+                                <div className="w-1/4 font-small">Jabatan Dilamar</div>
+                                <div className="w-3/4">: {examParticipant.position.name}</div>
                             </div>
                         </div>
                     </div>
@@ -32,33 +34,29 @@ export default function UserWelcome() {
                         </div>
                         <div className="p-4">
                             <div className="flex">
-                                <div className="w-1/4 font-medium">Nama Lengkap</div>
-                                <div className="w-3/4">: Martin Mulyo Syahidin</div>
+                                <div className="w-1/4 font-small">Nama Lengkap</div>
+                                <div className="w-3/4">: {user.name}</div>
                             </div>
                             <div className="flex">
-                                <div className="w-1/4 font-medium">Email</div>
-                                <div className="w-3/4">: martinms.za@gmail.com</div>
+                                <div className="w-1/4 font-small">Email</div>
+                                <div className="w-3/4">: {user.email}</div>
                             </div>
                             <div className="flex">
-                                <div className="w-1/4 font-medium">Jenis Kelamin</div>
-                                <div className="w-3/4">: Laki-Laki</div>
+                                <div className="w-1/4 font-small">No. HP</div>
+                                <div className="w-3/4">: {user.participant_profile.phone_number}</div>
                             </div>
                             <div className="flex">
-                                <div className="w-1/4 font-medium">Tempat Lahir</div>
-                                <div className="w-3/4">: Muko muko</div>
-                            </div>
-                            <div className="flex">
-                                <div className="w-1/4 font-medium">Tanggal Lahir</div>
-                                <div className="w-3/4">: 12 July 2000</div>
+                                <div className="w-1/4 font-small">Alamat</div>
+                                <div className="w-3/4">: {user.participant_profile.address}</div>
                             </div>
                         </div>
                     </div>
 
                     <div className="flex gap-1">
-                        <button type="button"
+                        <Link href={route('user.exams.index')}
                                 className="btn btn-primary py-2 px-4 bg-blue-500 text-white hover:bg-blue-600">
                             Mulai Ujian
-                        </button>
+                        </Link>
 
                         <Link type="button" href={route('logout')} as={'button'} method={'post'}
                                 className="btn btn-primary py-2 px-4 bg-blue-500 text-white hover:bg-blue-600">

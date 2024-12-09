@@ -50,6 +50,10 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
 
 Route::group(['middleware' => ['auth', 'role:user'], 'as' => 'user.', 'prefix' => 'user'], function () {
     Route::get('/welcome', [\App\Http\Controllers\User\WelcomeController::class, 'index'])->name('welcome');
+
+    Route::get('/exams', [\App\Http\Controllers\User\ExamController::class, 'index'])->name('exams.index');
+    Route::post('/exams/{exam_session}/save-answer', [\App\Http\Controllers\User\ExamController::class, 'saveAnswer'])->name('exams.save-answer');
+    Route::post('/exams/{exam_session}/set-current-question', [\App\Http\Controllers\User\ExamController::class, 'setCurrentQuestion'])->name('exams.set-current-question');
 });
 
 Route::middleware('auth')->group(function () {

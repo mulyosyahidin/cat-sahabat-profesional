@@ -50,8 +50,8 @@ class Exam_participant extends Model
      *
      * @return BelongsTo
      */
-    public function formation_position(): BelongsTo
+    public function position(): BelongsTo
     {
-        return $this->belongsTo(Formation_position::class);
+        return $this->belongsTo(Formation_position::class, 'formation_position_id');
     }
 }
