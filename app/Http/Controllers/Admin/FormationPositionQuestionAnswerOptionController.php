@@ -45,7 +45,7 @@ class FormationPositionQuestionAnswerOptionController extends Controller
             ]);
 
             if ($request->is_correct) {
-                $question->options()->update(['is_correct' => false]);
+                $question->options()->update(['is_correct' => false, 'weight' => 5]);
             }
 
             $option = $question->options()->create($request->all());
@@ -141,7 +141,8 @@ class FormationPositionQuestionAnswerOptionController extends Controller
      */
     public function markAsCorrect(Formation $formation, Formation_position $position, Formation_position_question_type $question_type, Formation_position_question $question, Formation_position_question_answer_option $answer_option)
     {
-        $answer_option->update(['is_correct' => true]);
+        $question->options()->update(['is_correct' => false, 'weight' => 0]);
+        $answer_option->update(['is_correct' => true, 'weight' => 5]);
 
         return redirect()->back()->with('success', 'Berhasil menandai jawaban sebagai benar');
     }

@@ -20,6 +20,11 @@ return new class extends Migration
             $table->dateTime('maximum_duration_end_at')->nullable();
             $table->dateTime('started_at')->nullable();
             $table->dateTime('finished_at')->nullable();
+            $table->smallInteger('answered_questions_count')->default(0);
+            $table->smallInteger('unanswered_questions_count')->default(0);
+            $table->smallInteger('total_score')->default(0);
+            $table->smallInteger('wrong_answer_count')->default(0);
+            $table->smallInteger('correct_answer_count')->default(0);
             $table->timestamps();
         });
     }

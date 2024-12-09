@@ -46,7 +46,7 @@ export default function AdminFormationPositionCreate({formation, success}) {
         <>
             <Head title={'Tambah Jabatan Baru'}/>
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.formations.show', formation.id)}/>
                 </div>
 

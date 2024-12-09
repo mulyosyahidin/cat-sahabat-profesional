@@ -42,7 +42,7 @@ export default function AdminExamCreate({token, formations, success}) {
         <>
             <Head title={'Tambah Ujian'}/>
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.exams.index')}/>
                 </div>
 

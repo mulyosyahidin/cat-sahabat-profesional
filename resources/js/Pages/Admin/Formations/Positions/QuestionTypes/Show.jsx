@@ -19,7 +19,7 @@ export default function AdminFormationPositionQuestionTypeEdit({formation, posit
         <>
             <Head title={`${questionType.name} - Jenis Soal`} />
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.formation.positions.show', [formation.id, position.id])}/>
                 </div>
 

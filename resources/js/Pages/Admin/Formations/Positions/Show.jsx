@@ -37,7 +37,7 @@ export default function AdminFormationPositionShow({formation, position, totalQu
         <>
             <Head title={position.name} />
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.formations.show', formation.id)}/>
                 </div>
 

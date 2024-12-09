@@ -9,7 +9,6 @@ import {Button} from "@/Components/Catalyst/button";
 import {Heading, Subheading} from "@/Components/Catalyst/heading";
 import {Divider} from "@/Components/Catalyst/divider";
 import {Input} from "@/Components/Catalyst/input";
-import 'quill/dist/quill.snow.css';
 import InputError from "@/Components/InputError";
 import {Textarea} from "@/Components/Catalyst/textarea";
 

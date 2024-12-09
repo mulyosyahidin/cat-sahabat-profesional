@@ -56,21 +56,16 @@ export default function FiveAndZeroType({ formation, position, question, questio
             onSuccess: () => {
                 setOptions((prevOptions) => {
                     return prevOptions.map(option => {
-                        if (option.id === selectedOptionToMark.id) {
-                            return { ...option, is_correct: true };
-                        }
-
-                        return option;
+                        // Set semua is_correct = false, kecuali option yang ditandai
+                        return { ...option, is_correct: option.id === selectedOptionToMark.id };
                     });
                 });
 
                 setIsMarkAsCorrectDialogOpen(false);
             },
-            onError: () => {
-
-            },
         });
     };
+
 
     return (
         <>
@@ -131,18 +126,15 @@ export default function FiveAndZeroType({ formation, position, question, questio
                                 </div>
 
                                 <div className={'flex gap-1'}>
-                                    {
-                                        !isCorrectOptionPresent && (
-                                            <Button
-                                                outline
-                                                size="small"
-                                                className="cursor-pointer"
-                                                onClick={() => handleOpenMarkAsCorrectDialog(option)}
-                                            >
-                                                <CheckIcon />
-                                            </Button>
-                                        )
-                                    }
+                                    <Button
+                                        outline
+                                        size="small"
+                                        className={`${option.is_correct ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                        disabled={option.is_correct}
+                                        onClick={() => handleOpenMarkAsCorrectDialog(option)}
+                                    >
+                                        <CheckIcon />
+                                    </Button>
                                     <Button
                                         outline={true}
                                         href={route('admin.formation.position.question-type.question.answer-options.edit', [formation.id, position.id, questionType.id, question.id, option.id])}

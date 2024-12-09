@@ -37,7 +37,7 @@ export default function AdminExamEdit({exam, formations, success}) {
         <>
             <Head title={`${exam.name} - Edit Ujian`}/>
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.exams.index')}/>
                 </div>
 

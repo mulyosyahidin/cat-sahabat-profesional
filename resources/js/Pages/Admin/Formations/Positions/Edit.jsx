@@ -42,7 +42,7 @@ export default function AdminFormationPositionEdit({formation, position, success
         <>
             <Head title={'Edit Jabatan'}/>
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.formations.show', formation.id)}/>
                 </div>
 

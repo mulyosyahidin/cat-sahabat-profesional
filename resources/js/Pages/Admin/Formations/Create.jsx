@@ -36,7 +36,7 @@ export default function AdminFormationCreate({success}) {
         <>
             <Head title={'Tambah Formasi Baru'}/>
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.formations.index')}/>
                 </div>
 

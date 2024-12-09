@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Exam_session extends Model
 {
@@ -20,6 +21,11 @@ class Exam_session extends Model
         'maximum_duration_end_at',
         'started_at',
         'finished_at',
+        'answered_questions_count',
+        'unanswered_questions_count',
+        'total_score',
+        'wrong_answer_count',
+        'correct_answer_count',
     ];
 
     /**
@@ -36,9 +42,29 @@ class Exam_session extends Model
      *
      * @return BelongsTo
      */
+    public function examParticipant(): BelongsTo
+    {
+        return $this->belongsTo(Exam_participant::class);
+    }
+
+    /**
+     * Get the exam participant that owns the exam session.
+     *
+     * @return BelongsTo
+     */
     public function currentQuestion(): BelongsTo
     {
         return $this->belongsTo(Formation_position_question::class, 'current_question_id');
+    }
+
+    /**
+     * Get scores per question type.
+     *
+     * @return HasMany
+     */
+    public function typeScores(): HasMany
+    {
+        return $this->hasMany(Exam_score_per_type::class);
     }
 
     /**
@@ -53,9 +79,9 @@ class Exam_session extends Model
         $duration = explode(':', $value);
 
         if (count($duration) === 3) {
-            $hours = (int) $duration[0];
-            $minutes = (int) $duration[1];
-            $seconds = (int) $duration[2];
+            $hours = (int)$duration[0];
+            $minutes = (int)$duration[1];
+            $seconds = (int)$duration[2];
 
             return ($hours * 60) + $minutes + ($seconds / 60);
         }

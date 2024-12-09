@@ -41,7 +41,7 @@ export default function AdminPositionShow({formation, success}) {
         <>
             <Head title={formation.name}/>
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.formations.index')}/>
                 </div>
 

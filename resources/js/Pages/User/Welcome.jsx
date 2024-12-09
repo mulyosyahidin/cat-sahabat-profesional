@@ -1,7 +1,7 @@
 import {Head, Link, usePage} from "@inertiajs/react";
 import BknLayout from "@/Layouts/BknLayout.jsx";
 
-export default function UserWelcome({exam, examParticipant}) {
+export default function UserWelcome({exam, examParticipant, examSession}) {
     const user = usePage().props.auth.user;
 
     return (
@@ -55,16 +55,15 @@ export default function UserWelcome({exam, examParticipant}) {
                     <div className="flex gap-1">
                         <Link href={route('user.exams.index')}
                                 className="btn btn-primary py-2 px-4 bg-blue-500 text-white hover:bg-blue-600">
-                            Mulai Ujian
+                            {examSession ? 'Lanjutkan Ujian' : 'Mulai Ujian'}
                         </Link>
 
                         <Link type="button" href={route('logout')} as={'button'} method={'post'}
                                 className="btn btn-primary py-2 px-4 bg-blue-500 text-white hover:bg-blue-600">
-                            Batal Ujian
+                            Keluar
                         </Link>
                     </div>
                 </div>
-
             </BknLayout>
         </>
     );

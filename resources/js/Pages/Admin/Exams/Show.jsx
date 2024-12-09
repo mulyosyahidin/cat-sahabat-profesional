@@ -23,7 +23,7 @@ export default function AdminExamShow({exam, success}) {
         <>
             <Head title={'Data Ujian'} />
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.exams.index')}/>
                 </div>
 

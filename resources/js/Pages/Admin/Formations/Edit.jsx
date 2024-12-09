@@ -31,7 +31,7 @@ export default function AdminFormationEdit({formation, success}) {
         <>
             <Head title={`Edit Formasi - ${formation.name}`}/>
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.formations.index')}/>
                 </div>
 

@@ -13,8 +13,9 @@ class Exam_question_answer extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'exam_participant_id',
+        'exam_session_id',
         'question_id',
+        'question_type_id',
         'answer_id',
     ];
 
@@ -23,9 +24,9 @@ class Exam_question_answer extends Model
      *
      * @return BelongsTo
      */
-    public function examParticipant(): BelongsTo
+    public function examSession(): BelongsTo
     {
-        return $this->belongsTo(Exam_participant::class);
+        return $this->belongsTo(Exam_session::class);
     }
 
     /**
@@ -36,6 +37,16 @@ class Exam_question_answer extends Model
     public function question(): BelongsTo
     {
         return $this->belongsTo(Formation_position_question::class, 'question_id');
+    }
+
+    /**
+     * Get the question type that owns the answer.
+     *
+     * @return BelongsTo
+     */
+    public function questionType(): BelongsTo
+    {
+        return $this->belongsTo(Formation_position_question_type::class, 'question_type_id');
     }
 
     /**

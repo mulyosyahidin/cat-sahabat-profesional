@@ -38,7 +38,7 @@ export default function AdminFormationPositionQuestionTypeCreate({formation, pos
         <>
             <Head title={'Tambah Jenis Soal'}/>
             <ApplicationLayout>
-                <div className="max-lg:hidden">
+                <div>
                     <BackButton link={route('admin.formation.positions.show', [formation.id, position.id])}/>
                 </div>
 
