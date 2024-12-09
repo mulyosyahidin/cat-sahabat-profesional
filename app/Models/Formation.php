@@ -26,6 +26,6 @@ class Formation extends Model
      */
     public function positions(): HasMany
     {
-        return $this->hasMany(Formation_position::class);
+        return $this->hasMany(Position::class);
     }
 }

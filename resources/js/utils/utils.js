@@ -27,3 +27,8 @@ export const limitPlainText = (value, max = -1, suffix = '...') => {
 
     return value.length > max ? value.substring(0, max) + ' '+ suffix : value;
 }
+
+export const WEIGHTING_TYPES = {
+    'FIVE_AND_ZERO': 'Five and Zero',
+    'FIVE_TO_ONE': 'Five to One',
+}

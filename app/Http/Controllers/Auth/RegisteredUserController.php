@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Formation_position;
+use App\Models\Position;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -23,7 +23,7 @@ class RegisteredUserController extends Controller
     {
         $activeFormationId = 1;
 
-        $positions = Formation_position::where('formation_id', $activeFormationId)->get();
+        $positions = Position::where('formation_id', $activeFormationId)->get();
 
         return view('auth.register', compact('positions'));
     }
@@ -41,7 +41,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', Rules\Password::defaults()],
             'phone_number' => ['required', 'string', 'max:16'],
             'address' => ['required', 'string', 'max:255'],
-            'position_id' => ['required', 'integer', 'exists:formation_positions,id'],
+            'position_id' => ['required', 'integer', 'exists:positions,id'],
         ]);
 
         $user = User::create([
@@ -59,7 +59,7 @@ class RegisteredUserController extends Controller
 
         $user->examParticipants()->create([
             'exam_id' => $examId,
-            'formation_position_id' => $request->position_id,
+            'position_id' => $request->position_id,
         ]);
 
         event(new Registered($user));

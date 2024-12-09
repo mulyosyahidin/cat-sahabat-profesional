@@ -57,7 +57,7 @@ class Exam_session extends Model
      */
     public function currentQuestion(): BelongsTo
     {
-        return $this->belongsTo(Formation_position_question::class, 'current_question_id');
+        return $this->belongsTo(Question::class, 'current_question_id');
     }
 
     /**
@@ -112,7 +112,7 @@ class Exam_session extends Model
         $answered = $this->answered_questions_count;
         $unanswered = $this->unanswered_questions_count;
 
-        if ($answered === 0 && $unanswered === 0) {
+        if (($answered + $unanswered) === 0) {
             return 0;
         }
 
@@ -129,7 +129,7 @@ class Exam_session extends Model
         $correct = $this->correct_answer_count;
         $wrong = $this->wrong_answer_count;
 
-        if ($correct === 0 && $wrong === 0) {
+        if (($correct + $wrong) === 0) {
             return 0;
         }
 
@@ -157,5 +157,4 @@ class Exam_session extends Model
 
         return ($finishedAt - $startedAt) / 60;
     }
-
 }

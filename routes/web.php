@@ -26,28 +26,18 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
     Route::patch('/profile/profile-picture', [\App\Http\Controllers\Admin\ProfileController::class, 'updateProfilePicture'])->name('profile.profile-picture');
 
     Route::resource('formations', \App\Http\Controllers\Admin\FormationController::class);
-    Route::group(['prefix' => 'formations/{formation}', 'as' => 'formation.'], function () {
-        Route::resource('positions', \App\Http\Controllers\Admin\FormationPositionController::class)->except('index');
+    Route::resource('positions', \App\Http\Controllers\Admin\PositionController::class)->except('index');
+    Route::resource('question-types', \App\Http\Controllers\Admin\QuestionTypeController::class)->except('index');
+    Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class);
 
-        Route::group(['prefix' => 'positions/{position}', 'as' => 'position.'], function () {
-            Route::resource('question-types', \App\Http\Controllers\Admin\FormationPositionQuestionTypeController::class)->except('index');
-
-            Route::group(['prefix' => 'question-types/{question_type}', 'as' => 'question-type.'], function () {
-                Route::resource('questions', \App\Http\Controllers\Admin\FormationPositionQuestionController::class);
-
-                Route::group(['prefix' => 'questions/{question}', 'as' => 'question.'], function () {
-                    Route::patch('answer-options/{answer_option}/mark-as-correct', [\App\Http\Controllers\Admin\FormationPositionQuestionAnswerOptionController::class, 'markAsCorrect'])->name('answer-option.mark-as-correct');
-                    Route::post('answer-options/store-bulk', [\App\Http\Controllers\Admin\FormationPositionQuestionAnswerOptionController::class, 'storeBulk'])->name('answer-options.store-bulk');
-
-                    Route::resource('answer-options', \App\Http\Controllers\Admin\FormationPositionQuestionAnswerOptionController::class);
-                });
-            });
-        });
-    });
+    Route::patch('questions/{question}/answer-options/{answer_option}/mark-as-correct', [\App\Http\Controllers\Admin\AnswerOptionController::class, 'markAsCorrect'])->name('questions.answer-options.mark-as-correct');
+    Route::post('questions/{question}/answer-options/store-bulk', [\App\Http\Controllers\Admin\AnswerOptionController::class, 'storeBulk'])->name('questions.answer-options.store-bulk');
+    Route::resource('questions/{question}/answer-options', \App\Http\Controllers\Admin\AnswerOptionController::class);
 
     Route::get('/exams/{exam}/participants', [\App\Http\Controllers\Admin\ExamParticipantController::class, 'index'])->name('exams.participants.index');
     Route::get('/exams/{exam}/participants/{exam_participant}', [\App\Http\Controllers\Admin\ExamParticipantController::class, 'show'])->name('exams.participants.show');
     Route::get('/exams/{exam}/participants/{exam_participant}/question-answers', [\App\Http\Controllers\Admin\ExamParticipantController::class, 'questionAnswers'])->name('exams.participants.question-answers');
+
     Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class);
 });
 

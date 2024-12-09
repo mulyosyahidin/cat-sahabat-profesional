@@ -147,7 +147,7 @@ export default function UserExamIndex({
             {
                 question_id: currentQuestion.id,
                 answer_id: selectedAnswer,
-                question_type_id: currentQuestion.formation_position_question_type_id,
+                question_type_id: currentQuestion.question_type_id,
             },
             {
                 onFinish: () => {

@@ -24,7 +24,7 @@ export default function AdminPositionShow({formation, success}) {
 
     const handleDeletePosition = () => {
         if (selectedPosition) {
-            destroy(route('admin.formation.positions.destroy', [formation.id, selectedPosition.id]), {
+            destroy(route('admin.positions.destroy', selectedPosition.id), {
                 onSuccess: () => {
                     setIsDeletePositionDialogOpen(false);
                 },
@@ -60,13 +60,6 @@ export default function AdminPositionShow({formation, success}) {
                                 <strong>{formation.name}</strong>
                             </TableCell>
                         </TableRow>
-
-                        <TableRow key={2}>
-                            <TableCell>Jumlah Jabatan</TableCell>
-                            <TableCell>
-                                <strong>{formation.positions_count}</strong>
-                            </TableCell>
-                        </TableRow>
                     </TableBody>
                 </Table>
 
@@ -93,7 +86,7 @@ export default function AdminPositionShow({formation, success}) {
                 <div className="flex justify-between mt-20">
                     <Heading level={3}>Jabatan</Heading>
 
-                    <Button className="cursor-pointer" href={route('admin.formation.positions.create', formation.id)}>
+                    <Button className="cursor-pointer" href={route('admin.positions.create', {formation_id: formation.id})}>
                         Tambah
                     </Button>
                 </div>
@@ -123,7 +116,7 @@ export default function AdminPositionShow({formation, success}) {
                                     <TableCell className="flex justify-end gap-1">
                                         <Button
                                             outline={true}
-                                            href={route('admin.formation.positions.show', [formation.id, position.id])}
+                                            href={route('admin.positions.show', position.id)}
                                             size="small"
                                             className="cursor-pointer"
                                         >
@@ -131,7 +124,7 @@ export default function AdminPositionShow({formation, success}) {
                                         </Button>
                                         <Button
                                             outline={true}
-                                            href={route('admin.formation.positions.edit', [formation.id, position.id])}
+                                            href={route('admin.positions.edit', position.id)}
                                             size="small"
                                             className="cursor-pointer"
                                         >

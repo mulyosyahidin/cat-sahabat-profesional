@@ -44,7 +44,7 @@ class Exam_score_per_type extends Model
      */
     public function questionType(): BelongsTo
     {
-        return $this->belongsTo(Formation_position_question_type::class);
+        return $this->belongsTo(Question_type::class);
     }
 
 }

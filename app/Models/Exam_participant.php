@@ -16,7 +16,7 @@ class Exam_participant extends Model
     protected $fillable = [
         'user_id',
         'exam_id',
-        'formation_position_id',
+        'position_id',
     ];
 
     /**
@@ -53,7 +53,7 @@ class Exam_participant extends Model
      */
     public function position(): BelongsTo
     {
-        return $this->belongsTo(Formation_position::class, 'formation_position_id');
+        return $this->belongsTo(Position::class);
     }
 
     /**

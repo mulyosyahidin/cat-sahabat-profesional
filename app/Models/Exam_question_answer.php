@@ -16,7 +16,7 @@ class Exam_question_answer extends Model
         'exam_session_id',
         'question_id',
         'question_type_id',
-        'answer_id',
+        'answer_option_id',
     ];
 
     /**
@@ -36,7 +36,7 @@ class Exam_question_answer extends Model
      */
     public function question(): BelongsTo
     {
-        return $this->belongsTo(Formation_position_question::class, 'question_id');
+        return $this->belongsTo(Question::class, 'question_id');
     }
 
     /**
@@ -46,7 +46,7 @@ class Exam_question_answer extends Model
      */
     public function questionType(): BelongsTo
     {
-        return $this->belongsTo(Formation_position_question_type::class, 'question_type_id');
+        return $this->belongsTo(Question_type::class, 'question_type_id');
     }
 
     /**
@@ -56,6 +56,6 @@ class Exam_question_answer extends Model
      */
     public function answerOption(): BelongsTo
     {
-        return $this->belongsTo(Formation_position_question_answer_option::class, 'answer_id');
+        return $this->belongsTo(Answer_option::class, 'answer_id');
     }
 }
