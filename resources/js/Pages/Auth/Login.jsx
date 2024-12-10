@@ -48,12 +48,12 @@ export default function Login({status, canResetPassword}) {
             ) : (
                 <p className="mt-2 text-sm text-gray-700">
                     Belum punya akun?{' '}
-                    <Link
+                    <a
                         href="/register"
                         className="font-medium text-blue-600 hover:underline"
                     >
                         Daftar disini
-                    </Link>{' '}
+                    </a>{' '}
                 </p>
             )}
 

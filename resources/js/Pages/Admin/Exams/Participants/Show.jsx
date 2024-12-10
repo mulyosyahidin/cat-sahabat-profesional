@@ -7,7 +7,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/C
 import {Dialog, DialogTitle, DialogBody, DialogActions} from "@/Components/Catalyst/dialog";
 import {useEffect, useState} from "react";
 import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
-import NextButton from "@/Components/NextButton.jsx";
+import NextButton from "@/Components/NextButton";
 
 export default function AdminParticipantShow({exam, examParticipant, participantProfile, typeScores, questionAnswers, success}) {
     return (

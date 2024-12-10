@@ -21,7 +21,7 @@ import {
     PaginationPage,
     PaginationPrevious
 } from "@/Components/Catalyst/pagination";
-import QuestionTypeOverviewDialog from "@/Pages/Admin/QuestionTypes/QuestionTypeOverviewDialog.jsx";
+import QuestionTypeOverviewDialog from "@/Pages/Admin/QuestionTypes/QuestionTypeOverviewDialog";
 
 export default function AdminFormationPositionQuestionTypeQuestionIndex({questionType, questions, meta, success}) {
     const [currentPage, setCurrentPage] = useState(meta.current_page);

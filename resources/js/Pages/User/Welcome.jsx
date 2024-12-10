@@ -1,5 +1,5 @@
 import {Head, Link, usePage} from "@inertiajs/react";
-import BknLayout from "@/Layouts/BknLayout.jsx";
+import BknLayout from "@/Layouts/BknLayout";
 
 export default function UserWelcome({exam, examParticipant, examSession}) {
     const user = usePage().props.auth.user;

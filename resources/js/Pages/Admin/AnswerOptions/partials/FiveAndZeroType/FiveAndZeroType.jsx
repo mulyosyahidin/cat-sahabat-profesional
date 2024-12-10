@@ -4,9 +4,9 @@ import {Button} from "@/Components/Catalyst/button";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
 import {useEffect, useState} from "react";
 import {useForm} from "@inertiajs/react";
-import FiveAndZeroTypeAddBulk from "@/Pages/Admin/AnswerOptions/partials/FiveAndZeroType/FiveAndZeroTypeAddBulk.jsx";
+import FiveAndZeroTypeAddBulk from "@/Pages/Admin/AnswerOptions/partials/FiveAndZeroType/FiveAndZeroTypeAddBulk";
 import FiveAndZeroTypeAddSingle
-    from "@/Pages/Admin/AnswerOptions/partials/FiveAndZeroType/FiveAndZeroTypeAddSingle.jsx";
+    from "@/Pages/Admin/AnswerOptions/partials/FiveAndZeroType/FiveAndZeroTypeAddSingle";
 
 export default function FiveAndZeroType({formation, position, question, questionType, newOptionId, newOptions}) {
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);

@@ -11,7 +11,7 @@ import {Divider} from "@/Components/Catalyst/divider";
 import {Input} from "@/Components/Catalyst/input";
 import InputError from "@/Components/InputError";
 import {Textarea} from "@/Components/Catalyst/textarea";
-import QuestionTypeOverviewDialog from "@/Pages/Admin/QuestionTypes/QuestionTypeOverviewDialog.jsx";
+import QuestionTypeOverviewDialog from "@/Pages/Admin/QuestionTypes/QuestionTypeOverviewDialog";
 
 export default function AdminQuestionCreate({questionType, success}) {
     const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);

@@ -7,6 +7,7 @@ use App\Models\Exam;
 use App\Models\Exam_participant;
 use App\Models\Exam_question_answer;
 use App\Models\Exam_session;
+use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -16,90 +17,61 @@ class ExamController extends Controller
 {
     public function index()
     {
-        $exam = Exam::find(1);
+        $allQuestionData = $this->getData();
 
-        $examParticipant = Exam_participant::where('user_id', \Auth::id())
-            ->where('exam_id', $exam->id)
-            ->with([
-                'position.questionTypes.questions.options'
-            ])->first();
+        $allQuestionsData = $allQuestionData['all_questions'];
+        $allQuestionIds = $allQuestionData['items'];
+        $activeQuestionId = request('question_id') ?? ($allQuestionIds[0]->id ?? null);
+        $indexNumber = array_search($activeQuestionId, array_column($allQuestionsData, 'id'));
 
-        $registeredExam = $examParticipant;
-
-        $cacheKey = 'exam_' . $exam->id . '_questions';
-        $questions = Cache::remember($cacheKey, 5, function () use ($examParticipant) {
-            $questions = [];
-            $positions = $examParticipant->position;
-
-            foreach ($positions->questionTypes->sortBy('display_order') as $questionType) {
-                foreach ($questionType->questions as $question) {
-                    $questions[] = [
-                        'question' => $question,
-                        'question_type' => $questionType,
-                        'answer_options' => $question->options,
-                    ];
-                }
-            }
-
-            return $questions;
-        });
-
-        $examSession = Exam_session::where('exam_participant_id', $registeredExam->id)
-            ->first();
-
-        if ($examSession == null) {
-            $maximumDuration = $registeredExam->position->maximum_test_duration_in_minutes;
-            $startedAt = now();
-            $maximumDurationEndAt = $startedAt->copy()->addMinutes($maximumDuration);
-
-            $examSession = Exam_session::create([
-                'exam_participant_id' => $registeredExam->id,
-                'current_question_id' => $questions[0]['question']->id,
+        $examParticipant = $allQuestionData['exam_participant'];
+        $examSession = Exam_session::firstOrCreate(
+            ['exam_participant_id' => $examParticipant->id],
+            [
+                'current_question_id' => $activeQuestionId,
                 'status' => 'active',
-                'maximum_duration' => $maximumDuration,
-                'maximum_duration_end_at' => $maximumDurationEndAt,
-                'started_at' => $startedAt,
-            ]);
-        }
+                'maximum_duration' => $examParticipant->position->maximum_test_duration_in_minutes,
+                'maximum_duration_end_at' => now()->addMinutes($examParticipant->position->maximum_test_duration_in_minutes),
+                'started_at' => now(),
+            ]
+        );
 
-        if ($examSession->status == 'finished') {
+        if ($examSession->status === 'finished') {
             return redirect()->route('user.exams.result', $examSession);
         }
 
-        $examSession->load('currentQuestion.options');
-
-        $currentQuestionData = collect($questions)
-            ->firstWhere('question.id', $examSession->currentQuestion->id);
-
         $questionAnswers = Exam_question_answer::where('exam_session_id', $examSession->id)
-            ->get()
-            ->keyBy('question_id');
+            ->get(['question_id', 'answer_option_id']);
+        $answeredQuestionIds = $questionAnswers->pluck('question_id')->toArray();
+
+        $questionData = Question::with('questionType', 'options')
+            ->findOrFail($activeQuestionId);
+
+        $nextQuestionId = $indexNumber + 1 < count($allQuestionsData)
+            ? $allQuestionsData[$indexNumber + 1]['id']
+            : null;
 
         return Inertia::render('User/Exams/Index', [
-            'currentQuestionData' => $currentQuestionData,
-            'questions' => $questions,
-            'examSession' => $examSession,
-            'questionAnswers' => $questionAnswers,
+            'all_question_ids' => $allQuestionIds,
+            'meta' => $allQuestionData['meta'],
+            'current_question' => $questionData,
+            'current_question_index' => $indexNumber,
+            'total_question' => count($allQuestionsData),
+            'next_question_id' => $nextQuestionId,
+            'exam_session_id' => $examSession->id,
+            'question_answers' => $questionAnswers,
+            'answered_question_ids' => $answeredQuestionIds,
             'start_at' => $examSession->started_at,
             'end_at' => $examSession->maximum_duration_end_at,
         ]);
     }
 
-    public function setCurrentQuestion(Request $request, Exam_session $exam_session)
-    {
-        $exam_session->update([
-            'current_question_id' => $request->question_id,
-        ]);
-
-        return redirect()->back();
-    }
-
     public function saveAnswer(Request $request, Exam_session $exam_session)
     {
         $request->validate([
-            'answer_id' => 'required|exists:formation_position_question_answer_options,id',
-            'question_id' => 'required|exists:formation_position_questions,id',
-            'question_type_id' => 'required|exists:formation_position_question_types,id',
+            'answer_id' => 'required|exists:answer_options,id',
+            'question_id' => 'required|exists:questions,id',
+            'question_type_id' => 'required|exists:question_types,id',
         ]);
 
         $existingAnswer = Exam_question_answer::where('exam_session_id', $exam_session->id)
@@ -108,14 +80,14 @@ class ExamController extends Controller
 
         if ($existingAnswer) {
             $existingAnswer->update([
-                'answer_id' => $request->answer_id,
+                'answer_option_id' => $request->answer_id,
             ]);
         } else {
             Exam_question_answer::create([
                 'exam_session_id' => $exam_session->id,
                 'question_id' => $request->question_id,
                 'question_type_id' => $request->question_type_id,
-                'answer_id' => $request->answer_id,
+                'answer_option_id' => $request->answer_id,
             ]);
         }
 
@@ -127,7 +99,7 @@ class ExamController extends Controller
         $answers = Exam_question_answer::where('exam_session_id', $exam_session->id)
             ->with([
                 'questionType:id,weighting_type',
-                'answerOption:id,is_correct,weight',
+                'answerOption:id,is_correct,score',
             ])
             ->get();
 
@@ -151,7 +123,7 @@ class ExamController extends Controller
                     $thisAnswerScore = 5;
                 }
             } else if ($questionWeightingType == 'FIVE_TO_ONE') {
-                $thisAnswerScore = $answer->answerOption->weight;
+                $thisAnswerScore = $answer->answerOption->score;
             }
 
             $totalScore += $thisAnswerScore;
@@ -202,5 +174,39 @@ class ExamController extends Controller
             'examSession' => $exam_session,
         ]);
     }
+
+    protected function getData()
+    {
+        $exam = Exam::findOrFail(1);
+
+        $examParticipant = Exam_participant::where('user_id', \Auth::id())
+            ->where('exam_id', $exam->id)
+            ->with(['position.questionTypes' => function ($query) {
+                $query->orderBy('display_order');
+            }])
+            ->first();
+
+        $questionTypesIds = $examParticipant->position->questionTypes->pluck('id')->toArray();
+
+        $allQuestions = Question::whereIn('question_type_id', $questionTypesIds)
+            ->get(['id']);
+
+        $allQuestionsWithPagination = Question::whereIn('question_type_id', $questionTypesIds)
+            ->paginate(20, ['id']);
+
+        return [
+            'exam_participant' => $examParticipant,
+            'all_questions' => $allQuestions->toArray(),
+            'items' => $allQuestionsWithPagination->items(),
+            'meta' => [
+                'total_items' => $allQuestionsWithPagination->total(),
+                'current_page' => $allQuestionsWithPagination->currentPage(),
+                'per_page' => $allQuestionsWithPagination->perPage(),
+                'last_page' => $allQuestionsWithPagination->lastPage(),
+                'total_pages' => $allQuestionsWithPagination->lastPage(),
+            ],
+        ];
+    }
+
 
 }

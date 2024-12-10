@@ -1,10 +1,10 @@
 import {useCallback, useMemo, useState} from "react";
 import {Head, router} from "@inertiajs/react";
-import ApplicationLayout from "@/Layouts/ApplicationLayout.jsx";
-import BackButton from "@/Components/BackButton.jsx";
-import {Heading} from "@/Components/Catalyst/heading.jsx";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table.jsx";
-import {Button} from "@/Components/Catalyst/button.jsx";
+import ApplicationLayout from "@/Layouts/ApplicationLayout";
+import BackButton from "@/Components/BackButton";
+import {Heading} from "@/Components/Catalyst/heading";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
+import {Button} from "@/Components/Catalyst/button";
 import {EyeIcon} from "@heroicons/react/24/outline/index.js";
 import {
     Pagination,
@@ -12,7 +12,7 @@ import {
     PaginationNext,
     PaginationPage,
     PaginationPrevious
-} from "@/Components/Catalyst/pagination.jsx";
+} from "@/Components/Catalyst/pagination";
 import {limitPlainText} from "@/utils/utils.js";
 
 export default function AdminParticipantShowQuestionAnswers({exam, examParticipant, questionAnswers, meta}) {
@@ -66,7 +66,7 @@ export default function AdminParticipantShowQuestionAnswers({exam, examParticipa
                                     <TableCell className="text-zinc-500">{limitPlainText(item.question.question, 40)}</TableCell>
                                     <TableCell className="text-zinc-500">{item.answer_option.option}. {item.answer_option.value}</TableCell>
                                     <TableCell className="text-zinc-500">{item.answer_option.is_correct ? 'Benar' : 'Salah'}</TableCell>
-                                    <TableCell className="text-zinc-500 text-center">{item.answer_option.weight}</TableCell>
+                                    <TableCell className="text-zinc-500 text-center">{item.answer_option.score}</TableCell>
                                 </TableRow>
                             );
                         })}

@@ -56,6 +56,6 @@ class Exam_question_answer extends Model
      */
     public function answerOption(): BelongsTo
     {
-        return $this->belongsTo(Answer_option::class, 'answer_id');
+        return $this->belongsTo(Answer_option::class, 'answer_option_id');
     }
 }

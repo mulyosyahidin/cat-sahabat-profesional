@@ -1,13 +1,13 @@
 import {Head, useForm} from "@inertiajs/react";
-import ApplicationLayout from "@/Layouts/ApplicationLayout.jsx";
-import BackButton from "@/Components/BackButton.jsx";
-import {Heading, Subheading} from "@/Components/Catalyst/heading.jsx";
-import {Divider} from "@/Components/Catalyst/divider.jsx";
-import {Input} from "@/Components/Catalyst/input.jsx";
-import InputError from "@/Components/InputError.jsx";
-import {Textarea} from "@/Components/Catalyst/textarea.jsx";
-import {Button} from "@/Components/Catalyst/button.jsx";
-import {Select} from "@/Components/Catalyst/select.jsx";
+import ApplicationLayout from "@/Layouts/ApplicationLayout";
+import BackButton from "@/Components/BackButton";
+import {Heading, Subheading} from "@/Components/Catalyst/heading";
+import {Divider} from "@/Components/Catalyst/divider";
+import {Input} from "@/Components/Catalyst/input";
+import InputError from "@/Components/InputError";
+import {Textarea} from "@/Components/Catalyst/textarea";
+import {Button} from "@/Components/Catalyst/button";
+import {Select} from "@/Components/Catalyst/select";
 
 export default function AdminExamEdit({exam, formations, success}) {
     const {data, setData, put, processing, errors} = useForm({

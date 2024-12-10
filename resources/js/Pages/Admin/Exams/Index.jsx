@@ -1,9 +1,9 @@
 import {Head, router} from "@inertiajs/react";
-import ApplicationLayout from "@/Layouts/ApplicationLayout.jsx";
+import ApplicationLayout from "@/Layouts/ApplicationLayout";
 import {useCallback, useMemo, useState} from "react";
-import {Heading} from "@/Components/Catalyst/heading.jsx";
-import {Button} from "@/Components/Catalyst/button.jsx";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table.jsx";
+import {Heading} from "@/Components/Catalyst/heading";
+import {Button} from "@/Components/Catalyst/button";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
 import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
 import {
     Pagination,
@@ -11,8 +11,8 @@ import {
     PaginationNext,
     PaginationPage,
     PaginationPrevious
-} from "@/Components/Catalyst/pagination.jsx";
-import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog.jsx";
+} from "@/Components/Catalyst/pagination";
+import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
 
 export default function AdminExamIndex({exams, meta, success}) {
     const [currentPage, setCurrentPage] = useState(meta.current_page);

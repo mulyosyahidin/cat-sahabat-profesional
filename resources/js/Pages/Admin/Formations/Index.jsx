@@ -12,7 +12,7 @@ import {
     PaginationNext,
     PaginationPage,
     PaginationPrevious
-} from "@/Components/Catalyst/pagination.jsx";
+} from "@/Components/Catalyst/pagination";
 
 export default function AdminFormationIndex({formations, meta, success}) {
     const [currentPage, setCurrentPage] = useState(meta.current_page);

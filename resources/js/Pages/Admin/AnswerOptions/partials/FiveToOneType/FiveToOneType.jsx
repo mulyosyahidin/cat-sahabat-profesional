@@ -4,8 +4,8 @@ import {useEffect, useState} from "react";
 import {Button} from "@/Components/Catalyst/button";
 import {useForm} from "@inertiajs/react";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
-import FiveToOneAddBulk from "@/Pages/Admin/AnswerOptions/partials/FiveToOneType/FiveToOneAddBulk.jsx";
-import FiveToOneAddSingle from "@/Pages/Admin/AnswerOptions/partials/FiveToOneType/FiveToOneAddSingle.jsx";
+import FiveToOneAddBulk from "@/Pages/Admin/AnswerOptions/partials/FiveToOneType/FiveToOneAddBulk";
+import FiveToOneAddSingle from "@/Pages/Admin/AnswerOptions/partials/FiveToOneType/FiveToOneAddSingle";
 
 export default function FiveToOneType({formation, position, question, questionType, newOptionId, newOptions}) {
     const [options, setOptions] = useState(question.options);

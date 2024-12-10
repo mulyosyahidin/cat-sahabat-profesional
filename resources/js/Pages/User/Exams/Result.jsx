@@ -1,4 +1,4 @@
-import BknLayout from "@/Layouts/BknLayout.jsx";
+import BknLayout from "@/Layouts/BknLayout";
 import {Link, usePage} from "@inertiajs/react";
 import {useEffect} from "react";
 
@@ -46,7 +46,7 @@ export default function UserExamResult({exam, examSession, examParticipant}) {
                             <div className="w-3/4">: {user.email}</div>
                         </div>
                         {examSession.type_scores.map((typeScore, index) => (
-                            <div className="flex">
+                            <div className="flex" key={index}>
                                 <div className="w-1/4 font-small">Nilai {typeScore.question_type.name}</div>
                                 <div className="w-3/4">: {typeScore.score}</div>
                             </div>

@@ -46,7 +46,6 @@ Route::group(['middleware' => ['auth', 'role:user'], 'as' => 'user.', 'prefix' =
 
     Route::get('/exams', [\App\Http\Controllers\User\ExamController::class, 'index'])->name('exams.index');
     Route::post('/exams/{exam_session}/save-answer', [\App\Http\Controllers\User\ExamController::class, 'saveAnswer'])->name('exams.save-answer');
-    Route::post('/exams/{exam_session}/set-current-question', [\App\Http\Controllers\User\ExamController::class, 'setCurrentQuestion'])->name('exams.set-current-question');
     Route::post('/exams/{exam_session}/finish', [\App\Http\Controllers\User\ExamController::class, 'finish'])->name('exams.finish');
     Route::get('/exams/{exam_session}/result', [\App\Http\Controllers\User\ExamController::class, 'result'])->name('exams.result');
 });
@@ -55,6 +54,141 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+Route::get('/test', function () {
+    for ($i = 1; $i <= 90; $i++) {
+        // Membuat data soal
+        $question = \App\Models\Question::create([
+            'question_type_id' => 1,
+            'question' => "[P3K][OLO][Kompetensi Teknis] Pertanyaan ke-$i: Apa jawaban yang benar?",
+            'discussion' => "Ini adalah pembahasan untuk pertanyaan ke-$i.",
+        ]);
+
+        // Menentukan jawaban benar secara acak
+        $correctOption = rand(1, 5); // Pilih angka acak antara 1 hingga 5
+
+        // Membuat 5 pilihan jawaban (A-E)
+        $options = ['A', 'B', 'C', 'D', 'E']; // Huruf pilihan
+        for ($j = 1; $j <= 5; $j++) {
+            $isCorrect = $j === $correctOption; // Tandai jika pilihan ini adalah jawaban benar
+
+            \App\Models\Answer_option::create([
+                'question_id' => $question->id,
+                'option' => $options[$j - 1], // Menggunakan huruf A-E
+                'value' => "Teks jawaban untuk pilihan {$options[$j - 1]} soal ke-$i", // Teks jawaban
+                'is_correct' => $isCorrect,
+                'score' => $isCorrect ? 5 : 0, // Skor 5 jika benar, 0 jika salah
+            ]);
+        }
+    }
+
+    echo "Selesai membuat soal kompetensi teknis!";
+
+    for ($i = 1; $i <= 20; $i++) {
+        // Membuat data soal
+        $question = \App\Models\Question::create([
+            'question_type_id' => 2,
+            'question' => "[P3K][OLO][Sosio Kultural] Pertanyaan ke-$i: Apa jawaban yang benar?",
+            'discussion' => "Ini adalah pembahasan untuk pertanyaan ke-$i.",
+        ]);
+
+        // Mendefinisikan opsi jawaban (A, B, C, D, E)
+        $options = ['A', 'B', 'C', 'D', 'E'];
+
+        // Mendefinisikan skor yang akan digunakan (1 sampai 5 tanpa duplikat)
+        $scores = [1, 2, 3, 4, 5];
+
+        // Mengacak urutan opsi dan skor
+        shuffle($options);
+        shuffle($scores);
+
+        // Membuat 5 pilihan jawaban
+        for ($j = 0; $j < 5; $j++) {
+            // Menentukan apakah jawaban ini benar (is_correct) jika skor = 5
+            $isCorrect = ($scores[$j] === 5);
+
+            \App\Models\Answer_option::create([
+                'question_id' => $question->id,
+                'option' => $options[$j], // Menggunakan A, B, C, D, E secara acak
+                'value' => "Jawaban {$options[$j]} untuk Pertanyaan $i soal ke-$i", // Teks pilihan
+                'is_correct' => $isCorrect,
+                'score' => $scores[$j], // Skor acak antara 1 hingga 5 tanpa duplikat
+            ]);
+        }
+    }
+
+    echo "Selesai membuat soal sosio kultural!";
+
+    for ($i = 1; $i <= 25; $i++) {
+        // Membuat data soal
+        $question = \App\Models\Question::create([
+            'question_type_id' => 3,
+            'question' => "[P3K][OLO][Manajerial] Pertanyaan ke-$i: Apa jawaban yang benar?",
+            'discussion' => "Ini adalah pembahasan untuk pertanyaan ke-$i.",
+        ]);
+
+        // Mendefinisikan opsi jawaban (A, B, C, D, E)
+        $options = ['A', 'B', 'C', 'D', 'E'];
+
+        // Mendefinisikan skor yang akan digunakan (1 sampai 5 tanpa duplikat)
+        $scores = [1, 2, 3, 4, 5];
+
+        // Mengacak urutan opsi dan skor
+        shuffle($options);
+        shuffle($scores);
+
+        // Membuat 5 pilihan jawaban
+        for ($j = 0; $j < 5; $j++) {
+            // Menentukan apakah jawaban ini benar (is_correct) jika skor = 5
+            $isCorrect = ($scores[$j] === 5);
+
+            \App\Models\Answer_option::create([
+                'question_id' => $question->id,
+                'option' => $options[$j], // Menggunakan A, B, C, D, E secara acak
+                'value' => "Jawaban {$options[$j]} untuk Pertanyaan $i soal ke-$i", // Teks pilihan
+                'is_correct' => $isCorrect,
+                'score' => $scores[$j], // Skor acak antara 1 hingga 5 tanpa duplikat
+            ]);
+        }
+    }
+
+    echo "Selesai membuat soal manajerial!";
+
+    for ($i = 1; $i <= 10; $i++) {
+        // Membuat data soal
+        $question = \App\Models\Question::create([
+            'question_type_id' => 4,
+            'question' => "[P3K][OLO][Wawancara] Pertanyaan ke-$i: Apa jawaban yang benar?",
+            'discussion' => "Ini adalah pembahasan untuk pertanyaan ke-$i.",
+        ]);
+
+        // Mendefinisikan opsi jawaban (A, B, C, D, E)
+        $options = ['A', 'B', 'C', 'D', 'E'];
+
+        // Mendefinisikan skor yang akan digunakan (1 sampai 5 tanpa duplikat)
+        $scores = [1, 2, 3, 4, 5];
+
+        // Mengacak urutan opsi dan skor
+        shuffle($options);
+        shuffle($scores);
+
+        // Membuat 5 pilihan jawaban
+        for ($j = 0; $j < 5; $j++) {
+            // Menentukan apakah jawaban ini benar (is_correct) jika skor = 5
+            $isCorrect = ($scores[$j] === 5);
+
+            \App\Models\Answer_option::create([
+                'question_id' => $question->id,
+                'option' => $options[$j], // Menggunakan A, B, C, D, E secara acak
+                'value' => "Jawaban {$options[$j]} untuk Pertanyaan $i soal ke-$i", // Teks pilihan
+                'is_correct' => $isCorrect,
+                'score' => $scores[$j], // Skor acak antara 1 hingga 5 tanpa duplikat
+            ]);
+        }
+    }
+
+    echo "Selesai membuat soal wawancara!";
 });
 
 require __DIR__ . '/auth.php';

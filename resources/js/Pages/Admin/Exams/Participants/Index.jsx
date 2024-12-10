@@ -12,8 +12,8 @@ import {
     PaginationNext,
     PaginationPage,
     PaginationPrevious
-} from "@/Components/Catalyst/pagination.jsx";
-import BackButton from "@/Components/BackButton.jsx";
+} from "@/Components/Catalyst/pagination";
+import BackButton from "@/Components/BackButton";
 
 export default function AdminParticipantIndex({exam, participants, meta, success}) {
     const [currentPage, setCurrentPage] = useState(meta.current_page);
@@ -32,23 +32,6 @@ export default function AdminParticipantIndex({exam, participants, meta, success
             isCurrent: meta.current_page === page + 1
         }));
     }, [meta])
-
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [deleteId, setDeleteId] = useState(null);
-
-    const handleOpenDeleteDialog = (id) => {
-        setDeleteId(id);
-        setIsDeleteDialogOpen(true);
-    }
-
-    const handleDelete = () => {
-        router.delete(route('admin.participants.destroy', deleteId), {
-            preserveScroll: true,
-            onSuccess: () => {
-                setIsDeleteDialogOpen(false);
-            },
-        });
-    }
 
     return (
         <>
@@ -134,26 +117,6 @@ export default function AdminParticipantIndex({exam, participants, meta, success
                     </Pagination>
                 )}
             </ApplicationLayout>
-
-            <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
-                <DialogTitle>Hapus Formasi</DialogTitle>
-                <DialogBody>
-                    <p>Apakah Anda yakin ingin menghapus formasi ini? Menghapus formasi juga akan menghapus data lain
-                        yang terkait.</p>
-                </DialogBody>
-                <DialogActions>
-                    <Button plain className="cursor-pointer" onClick={() => setIsDeleteDialogOpen(false)}>
-                        Batal
-                    </Button>
-                    <Button
-                        color={'rose'}
-                        className="cursor-pointer text-red-500"
-                        onClick={handleDelete}
-                    >
-                        Hapus
-                    </Button>
-                </DialogActions>
-            </Dialog>
         </>
     )
 }

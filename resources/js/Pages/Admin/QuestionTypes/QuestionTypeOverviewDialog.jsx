@@ -1,6 +1,6 @@
-import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog.jsx";
-import {Table, TableBody, TableCell, TableRow} from "@/Components/Catalyst/table.jsx";
-import {Button} from "@/Components/Catalyst/button.jsx";
+import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
+import {Table, TableBody, TableCell, TableRow} from "@/Components/Catalyst/table";
+import {Button} from "@/Components/Catalyst/button";
 import {WEIGHTING_TYPES} from "@/utils/utils.js";
 
 export default function QuestionTypeOverviewDialog({isInfoDialogOpen, setIsInfoDialogOpen, questionType}) {

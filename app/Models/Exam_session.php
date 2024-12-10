@@ -116,7 +116,9 @@ class Exam_session extends Model
             return 0;
         }
 
-        return ($answered / ($answered + $unanswered)) * 100;
+        $percent = ($answered / ($answered + $unanswered)) * 100;
+
+        return number_format($percent, 2);
     }
 
     /**

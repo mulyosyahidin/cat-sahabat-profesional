@@ -1,96 +1,49 @@
-import {useEffect, useState} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import {router, usePage} from "@inertiajs/react";
-import BknLayout from "@/Layouts/BknLayout.jsx";
-import {Button} from "@/Components/Catalyst/button.jsx";
+import BknLayout from "@/Layouts/BknLayout";
+import {Button} from "@/Components/Catalyst/button";
+import {calculateTimeLeft, convertToISO, formatTime} from "@/utils/utils.js";
+import Timer from "@/Pages/User/Exams/partials/Timer";
+import Overview from "@/Pages/User/Exams/partials/Overview";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog.jsx";
 
 export default function UserExamIndex({
-                                          currentQuestionData,
-                                          questions,
-                                          examSession,
-                                          questionAnswers,
+                                          all_question_ids,
+                                          meta,
+                                          current_question,
+                                          current_question_index,
+                                          total_question,
+                                          next_question_id,
+                                          exam_session_id,
+                                          question_answers,
+                                          answered_question_ids,
                                           start_at,
-                                          end_at
+                                          end_at,
                                       }) {
     const user = usePage().props.auth.user;
-
-    const totalQuestion = questions.length;
-    const [totalAnsweredQuestion, setTotalAnsweredQuestion] = useState(0);
-
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [currentQuestion, setCurrentQuestion] = useState(null);
+    const [currentPage, setCurrentPage] = useState(meta.current_page);
+    const [isSaveButtonCanClick, setIsSaveButtonCanClick] = useState(false);
+    const [answers, setAnswers] = useState({});
 
     const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
-
-    const [answers, setAnswers] = useState(() => {
-        const initialAnswers = {};
-
-        Object.keys(questionAnswers).forEach((questionId) => {
-            initialAnswers[questionId] = questionAnswers[questionId].answer_id;
-        });
-
-        return initialAnswers;
-    });
-
-    const [savedAnswers, setSavedAnswers] = useState(() => {
-        const initialSavedAnswers = {};
-
-        Object.values(questionAnswers).forEach((answer) => {
-            if (answer.created_at || answer.updated_at) {
-                initialSavedAnswers[answer.question_id] = true;
-            }
-        });
-
-        return initialSavedAnswers;
-    });
-
-    const convertToISO = (datetime) => {
-        return datetime.replace(' ', 'T');
-    };
 
     const startTime = new Date(convertToISO(start_at)).getTime();
     const endTime = new Date(convertToISO(end_at)).getTime();
 
-    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
+    const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(endTime));
     const [timer, setTimer] = useState("");
 
-    function calculateTimeLeft() {
-        const now = new Date().getTime();
-        const remainingTime = endTime - now;
-
-        return remainingTime;
-    }
-
-    const formatTime = (milliseconds) => {
-        let seconds = Math.floor(milliseconds / 1000);
-        let minutes = Math.floor(seconds / 60);
-        let hours = Math.floor(minutes / 60);
-
-        seconds = seconds % 60;
-        minutes = minutes % 60;
-
-        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    const msToMinute = (ms) => {
-        return Math.floor(ms / 60000);
-    }
+    const handleAnswerChange = useCallback((optionId) => {
+        setAnswers((prevAnswers) => ({
+            ...prevAnswers,
+            [current_question.id]: optionId,
+        }));
+    }, [current_question.id]);
 
     useEffect(() => {
-        const answeredCount = Object.values(answers).filter((answer) => answer !== undefined).length;
-        setTotalAnsweredQuestion(answeredCount);
-
-        if (currentQuestionData?.question) {
-            const currentIndex = questions.findIndex(
-                (q) => q.question.id === currentQuestionData?.question.id
-            );
-
-            setCurrentQuestionIndex(currentIndex);
-            setCurrentQuestion(currentQuestionData.question);
-        }
-
         const intervalId = setInterval(() => {
-            const remainingTime = calculateTimeLeft();
+            const remainingTime = calculateTimeLeft(endTime);
+
             if (remainingTime <= 0) {
                 clearInterval(intervalId);
 
@@ -103,86 +56,78 @@ export default function UserExamIndex({
         }, 1000);
 
         return () => clearInterval(intervalId);
+    }, [endTime]);
 
-    }, [currentQuestionData, questions, endTime]);
+    useEffect(() => {
+        const processedAnswers = question_answers.reduce((acc, item) => {
+            acc[item.question_id] = item.answer_option_id;
+            return acc;
+        }, {});
+        setAnswers(processedAnswers);
+    }, [question_answers]);
 
-    const unansweredQuestions = totalQuestion - totalAnsweredQuestion;
+    useEffect(() => {
+        setIsSaveButtonCanClick(answers[current_question.id] !== undefined);
+    }, [answers, current_question.id]);
 
-    const setCurrentQuestionRequest = (questionId) => {
-        router.post(route('user.exams.set-current-question', examSession.id), {
-            question_id: questionId,
-        });
-    };
-
-    const skipQuestion = () => {
-        const nextIndex = currentQuestionIndex + 1;
-
-        if (nextIndex < questions.length) {
-            setCurrentQuestionIndex(nextIndex);
-            setCurrentQuestion(questions[nextIndex].question);
-
-            setCurrentQuestionRequest(questions[nextIndex]["question"].id);
+    const handlePageChange = (page) => {
+        if (page > 0 && page <= meta.total_pages) {
+            setCurrentPage(page);
+            router.get(route("user.exams.index", {page}));
         }
     };
 
-    const handleQuestionClick = (index) => {
-        setCurrentQuestionIndex(index);
-        setCurrentQuestion(questions[index].question);
+    const skipQuestion = () => {
+        const perPage = meta.per_page;
+        const nextQuestionIndex = current_question_index + 1;
+        const nextPage = Math.floor(nextQuestionIndex / perPage) + 1;
+        const nextQuestionId = all_question_ids[nextQuestionIndex] || next_question_id;
 
-        setCurrentQuestionRequest(questions[index]["question"].id);
-    };
+        router.get(route("user.exams.index", {
+            page: nextPage,
+            question_id: nextQuestionId.id === undefined ? next_question_id : nextQuestionId.id,
+        }));
+    }
 
-    const handleAnswerChange = (questionId, selectedAnswer) => {
-        setAnswers((prevAnswers) => ({
-            ...prevAnswers,
-            [questionId]: selectedAnswer,
+    const handleQuestionClick = (questionId) => {
+        router.get(route("user.exams.index", {
+            page: currentPage,
+            question_id: questionId,
         }));
     };
 
-    const saveAnswer = () => {
-        const selectedAnswer = answers[currentQuestion.id];
+    const saveAndNextQuestion = () => {
+        const selectedOptionId = answers[current_question.id];
 
-        router.post(
-            route('user.exams.save-answer', examSession.id),
-            {
-                question_id: currentQuestion.id,
-                answer_id: selectedAnswer,
-                question_type_id: currentQuestion.question_type_id,
-            },
-            {
-                onFinish: () => {
-                    setSavedAnswers((prevSavedAnswers) => ({
-                        ...prevSavedAnswers,
-                        [currentQuestion.id]: true,
+        router.post(route("user.exams.save-answer", exam_session_id), {
+            question_id: current_question.id,
+            answer_id: selectedOptionId,
+            question_type_id: current_question.question_type_id,
+        }, {
+            onSuccess: () => {
+                if (current_question_index < total_question - 1) {
+                    router.get(route("user.exams.index", {
+                        page: currentPage,
+                        question_id: next_question_id,
                     }));
-                },
-                onSuccess: () => {
-                    const nextIndex = currentQuestionIndex + 1;
-
-                    if (nextIndex < questions.length) {
-                        setCurrentQuestionIndex(nextIndex);
-                        setCurrentQuestion(questions[nextIndex].question);
-
-                        setCurrentQuestionRequest(questions[nextIndex]["question"].id);
-                    }
-
-                    if (nextIndex === questions.length) {
-                        handleFinishExam();
-                    }
                 }
             }
-        );
-    };
+        });
+    }
+
+    const getButtonClass = (id) => {
+        return answered_question_ids.includes(id) ? 'bg-green-500' : 'bg-red-500';
+    }
 
     const handleFinishExam = () => {
-        router.post(route('user.exams.finish', examSession.id), {
-            total_question: totalQuestion,
+        router.post(route('user.exams.finish', exam_session_id), {
+            total_question: total_question,
         });
     }
 
     return (
-        <div className="relative" style={{minHeight: "90vh"}}>
-            <BknLayout className={'relative flex flex-col min-h-'}>
+        <>
+            <BknLayout title={'SIMULASI CAT'} className={'relative flex flex-col'}>
                 <div className="bg-white px-5 py-4 border border-gray-300 w-full">
                     <div className="flex">
                         <div className="w-1/6 font-light">Nama Peserta</div>
@@ -193,30 +138,27 @@ export default function UserExamIndex({
                         <div className="w-5/6 font-light">: {user.email}</div>
                     </div>
                     <div className="mt-2">
-                        <strong>{currentQuestionData?.question_type?.name || ""}</strong>
+                        <strong>{current_question.question_type.name}</strong>
                     </div>
                 </div>
 
                 <div className="bg-white px-5 py-4 border border-gray-300 w-full mt-5">
-                    {currentQuestion &&
+                    {current_question && (
                         <>
                             <div className="mb-3">
-                                <strong>Soal No. {currentQuestionIndex + 1}</strong>
+                                <strong>Soal No. {current_question_index + 1}</strong>
                             </div>
+                            <div className="mb-3">{current_question.question}</div>
 
-                            <div className="mb-3">{currentQuestion.question}</div>
-
-                            {currentQuestion.options?.map((option, index) => (
+                            {current_question.options?.map((option, index) => (
                                 <div key={index} className="flex items-center gap-2">
                                     <input
                                         type="radio"
-                                        name={`question-${currentQuestion.id}`}
+                                        name={`question-${current_question.id}`}
                                         id={`option-${index}`}
                                         value={option.id}
-                                        checked={answers[currentQuestion?.id] === option.id}
-                                        onChange={() =>
-                                            handleAnswerChange(currentQuestion.id, option.id)
-                                        }
+                                        checked={answers[current_question.id] === option.id}
+                                        onChange={() => handleAnswerChange(option.id)}
                                     />
                                     <label htmlFor={`option-${index}`}>
                                         {option.option}. {option.value}
@@ -224,23 +166,19 @@ export default function UserExamIndex({
                                 </div>
                             ))}
                         </>
-                    }
+                    )}
                 </div>
 
                 <div className="mt-3 flex gap-1">
                     <button
-                        className={`px-3 py-2 text-white ${
-                            answers[currentQuestion?.id] !== undefined
-                                ? "bg-blue-600"
-                                : "bg-blue-500 cursor-not-allowed"
-                        }`}
-                        disabled={answers[currentQuestion?.id] === undefined}
-                        onClick={saveAnswer}
+                        className={`px-3 py-2 text-white ${isSaveButtonCanClick ? 'bg-blue-600' : 'bg-blue-500'}`}
+                        onClick={saveAndNextQuestion}
+                        disabled={!isSaveButtonCanClick}
                     >
-                        {currentQuestionIndex < questions.length - 1 ? 'Simpan dan lanjutkan' : 'Selesaikan'}
+                        {current_question_index < total_question - 1 ? 'Simpan dan lanjutkan' : 'Simpan'}
                     </button>
 
-                    {currentQuestionIndex < questions.length - 1 && (
+                    {current_question_index < total_question - 1 && (
                         <button
                             className="px-3 py-2 bg-blue-600 text-white"
                             onClick={skipQuestion}
@@ -250,77 +188,48 @@ export default function UserExamIndex({
                     )}
                 </div>
 
-                <div className="text-center flex items-center justify-center mt-5">
-                    <small>
-                        Hijau : Dijawab, Merah : Belum dijawab
-                    </small>
-                </div>
+                <div className="text-center mt-10 flex items-center justify-between max-w-2xl mx-auto">
+                    <img
+                        src={'/assets/bkn/images/left.png'}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        alt={'left'}
+                        className={`w-8 h-8 cursor-pointer ${currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        style={{pointerEvents: currentPage === 1 ? 'none' : 'auto'}}
+                    />
 
-                <div className="text-center flex items-center justify-center mt-1">
-                    <div className="flex gap-2">
-                        {questions.map((_, index) => {
-                            let buttonClass = "bg-red-600 text-white";
-
-                            if (savedAnswers[questions[index].question.id]) {
-                                buttonClass = "bg-green-600 text-white";
-                            }
-
-                            if (currentQuestionIndex === index) {
-                                buttonClass = "bg-blue-600 text-white";
-                            }
-
+                    <div className="grid grid-cols-10 gap-1 justify-items-center">
+                        {all_question_ids.map((question_id, index) => {
+                            const itemNumber = (currentPage - 1) * meta.per_page + index + 1;
                             return (
                                 <button
                                     key={index}
-                                    className={`px-3 py-1 rounded-full border ${buttonClass}`}
-                                    onClick={() => handleQuestionClick(index)}
+                                    className={`px-3 py-1 w-12 h-8 ${getButtonClass(question_id.id)} text-white`}
+                                    onClick={() => handleQuestionClick(question_id.id)}
                                 >
-                                    {index + 1}
+                                    {itemNumber}
                                 </button>
                             );
                         })}
                     </div>
+
+                    <img
+                        src={'/assets/bkn/images/right.png'}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        alt={'right'}
+                        className={`w-8 h-8 cursor-pointer ${currentPage === meta.total_pages ? 'opacity-50 cursor-not-allowed' : ''}`}
+                        style={{pointerEvents: currentPage === meta.total_pages ? 'none' : 'auto'}}
+                    />
                 </div>
             </BknLayout>
 
-            <div className="absolute bottom-5 right-5 p-5 text-white shadow-md rounded"
-                 style={{backgroundColor: "rgba(0,0,0,0.8)"}}>
-                <span style={{fontSize: "25px"}}>{timer}</span>
-            </div>
-
-            <div className="absolute top-5 right-5 bg-white bg-opacity-90 border-2  p-1">
-                <div className="flex flex-wrap">
-                    <div className="w-full sm:w-1/2 md:w-1/4 lg:w-1/6 xl:w-1/6 text-center p-2">
-                        <span className="font-light" style={{fontSize: "14px"}}>Batas Waktu</span>
-                        <br/>
-                        {msToMinute(timeLeft)} menit
-                    </div>
-                    <div className="w-full sm:w-1/2 md:w-1/4 lg:w-1/6 xl:w-1/6 text-center p-2">
-                        <span className="font-light" style={{fontSize: "14px"}}>Jumlah Soal</span>
-                        <br/>
-                        {totalQuestion}
-                    </div>
-                    <div className="w-full sm:w-1/2 md:w-1/4 lg:w-1/6 xl:w-1/6 text-center p-2">
-                        <span className="text-green-600" style={{fontSize: "14px"}}>Soal Dijawab</span>
-                        <br/>
-                        {totalAnsweredQuestion}
-                    </div>
-                    <div className="w-full sm:w-1/2 md:w-1/4 lg:w-1/6 xl:w-1/6 text-center p-2">
-                        <span className="text-red-600" style={{fontSize: "14px"}}>Belum Dijawab</span>
-                        <br/>
-                        {unansweredQuestions}
-                    </div>
-                    <div
-                        className="w-full sm:w-1/2 md:w-1/4 lg:w-1/3 xl:w-1/3 text-center p-2 flex justify-center items-center">
-                        <Button type="button" className="cursor-pointer" onClick={() => setIsFinishDialogOpen(true)}>
-                            Selesai Ujian
-                        </Button>
-                    </div>
-                </div>
-            </div>
+            <Timer timer={timer}/>
+            <Overview timeLeft={timeLeft} totalQuestion={total_question}
+                      totalAnsweredQuestion={answered_question_ids.length}
+                      unansweredQuestions={total_question - answered_question_ids.length}
+                      setIsFinishDialogOpen={setIsFinishDialogOpen}/>
 
             <Dialog open={isFinishDialogOpen} onClose={() => setIsFinishDialogOpen(false)}>
-                <DialogTitle>Hapus Formasi</DialogTitle>
+                <DialogTitle>Selesaikan Ujian?</DialogTitle>
                 <DialogBody>
                     <p>
                         Apakah Anda ingin mengakhiri simulasi ujian ini?
@@ -336,7 +245,6 @@ export default function UserExamIndex({
                     <Button
                         className="cursor-pointer rounded-none"
                         onClick={handleFinishExam}
-                        // disabled={processing}
                     >
                         YA
                     </Button>
@@ -349,7 +257,6 @@ export default function UserExamIndex({
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
-
+        </>
     );
 }

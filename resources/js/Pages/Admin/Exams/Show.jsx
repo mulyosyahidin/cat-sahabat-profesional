@@ -1,11 +1,11 @@
 import {Head, useForm} from "@inertiajs/react";
-import ApplicationLayout from "@/Layouts/ApplicationLayout.jsx";
-import BackButton from "@/Components/BackButton.jsx";
-import {Heading} from "@/Components/Catalyst/heading.jsx";
-import {Table, TableBody, TableCell, TableRow} from "@/Components/Catalyst/table.jsx";
-import {Button} from "@/Components/Catalyst/button.jsx";
+import ApplicationLayout from "@/Layouts/ApplicationLayout";
+import BackButton from "@/Components/BackButton";
+import {Heading} from "@/Components/Catalyst/heading";
+import {Table, TableBody, TableCell, TableRow} from "@/Components/Catalyst/table";
+import {Button} from "@/Components/Catalyst/button";
 import {useState} from "react";
-import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog.jsx";
+import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
 
 export default function AdminExamShow({exam, success}) {
     const {delete: destroy, processing} = useForm();
