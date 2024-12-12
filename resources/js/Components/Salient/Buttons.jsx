@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import {Link} from "@inertiajs/react";
 
 const baseStyles = {
     solid:

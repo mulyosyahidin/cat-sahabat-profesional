@@ -1,4 +1,4 @@
-import {Button} from "@/Components/Catalyst/button.jsx";
+import {Button} from "@/Components/Catalyst/button";
 import {msToMinute} from "@/utils/utils.js";
 
 

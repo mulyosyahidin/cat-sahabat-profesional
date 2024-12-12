@@ -5,7 +5,8 @@ import {Button} from "@/Components/Catalyst/button";
 import {calculateTimeLeft, convertToISO, formatTime} from "@/utils/utils.js";
 import Timer from "@/Pages/User/Exams/partials/Timer";
 import Overview from "@/Pages/User/Exams/partials/Overview";
-import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog.jsx";
+import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
+import BackButton from "@/Components/BackButton";
 
 export default function UserExamIndex({
                                           all_question_ids,
@@ -21,9 +22,12 @@ export default function UserExamIndex({
                                           end_at,
                                       }) {
     const user = usePage().props.auth.user;
+
     const [currentPage, setCurrentPage] = useState(meta.current_page);
     const [isSaveButtonCanClick, setIsSaveButtonCanClick] = useState(false);
     const [answers, setAnswers] = useState({});
+
+    const [canClickButton, setCanClickButton] = useState(true);
 
     const [isFinishDialogOpen, setIsFinishDialogOpen] = useState(false);
 
@@ -99,6 +103,8 @@ export default function UserExamIndex({
     const saveAndNextQuestion = () => {
         const selectedOptionId = answers[current_question.id];
 
+        setCanClickButton(false);
+
         router.post(route("user.exams.save-answer", exam_session_id), {
             question_id: current_question.id,
             answer_id: selectedOptionId,
@@ -111,6 +117,9 @@ export default function UserExamIndex({
                         question_id: next_question_id,
                     }));
                 }
+            },
+            onFinish: () => {
+                setCanClickButton(true);
             }
         });
     }
@@ -128,7 +137,9 @@ export default function UserExamIndex({
     return (
         <>
             <BknLayout title={'SIMULASI CAT'} className={'relative flex flex-col'}>
-                <div className="bg-white px-5 py-4 border border-gray-300 w-full">
+                <BackButton link={route('user.welcome')}
+                />
+                <div className="bg-white px-5 py-4 border border-gray-300 w-full mt-5">
                     <div className="flex">
                         <div className="w-1/6 font-light">Nama Peserta</div>
                         <div className="w-5/6 font-light">: {user.name}</div>
@@ -173,7 +184,7 @@ export default function UserExamIndex({
                     <button
                         className={`px-3 py-2 text-white ${isSaveButtonCanClick ? 'bg-blue-600' : 'bg-blue-500'}`}
                         onClick={saveAndNextQuestion}
-                        disabled={!isSaveButtonCanClick}
+                        disabled={!isSaveButtonCanClick || !canClickButton}
                     >
                         {current_question_index < total_question - 1 ? 'Simpan dan lanjutkan' : 'Simpan'}
                     </button>
@@ -182,6 +193,7 @@ export default function UserExamIndex({
                         <button
                             className="px-3 py-2 bg-blue-600 text-white"
                             onClick={skipQuestion}
+                            disabled={!canClickButton}
                         >
                             Lewati soal ini
                         </button>

@@ -29,6 +29,17 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'g-recaptcha-response' => ['required'],
+        ];
+    }
+
+    /**
+     * Get the validation messages that apply to the request.
+     */
+    public function messages(): array
+    {
+        return [
+            'g-recaptcha-response.required' => 'The reCAPTCHA verification failed. Please try again.',
         ];
     }
 

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Imports\FormationQuestionImport;
 use App\Models\Formation;
+use App\Services\FileService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class FormationController extends Controller
 {
@@ -65,6 +68,7 @@ class FormationController extends Controller
         return Inertia::render('Admin/Formations/Show', [
             'formation' => $formation,
             'success' => session('success'),
+            'error' => session('error'),
         ]);
     }
 
@@ -101,5 +105,32 @@ class FormationController extends Controller
         $formation->delete();
 
         return redirect()->route('admin.formations.index')->with('success', 'Berhasil menghapus data formasi');
+    }
+
+    /**
+     * Import questions to a formation.
+     */
+    public function importQuestions(Request $request, Formation $formation)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx',
+        ]);
+
+        $file = FileService::upload('file');
+        if ($file) {
+            if ($request->clear_data) {
+                $formation->positions()->delete();
+            }
+
+            try {
+                Excel::import(new FormationQuestionImport($formation), storage_path('app/public/' . $file['path']));
+
+                return redirect()->back()->with('success', 'Berhasil mengimpor file');
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', $e->getMessage());
+            }
+        }
+
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunggah file');
     }
 }

@@ -42,6 +42,9 @@ class RegisteredUserController extends Controller
             'phone_number' => ['required', 'string', 'max:16'],
             'address' => ['required', 'string', 'max:255'],
             'position_id' => ['required', 'integer', 'exists:positions,id'],
+            'g-recaptcha-response' => ['required'],
+        ], [
+            'g-recaptcha-response.required' => 'The reCAPTCHA verification failed. Please try again.',
         ]);
 
         $user = User::create([

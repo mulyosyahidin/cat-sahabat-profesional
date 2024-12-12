@@ -25,7 +25,9 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
     Route::patch('/profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
     Route::patch('/profile/profile-picture', [\App\Http\Controllers\Admin\ProfileController::class, 'updateProfilePicture'])->name('profile.profile-picture');
 
+    Route::post('/formations/{formation}/questions-import', [\App\Http\Controllers\Admin\FormationController::class, 'importQuestions'])->name('formations.question-import');
     Route::resource('formations', \App\Http\Controllers\Admin\FormationController::class);
+
     Route::resource('positions', \App\Http\Controllers\Admin\PositionController::class)->except('index');
     Route::resource('question-types', \App\Http\Controllers\Admin\QuestionTypeController::class)->except('index');
     Route::resource('questions', \App\Http\Controllers\Admin\QuestionController::class);
@@ -57,11 +59,13 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/test', function () {
+    $isCorrectText = '(INI YANG BENAR)';
+
     for ($i = 1; $i <= 90; $i++) {
         // Membuat data soal
         $question = \App\Models\Question::create([
             'question_type_id' => 1,
-            'question' => "[P3K][OLO][Kompetensi Teknis] Pertanyaan ke-$i: Apa jawaban yang benar?",
+            'question' => "[P3K][PAP][Kompetensi Teknis] Pertanyaan ke-$i: Apa jawaban yang benar?",
             'discussion' => "Ini adalah pembahasan untuk pertanyaan ke-$i.",
         ]);
 
@@ -76,7 +80,7 @@ Route::get('/test', function () {
             \App\Models\Answer_option::create([
                 'question_id' => $question->id,
                 'option' => $options[$j - 1], // Menggunakan huruf A-E
-                'value' => "Teks jawaban untuk pilihan {$options[$j - 1]} soal ke-$i", // Teks jawaban
+                'value' => "Teks jawaban untuk pilihan {$options[$j - 1]} soal ke-$i". ($isCorrect ? " $isCorrectText" : ''), // Teks pilihan
                 'is_correct' => $isCorrect,
                 'score' => $isCorrect ? 5 : 0, // Skor 5 jika benar, 0 jika salah
             ]);
@@ -89,7 +93,7 @@ Route::get('/test', function () {
         // Membuat data soal
         $question = \App\Models\Question::create([
             'question_type_id' => 2,
-            'question' => "[P3K][OLO][Sosio Kultural] Pertanyaan ke-$i: Apa jawaban yang benar?",
+            'question' => "[P3K][PAP][Sosio Kultural] Pertanyaan ke-$i: Apa jawaban yang benar?",
             'discussion' => "Ini adalah pembahasan untuk pertanyaan ke-$i.",
         ]);
 
@@ -111,7 +115,7 @@ Route::get('/test', function () {
             \App\Models\Answer_option::create([
                 'question_id' => $question->id,
                 'option' => $options[$j], // Menggunakan A, B, C, D, E secara acak
-                'value' => "Jawaban {$options[$j]} untuk Pertanyaan $i soal ke-$i", // Teks pilihan
+                'value' => "Jawaban {$options[$j]} untuk Pertanyaan $i soal ke-$i". ($isCorrect ? " $isCorrectText" : ''), // Teks pilihan
                 'is_correct' => $isCorrect,
                 'score' => $scores[$j], // Skor acak antara 1 hingga 5 tanpa duplikat
             ]);
@@ -124,7 +128,7 @@ Route::get('/test', function () {
         // Membuat data soal
         $question = \App\Models\Question::create([
             'question_type_id' => 3,
-            'question' => "[P3K][OLO][Manajerial] Pertanyaan ke-$i: Apa jawaban yang benar?",
+            'question' => "[P3K][PAP][Manajerial] Pertanyaan ke-$i: Apa jawaban yang benar?",
             'discussion' => "Ini adalah pembahasan untuk pertanyaan ke-$i.",
         ]);
 
@@ -146,7 +150,7 @@ Route::get('/test', function () {
             \App\Models\Answer_option::create([
                 'question_id' => $question->id,
                 'option' => $options[$j], // Menggunakan A, B, C, D, E secara acak
-                'value' => "Jawaban {$options[$j]} untuk Pertanyaan $i soal ke-$i", // Teks pilihan
+                'value' => "Jawaban {$options[$j]} untuk Pertanyaan $i soal ke-$i". ($isCorrect ? " $isCorrectText" : ''), // Teks pilihan
                 'is_correct' => $isCorrect,
                 'score' => $scores[$j], // Skor acak antara 1 hingga 5 tanpa duplikat
             ]);
@@ -159,7 +163,7 @@ Route::get('/test', function () {
         // Membuat data soal
         $question = \App\Models\Question::create([
             'question_type_id' => 4,
-            'question' => "[P3K][OLO][Wawancara] Pertanyaan ke-$i: Apa jawaban yang benar?",
+            'question' => "[P3K][PAP][Wawancara] Pertanyaan ke-$i: Apa jawaban yang benar?",
             'discussion' => "Ini adalah pembahasan untuk pertanyaan ke-$i.",
         ]);
 
@@ -181,7 +185,7 @@ Route::get('/test', function () {
             \App\Models\Answer_option::create([
                 'question_id' => $question->id,
                 'option' => $options[$j], // Menggunakan A, B, C, D, E secara acak
-                'value' => "Jawaban {$options[$j]} untuk Pertanyaan $i soal ke-$i", // Teks pilihan
+                'value' => "Jawaban {$options[$j]} untuk Pertanyaan $i soal ke-$i". ($isCorrect ? " $isCorrectText" : ''), // Teks pilihan
                 'is_correct' => $isCorrect,
                 'score' => $scores[$j], // Skor acak antara 1 hingga 5 tanpa duplikat
             ]);

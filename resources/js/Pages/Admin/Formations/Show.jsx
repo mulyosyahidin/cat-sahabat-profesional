@@ -7,12 +7,20 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/C
 import {Dialog, DialogTitle, DialogBody, DialogActions} from "@/Components/Catalyst/dialog";
 import {useEffect, useState} from "react";
 import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
+import {Input} from "@/Components/Catalyst/input.jsx";
+import InputError from "@/Components/InputError.jsx";
 
-export default function AdminPositionShow({formation, success}) {
-    const {delete: destroy, processing} = useForm();
+export default function AdminPositionShow({formation, success, error}) {
+    const {data, setData, post, delete: destroy, processing, errors, reset} = useForm({
+        file: null,
+        clear_data: false,
+    });
+
     const [isDeleteFormationDialogOpen, setIsDeleteFormationDialogOpen] = useState(false);
     const [isDeletePositionDialogOpen, setIsDeletePositionDialogOpen] = useState(false);
     const [selectedPosition, setSelectedPosition] = useState(null);
+
+    const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 
     const handleDeleteFormation = () => {
         destroy(route('admin.formations.destroy', formation.id), {
@@ -31,6 +39,15 @@ export default function AdminPositionShow({formation, success}) {
             });
         }
     };
+
+    const handleImportFile = () => {
+        post(route('admin.formations.question-import', formation.id), {
+            preserveScroll: true,
+            onSuccess: () => {
+                setIsImportDialogOpen(false);
+            },
+        });
+    }
 
     const handleDeletePositionDialogOpen = (position) => {
         setSelectedPosition(position);
@@ -52,6 +69,12 @@ export default function AdminPositionShow({formation, success}) {
                     </div>
                 )}
 
+                {error && (
+                    <div className="mb-4 mt-2 text-sm font-medium text-red-600">
+                        {error}
+                    </div>
+                )}
+
                 <Table className="mt-8 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
                     <TableBody>
                         <TableRow key={1}>
@@ -64,6 +87,14 @@ export default function AdminPositionShow({formation, success}) {
                 </Table>
 
                 <div className="flex justify-end gap-1 mt-5">
+                    <Button
+                        size="small"
+                        outline
+                        className={'cursor-pointer'}
+                        onClick={() => setIsImportDialogOpen(true)}
+                    >
+                        Import Soal
+                    </Button>
                     <Button
                         href={route('admin.formations.edit', formation.id)}
                         size="small"
@@ -86,7 +117,8 @@ export default function AdminPositionShow({formation, success}) {
                 <div className="flex justify-between mt-20">
                     <Heading level={3}>Jabatan</Heading>
 
-                    <Button className="cursor-pointer" href={route('admin.positions.create', {formation_id: formation.id})}>
+                    <Button className="cursor-pointer"
+                            href={route('admin.positions.create', {formation_id: formation.id})}>
                         Tambah
                     </Button>
                 </div>
@@ -103,7 +135,8 @@ export default function AdminPositionShow({formation, success}) {
                     <TableBody>
                         {formation.positions.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan="4" className="text-center">Tidak ada data untuk ditampilkan</TableCell>
+                                <TableCell colSpan="4" className="text-center">Tidak ada data untuk
+                                    ditampilkan</TableCell>
                             </TableRow>
                         )}
 
@@ -112,7 +145,8 @@ export default function AdminPositionShow({formation, success}) {
                                 <TableRow key={position.id}>
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell className="text-zinc-500">{position.name}</TableCell>
-                                    <TableCell className="text-zinc-500">{position.maximum_test_duration_in_minutes} menit</TableCell>
+                                    <TableCell
+                                        className="text-zinc-500">{position.maximum_test_duration_in_minutes} menit</TableCell>
                                     <TableCell className="flex justify-end gap-1">
                                         <Button
                                             outline={true}
@@ -120,7 +154,7 @@ export default function AdminPositionShow({formation, success}) {
                                             size="small"
                                             className="cursor-pointer"
                                         >
-                                            <EyeIcon />
+                                            <EyeIcon/>
                                         </Button>
                                         <Button
                                             outline={true}
@@ -128,7 +162,7 @@ export default function AdminPositionShow({formation, success}) {
                                             size="small"
                                             className="cursor-pointer"
                                         >
-                                            <PencilSquareIcon />
+                                            <PencilSquareIcon/>
                                         </Button>
                                         <Button
                                             outline={true}
@@ -136,7 +170,7 @@ export default function AdminPositionShow({formation, success}) {
                                             className="cursor-pointer text-red-500"
                                             onClick={() => handleDeletePositionDialogOpen(position)}
                                         >
-                                            <TrashIcon />
+                                            <TrashIcon/>
                                         </Button>
                                     </TableCell>
                                 </TableRow>
@@ -150,7 +184,8 @@ export default function AdminPositionShow({formation, success}) {
                 <DialogTitle>Hapus Formasi</DialogTitle>
                 <DialogBody>
                     <p>
-                        Apakah Anda yakin ingin menghapus formasi ini? Menghapus formasi ini akan menghapus data terkait.
+                        Apakah Anda yakin ingin menghapus formasi ini? Menghapus formasi ini akan menghapus data
+                        terkait.
                     </p>
                 </DialogBody>
                 <DialogActions>
@@ -176,7 +211,8 @@ export default function AdminPositionShow({formation, success}) {
                 <DialogTitle>Hapus Jabatan</DialogTitle>
                 <DialogBody>
                     <p>
-                        Apakah Anda yakin ingin menghapus jabatan ini? Menghapus jabatan ini akan menghapus data terkait.
+                        Apakah Anda yakin ingin menghapus jabatan ini? Menghapus jabatan ini akan menghapus data
+                        terkait.
                     </p>
                 </DialogBody>
                 <DialogActions>
@@ -194,6 +230,62 @@ export default function AdminPositionShow({formation, success}) {
                         disabled={processing}
                     >
                         {processing ? 'Menghapus...' : 'Hapus'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={isImportDialogOpen} onClose={() => setIsImportDialogOpen(false)}>
+                <DialogTitle>Import Soal</DialogTitle>
+                <DialogBody>
+                    <p>
+                        Pastikan kolom <b>soal</b>, <b>pilihan jawaban A, B, C, D, E</b>, dan <b>nilai A, B, C, D, E</b> tidak kosong.
+                    </p>
+
+                    <section className="mb-5 mt-5">
+                        <Input type="file" name="file" onChange={(e) => setData('file', e.target.files[0])}/>
+
+                        {errors.file ? (
+                            <InputError message={errors.file} className="mt-2"/>
+                        ) : (
+                            <small className="text-zinc-500">
+                                Download template import soal <a href="/assets/files/template_import_soal.xlsx"
+                                                                 className={'text-blue-500'}>disini</a>.
+                            </small>
+                        )}
+                    </section>
+
+                    <section className="mb-3">
+                        <input
+                            type="checkbox"
+                            id="clear_data"
+                            name="clear_data"
+                            className="h-5 w-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                            onChange={(e) => setData('clear_data', e.target.checked)}
+                        />
+                        <label htmlFor="clear_data" className="ml-2 text-sm font-medium text-gray-700 cursor-pointer">
+                            Hapus data soal sebelumnya
+                        </label>
+                    </section>
+
+                </DialogBody>
+                <DialogActions>
+                    {
+                        !processing && (
+                            <Button
+                                plain
+                                className="cursor-pointer"
+                                onClick={() => setIsImportDialogOpen(false)}
+                            >
+                                Batal
+                            </Button>
+                        )
+                    }
+                    <Button
+                        className="cursor-pointer"
+                        onClick={handleImportFile}
+                        disabled={processing}
+                    >
+                    {processing ? 'Mengimport...' : 'Import'}
                     </Button>
                 </DialogActions>
             </Dialog>
