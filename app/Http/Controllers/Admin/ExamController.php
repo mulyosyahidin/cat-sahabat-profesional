@@ -15,7 +15,7 @@ class ExamController extends Controller
      */
     public function index()
     {
-        $exams = Exam::with('formation')->latest()->paginate(10);
+        $exams = Exam::with('formation')->withCount('participants')->latest()->paginate(10);
 
         return Inertia::render('Admin/Exams/Index', [
             'exams' => $exams->items(),
@@ -69,6 +69,7 @@ class ExamController extends Controller
     public function show(Exam $exam)
     {
         $exam->load('formation');
+        $exam->loadCount('participants');
 
         return Inertia::render('Admin/Exams/Show', [
             'exam' => $exam,

@@ -7,8 +7,8 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/C
 import {Dialog, DialogTitle, DialogBody, DialogActions} from "@/Components/Catalyst/dialog";
 import {useEffect, useState} from "react";
 import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
-import {Input} from "@/Components/Catalyst/input.jsx";
-import InputError from "@/Components/InputError.jsx";
+import {Input} from "@/Components/Catalyst/input";
+import InputError from "@/Components/InputError";
 
 export default function AdminPositionShow({formation, success, error}) {
     const {data, setData, post, delete: destroy, processing, errors, reset} = useForm({

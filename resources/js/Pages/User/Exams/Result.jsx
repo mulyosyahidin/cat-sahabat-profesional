@@ -1,6 +1,7 @@
 import BknLayout from "@/Layouts/BknLayout";
 import {Link, usePage} from "@inertiajs/react";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
+import BackButton from "@/Components/BackButton.jsx";
 
 export default function UserExamResult({exam, examSession, examParticipant}) {
     const user = usePage().props.auth.user;
@@ -12,7 +13,10 @@ export default function UserExamResult({exam, examSession, examParticipant}) {
     return (
         <BknLayout title={'HASIL SIMULASI'}>
             <div className="container pt-5 mb-20 mx-auto max-w-7xl">
-                <div className="bg-white border border-gray-300 rounded-lg shadow-md mb-6">
+                <BackButton link={route('user.welcome')}
+                />
+
+                <div className="bg-white border border-gray-300 rounded-lg shadow-md mb-6 mt-5">
                     <div className="bg-gray-100 p-4">
                         <h3 className="text-lg font-semibold">Informasi Ujian</h3>
                     </div>

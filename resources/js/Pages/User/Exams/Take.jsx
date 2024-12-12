@@ -8,19 +8,20 @@ import Overview from "@/Pages/User/Exams/partials/Overview";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
 import BackButton from "@/Components/BackButton";
 
-export default function UserExamIndex({
-                                          all_question_ids,
-                                          meta,
-                                          current_question,
-                                          current_question_index,
-                                          total_question,
-                                          next_question_id,
-                                          exam_session_id,
-                                          question_answers,
-                                          answered_question_ids,
-                                          start_at,
-                                          end_at,
-                                      }) {
+export default function UserExamTake({
+                                         all_question_ids,
+                                         meta,
+                                         current_question,
+                                         current_question_index,
+                                         current_page_number,
+                                         total_question,
+                                         next_question_id,
+                                         exam_session_id,
+                                         question_answers,
+                                         answered_question_ids,
+                                         start_at,
+                                         end_at,
+                                     }) {
     const user = usePage().props.auth.user;
 
     const [currentPage, setCurrentPage] = useState(meta.current_page);
@@ -77,7 +78,10 @@ export default function UserExamIndex({
     const handlePageChange = (page) => {
         if (page > 0 && page <= meta.total_pages) {
             setCurrentPage(page);
-            router.get(route("user.exams.index", {page}));
+            router.get(route("user.exams.take", {
+                page: page,
+                exam_session: exam_session_id,
+            }));
         }
     };
 
@@ -87,14 +91,16 @@ export default function UserExamIndex({
         const nextPage = Math.floor(nextQuestionIndex / perPage) + 1;
         const nextQuestionId = all_question_ids[nextQuestionIndex] || next_question_id;
 
-        router.get(route("user.exams.index", {
+        router.get(route("user.exams.take", {
+            exam_session: exam_session_id,
             page: nextPage,
             question_id: nextQuestionId.id === undefined ? next_question_id : nextQuestionId.id,
         }));
     }
 
     const handleQuestionClick = (questionId) => {
-        router.get(route("user.exams.index", {
+        router.get(route("user.exams.take", {
+            exam_session: exam_session_id,
             page: currentPage,
             question_id: questionId,
         }));
@@ -103,7 +109,13 @@ export default function UserExamIndex({
     const saveAndNextQuestion = () => {
         const selectedOptionId = answers[current_question.id];
 
-        setCanClickButton(false);
+        setCanClickButton(false)
+
+        const perPage = meta.per_page;
+        const nextQuestionIndex = current_question_index + 1;
+        const nextPage = Math.floor(nextQuestionIndex / perPage) + 1;
+
+        console.log(nextPage)
 
         router.post(route("user.exams.save-answer", exam_session_id), {
             question_id: current_question.id,
@@ -112,8 +124,9 @@ export default function UserExamIndex({
         }, {
             onSuccess: () => {
                 if (current_question_index < total_question - 1) {
-                    router.get(route("user.exams.index", {
-                        page: currentPage,
+                    router.get(route("user.exams.take", {
+                        exam_session: exam_session_id,
+                        page: nextPage,
                         question_id: next_question_id,
                     }));
                 }
@@ -212,6 +225,7 @@ export default function UserExamIndex({
                     <div className="grid grid-cols-10 gap-1 justify-items-center">
                         {all_question_ids.map((question_id, index) => {
                             const itemNumber = (currentPage - 1) * meta.per_page + index + 1;
+
                             return (
                                 <button
                                     key={index}

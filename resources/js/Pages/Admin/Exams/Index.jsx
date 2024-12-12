@@ -96,7 +96,7 @@ export default function AdminExamIndex({exams, meta, success}) {
                                     <TableCell className="text-zinc-500">{exam.name}</TableCell>
                                     <TableCell className="text-zinc-500">{exam.formation.name}</TableCell>
                                     <TableCell className="text-zinc-500">{exam.token}</TableCell>
-                                    <TableCell className="text-zinc-500 text-center">{0}</TableCell>
+                                    <TableCell className="text-zinc-500 text-center">{exam.participants_count} Peserta</TableCell>
                                     <TableCell className="flex justify-end gap-1">
                                         <Button
                                             outline={true}

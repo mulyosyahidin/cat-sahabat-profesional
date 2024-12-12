@@ -41,7 +41,6 @@ class RegisteredUserController extends Controller
             'password' => ['required', Rules\Password::defaults()],
             'phone_number' => ['required', 'string', 'max:16'],
             'address' => ['required', 'string', 'max:255'],
-            'position_id' => ['required', 'integer', 'exists:positions,id'],
             'g-recaptcha-response' => ['required'],
         ], [
             'g-recaptcha-response.required' => 'The reCAPTCHA verification failed. Please try again.',
@@ -56,13 +55,6 @@ class RegisteredUserController extends Controller
         $user->participantProfile()->create([
             'phone_number' => $request->phone_number,
             'address' => $request->address,
-        ]);
-
-        $examId = 1;
-
-        $user->examParticipants()->create([
-            'exam_id' => $examId,
-            'position_id' => $request->position_id,
         ]);
 
         event(new Registered($user));

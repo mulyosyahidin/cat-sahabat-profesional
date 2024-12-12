@@ -63,8 +63,8 @@ export default function AdminParticipantShowQuestionAnswers({exam, examParticipa
                                 <TableRow key={item.id}>
                                     <TableCell>{startIndex + index + 1}</TableCell>
                                     <TableCell className="text-zinc-500">{item.question_type.name}</TableCell>
-                                    <TableCell className="text-zinc-500">{limitPlainText(item.question.question, 40)}</TableCell>
-                                    <TableCell className="text-zinc-500">{item.answer_option.option}. {item.answer_option.value}</TableCell>
+                                    <TableCell className="text-zinc-500">{limitPlainText(item.question.question, 35)}</TableCell>
+                                    <TableCell className="text-zinc-500">{item.answer_option.option}. {limitPlainText(item.answer_option.value, 35)}</TableCell>
                                     <TableCell className="text-zinc-500">{item.answer_option.is_correct ? 'Benar' : 'Salah'}</TableCell>
                                     <TableCell className="text-zinc-500 text-center">{item.answer_option.score}</TableCell>
                                 </TableRow>

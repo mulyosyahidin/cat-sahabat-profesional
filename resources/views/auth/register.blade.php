@@ -128,7 +128,7 @@
                 <div class="form-group @error('password') has-error @enderror">
                     <label for="password" class="col-sm-2 control-label">Password</label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" id="password" placeholder="Password" name="password"
+                        <input type="password" class="form-control" id="password" placeholder="Password" name="password" minlength="8"
                                required>
 
                         @error('password')
@@ -154,21 +154,6 @@
                                   required>{{ old('address') }}</textarea>
 
                         @error('address')
-                        <span class="help-block">{{ $message }}</span>
-                        @enderror
-                    </div>
-                </div>
-                <div class="form-group @error('position_id') has-error @enderror">
-                    <label for="position" class="col-sm-2 control-label">Jabatan yang dilamar</label>
-                    <div class="col-sm-10">
-                        <select name="position_id" id="position" class="form-control" required>
-                            <option value="">Pilih jabatan</option>
-                            @foreach($positions as $position)
-                                <option value="{{ $position->id }}" @if(old('position_id') == $position->id) selected @endif>{{ $position->name }}</option>
-                            @endforeach
-                        </select>
-
-                        @error('position_id')
                         <span class="help-block">{{ $message }}</span>
                         @enderror
                     </div>

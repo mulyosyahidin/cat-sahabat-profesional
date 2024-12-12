@@ -7,26 +7,94 @@ use App\Models\Exam;
 use App\Models\Exam_participant;
 use App\Models\Exam_session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class WelcomeController extends Controller
 {
     public function index()
     {
-        $exam = Exam::find(1);
-        $examParticipant = Exam_participant::where('user_id', \Auth::id())->where('exam_id', $exam->id)->with('position')->first();
+        $currentUserExamParticipant = Exam_participant::where('user_id', auth()->id())->with('exam', 'position')->get();
+        $hasActiveExamSession = $currentUserExamParticipant->filter(function ($examParticipant) {
+            return $examParticipant->session()->where('status', 'active')->exists();
+        })->isNotEmpty();
 
-        $examSession = Exam_session::where('exam_participant_id', $examParticipant->id)
-            ->first();
+        $activeExamParticipant = $currentUserExamParticipant->filter(function ($examParticipant) {
+            return $examParticipant->session()->where('status', 'active')->exists();
+        })->first();
 
-        if ($examSession != null && $examSession->status == 'finished') {
-            return redirect()->route('user.exams.result', $examSession->id);
-        }
+        $activeExam = $activeExamParticipant->exam ?? null;
+        $activeExamSession = $activeExamParticipant->session ?? null;
+        $activeExamPosition = $activeExamParticipant->position ?? null;
+
+//        $examParticipationHistories = Exam_participant::where('user_id', auth()->id())->with('exam', 'position')->get();
 
         return Inertia::render('User/Welcome', [
-            'exam' => $exam,
-            'examSession' => $examSession,
-            'examParticipant' => $examParticipant,
+            'status' => session('status'),
+            'exam_positions' => session('exam_positions'),
+            'has_active_exam_session' => $hasActiveExamSession,
+            'active_exam' => $activeExam,
+            'active_exam_position' => $activeExamPosition,
+            'active_exam_session' => $activeExamSession ?? null,
+//            'exam_participation_histories' => $examParticipationHistories,
         ]);
+    }
+
+    public function validateToken(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string|exists:exams,token',
+        ], [
+            'token.exists' => 'Kode token tidak ada',
+        ]);
+
+        $exam = Exam::where('token', $request->token)->first();
+
+        if ($exam->participants()->where('user_id', auth()->id())->exists()) {
+            return redirect()->back()->withErrors([
+                'token' => 'Anda sudah pernah mengikuti ujian ini!',
+            ]);
+        }
+
+        return redirect()->back()->with('exam_positions', $exam->formation->positions);
+    }
+
+    public function takeExam(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string|exists:exams,token',
+            'position_id' => 'required|integer|exists:positions,id',
+        ], [
+            'token.exists' => 'Kode token tidak ada',
+        ]);
+
+        $cacheKey = 'exam_data_by_token_' . $request->token;
+        if (!Cache::has($cacheKey)) {
+            $exam = Exam::where('token', $request->token)->first();
+
+            Cache::put($cacheKey, $exam, now()->addMinutes(30));
+        }
+
+        $exam = Cache::get($cacheKey);
+
+        $examParticipant = Exam_participant::updateOrCreate(
+            [
+                'user_id' => auth()->id(),
+                'exam_id' => $exam->id,
+                'position_id' => $request->position_id,
+            ],
+            [
+                'updated_at' => now(),
+            ]
+        );
+
+        $examSession = $examParticipant->session()->create([
+            'status' => 'active',
+            'maximum_duration' => $examParticipant->position->maximum_test_duration_in_minutes,
+            'maximum_duration_end_at' => now()->addMinutes($examParticipant->position->maximum_test_duration_in_minutes),
+            'started_at' => now(),
+        ]);
+
+        return redirect()->route('user.exams.take', $examSession->id);
     }
 }

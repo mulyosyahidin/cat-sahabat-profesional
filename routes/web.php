@@ -45,8 +45,10 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
 
 Route::group(['middleware' => ['auth', 'role:user'], 'as' => 'user.', 'prefix' => 'user'], function () {
     Route::get('/welcome', [\App\Http\Controllers\User\WelcomeController::class, 'index'])->name('welcome');
+    Route::post('/welcome/validate-token', [\App\Http\Controllers\User\WelcomeController::class, 'validateToken'])->name('validate-token');
+    Route::post('/welcome/take-exam', [\App\Http\Controllers\User\WelcomeController::class, 'takeExam'])->name('take-exam');
 
-    Route::get('/exams', [\App\Http\Controllers\User\ExamController::class, 'index'])->name('exams.index');
+    Route::get('/exams/take/{exam_session}', [\App\Http\Controllers\User\ExamController::class, 'take'])->name('exams.take');
     Route::post('/exams/{exam_session}/save-answer', [\App\Http\Controllers\User\ExamController::class, 'saveAnswer'])->name('exams.save-answer');
     Route::post('/exams/{exam_session}/finish', [\App\Http\Controllers\User\ExamController::class, 'finish'])->name('exams.finish');
     Route::get('/exams/{exam_session}/result', [\App\Http\Controllers\User\ExamController::class, 'result'])->name('exams.result');

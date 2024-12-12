@@ -42,6 +42,13 @@ export default function AdminExamShow({exam, success}) {
                         </TableRow>
 
                         <TableRow key={2}>
+                            <TableCell>Token</TableCell>
+                            <TableCell>
+                                <strong>{exam.token}</strong>
+                            </TableCell>
+                        </TableRow>
+
+                        <TableRow key={3}>
                             <TableCell>Formasi</TableCell>
                             <TableCell>
                                 <strong>{exam.formation.name}</strong>
@@ -55,14 +62,14 @@ export default function AdminExamShow({exam, success}) {
                             </TableCell>
                         </TableRow>
 
-                        <TableRow key={4}>
+                        <TableRow key={3}>
                             <TableCell>Jumlah Peserta</TableCell>
                             <TableCell>
-                                <strong>0</strong>
+                                <strong>{exam.participants_count} Peserta</strong>
                             </TableCell>
                         </TableRow>
 
-                        <TableRow key={5}>
+                        <TableRow key={6}>
                             <TableCell>Keterangan</TableCell>
                             <TableCell>
                                 <strong>{exam.description}</strong>
@@ -72,6 +79,14 @@ export default function AdminExamShow({exam, success}) {
                 </Table>
 
                 <div className="flex justify-end gap-1 mt-5">
+                    <Button
+                        href={route('admin.exams.participants.index', exam.id)}
+                        size="small"
+                        outline
+                        className={'cursor-pointer'}
+                    >
+                        Download Nilai
+                    </Button>
                     <Button
                         href={route('admin.exams.participants.index', exam.id)}
                         size="small"

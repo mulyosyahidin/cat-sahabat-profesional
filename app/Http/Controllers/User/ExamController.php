@@ -15,26 +15,26 @@ use Inertia\Inertia;
 
 class ExamController extends Controller
 {
-    public function index()
+    public function take(Request $request, Exam_session $examSession)
     {
-        $allQuestionData = $this->getData();
+        if ($examSession->examParticipant->user_id != auth()->id()) {
+            return redirect()->route('user.welcome');
+        }
+
+        $currentQuestionIdFromRequest = $request->get('question_id');
+
+        if ($currentQuestionIdFromRequest) {
+            $examSession->update([
+                'current_question_id' => $currentQuestionIdFromRequest,
+            ]);
+        }
+
+        $allQuestionData = $this->getData($examSession);
 
         $allQuestionsData = $allQuestionData['all_questions'];
         $allQuestionIds = $allQuestionData['items'];
-        $activeQuestionId = request('question_id') ?? ($allQuestionIds[0]->id ?? null);
+        $activeQuestionId = $currentQuestionIdFromRequest ?? ($examSession->current_question_id ?? $allQuestionIds[0]->id);
         $indexNumber = array_search($activeQuestionId, array_column($allQuestionsData, 'id'));
-
-        $examParticipant = $allQuestionData['exam_participant'];
-        $examSession = Exam_session::firstOrCreate(
-            ['exam_participant_id' => $examParticipant->id],
-            [
-                'current_question_id' => $activeQuestionId,
-                'status' => 'active',
-                'maximum_duration' => $examParticipant->position->maximum_test_duration_in_minutes,
-                'maximum_duration_end_at' => now()->addMinutes($examParticipant->position->maximum_test_duration_in_minutes),
-                'started_at' => now(),
-            ]
-        );
 
         if ($examSession->status === 'finished') {
             return redirect()->route('user.exams.result', $examSession);
@@ -51,7 +51,7 @@ class ExamController extends Controller
             ? $allQuestionsData[$indexNumber + 1]['id']
             : null;
 
-        return Inertia::render('User/Exams/Index', [
+        return Inertia::render('User/Exams/Take', [
             'all_question_ids' => $allQuestionIds,
             'meta' => $allQuestionData['meta'],
             'current_question' => $questionData,
@@ -146,6 +146,22 @@ class ExamController extends Controller
             }
         }
 
+        $allQuestionTypes = $exam_session->examParticipant->position->questionTypes->pluck('id')->toArray();
+
+        foreach ($allQuestionTypes as $questionTypeId) {
+            $existingEntry = collect($totalScorePerTypes)->firstWhere('question_type_id', $questionTypeId);
+
+            if (!$existingEntry) {
+                $totalScorePerTypes[] = [
+                    'exam_session_id' => $exam_session->id,
+                    'question_type_id' => $questionTypeId,
+                    'score' => 0,
+                    'correct_answer_count' => 0,
+                    'wrong_answer_count' => 0,
+                ];
+            }
+        }
+
         $exam_session->typeScores()->insert($totalScorePerTypes);
 
         $exam_session->update([
@@ -175,16 +191,10 @@ class ExamController extends Controller
         ]);
     }
 
-    protected function getData()
+    protected function getData(Exam_session $examSession)
     {
-        $exam = Exam::findOrFail(1);
-
-        $examParticipant = Exam_participant::where('user_id', \Auth::id())
-            ->where('exam_id', $exam->id)
-            ->with(['position.questionTypes' => function ($query) {
-                $query->orderBy('display_order');
-            }])
-            ->first();
+        $exam = $examSession->examParticipant->exam;
+        $examParticipant = $examSession->examParticipant;
 
         $questionTypesIds = $examParticipant->position->questionTypes->pluck('id')->toArray();
 
@@ -207,6 +217,4 @@ class ExamController extends Controller
             ],
         ];
     }
-
-
 }
