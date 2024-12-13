@@ -7,10 +7,11 @@ export default function Overview({
                                      totalQuestion,
                                      totalAnsweredQuestion,
                                      unansweredQuestions,
-                                     setIsFinishDialogOpen
+                                     setIsFinishDialogOpen,
+                                     classes = ''
                                  }) {
     return (
-        <div className="absolute top-5 right-5 bg-white bg-opacity-90 border-2  p-1">
+        <div className={`${classes}`}>
             <div className="flex flex-wrap">
                 <div className="w-full sm:w-1/2 md:w-1/4 lg:w-1/6 xl:w-1/6 text-center p-2">
                     <span className="font-light" style={{fontSize: "14px"}}>Sisa Waktu</span>

@@ -17,7 +17,7 @@ export default function BknLayout({ header, title = 'SIMULASI CAT', children, ..
                             backgroundRepeat: "no-repeat",
                         }}
                     >
-                        <img src="/assets/bkn/images/logo-new2.png" alt="Logo"/>
+                        <img src="/assets/images/profesional.png" alt="Logo" className="w-32"/>
                     </div>
 
                     <div
@@ -33,8 +33,8 @@ export default function BknLayout({ header, title = 'SIMULASI CAT', children, ..
 
                 <div className="w-full p-5">{children}</div>
 
-                <div className="fixed bottom-0 w-full text-center bg-[#BDC2FD] py-2">
-                    <h5 className={'text-dark-50'}>CBT SAHABAT PROFESIONAL</h5>
+                <div className="fixed bottom-0 w-full text-center bg-[#BDC2FD] py-2 hidden lg:block">
+                    <h5 className="text-dark-50">CAT SAHABAT PROFESIONAL</h5>
                 </div>
             </div>
         </>

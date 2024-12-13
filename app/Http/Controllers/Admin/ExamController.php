@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\Formation;
+use App\Models\Question_type;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -116,5 +118,25 @@ class ExamController extends Controller
         $exam->delete();
 
         return redirect()->route('admin.exams.index')->with('success', 'Berhasil menghapus ujian');
+    }
+
+    public function downloadExamResults(Exam $exam)
+    {
+        $exam->load(['participants.user', 'participants.position', 'participants.session.typeScores.questionType', 'formation.positions.questionTypes']);
+
+        $exam->participants = $exam->participants->sortByDesc(function ($participant) {
+            return $participant->session->total_score;
+        });
+
+        $questionTypes = Question_type::whereHas('position', function ($query) use ($exam) {
+            $query->where('formation_id', $exam->formation_id);
+        })->get();
+
+        $pdf = Pdf::loadView('admin.exams.download-exam-results', [
+            'exam' => $exam,
+            'questionTypes' => $questionTypes,
+        ]);
+
+        return $pdf->download('Hasil Ujian ' . $exam->name . '.pdf');
     }
 }

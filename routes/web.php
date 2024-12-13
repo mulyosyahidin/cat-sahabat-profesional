@@ -40,6 +40,8 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
     Route::get('/exams/{exam}/participants/{exam_participant}', [\App\Http\Controllers\Admin\ExamParticipantController::class, 'show'])->name('exams.participants.show');
     Route::get('/exams/{exam}/participants/{exam_participant}/question-answers', [\App\Http\Controllers\Admin\ExamParticipantController::class, 'questionAnswers'])->name('exams.participants.question-answers');
 
+    Route::get('/exams/{exam}/download-exam-results', [\App\Http\Controllers\Admin\ExamController::class, 'downloadExamResults'])->name('exams.download-exam-results');
+
     Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class);
 });
 

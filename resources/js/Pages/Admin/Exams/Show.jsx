@@ -80,7 +80,7 @@ export default function AdminExamShow({exam, success}) {
 
                 <div className="flex justify-end gap-1 mt-5">
                     <Button
-                        href={route('admin.exams.participants.index', exam.id)}
+                        href={route('admin.exams.download-exam-results', exam.id)}
                         size="small"
                         outline
                         className={'cursor-pointer'}

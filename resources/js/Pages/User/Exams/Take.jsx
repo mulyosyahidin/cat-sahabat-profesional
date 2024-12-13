@@ -7,6 +7,7 @@ import Timer from "@/Pages/User/Exams/partials/Timer";
 import Overview from "@/Pages/User/Exams/partials/Overview";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
 import BackButton from "@/Components/BackButton";
+import MobileOverview from "@/Pages/User/Exams/partials/MobileOverview.jsx";
 
 export default function UserExamTake({
                                          all_question_ids,
@@ -152,9 +153,10 @@ export default function UserExamTake({
             <BknLayout title={'SIMULASI CAT'} className={'relative flex flex-col'}>
                 <BackButton link={route('user.welcome')}
                 />
-                <div className="bg-white px-5 py-4 border border-gray-300 w-full mt-5">
+                <div
+                    className="bg-white px-5 py-4 border border-gray-300 w-full mt-5 rounded-tl rounded-tr md:rounded-none">
                     <div className="flex">
-                        <div className="w-1/6 font-light">Nama Peserta</div>
+                        <div className="w-1/6 font-light">Nama</div>
                         <div className="w-5/6 font-light">: {user.name}</div>
                     </div>
                     <div className="flex">
@@ -165,6 +167,8 @@ export default function UserExamTake({
                         <strong>{current_question.question_type.name}</strong>
                     </div>
                 </div>
+
+                <Timer timer={timer} classes={'block sm:hidden text-white rounded-bl rounded-br text-center'}/>
 
                 <div className="bg-white px-5 py-4 border border-gray-300 w-full mt-5">
                     {current_question && (
@@ -195,7 +199,7 @@ export default function UserExamTake({
 
                 <div className="mt-3 flex gap-1">
                     <button
-                        className={`px-3 py-2 text-white ${isSaveButtonCanClick ? 'bg-blue-600' : 'bg-blue-500'}`}
+                        className={`w-full md:w-auto px-3 py-2 text-white ${isSaveButtonCanClick ? 'bg-blue-600' : 'bg-blue-500'}`}
                         onClick={saveAndNextQuestion}
                         disabled={!isSaveButtonCanClick || !canClickButton}
                     >
@@ -204,7 +208,7 @@ export default function UserExamTake({
 
                     {current_question_index < total_question - 1 && (
                         <button
-                            className="px-3 py-2 bg-blue-600 text-white"
+                            className={`px-3 py-2 bg-blue-600 text-white ${canClickButton ? '' : 'opacity-50 cursor-not-allowed'} w-full md:w-auto`}
                             onClick={skipQuestion}
                             disabled={!canClickButton}
                         >
@@ -222,7 +226,8 @@ export default function UserExamTake({
                         style={{pointerEvents: currentPage === 1 ? 'none' : 'auto'}}
                     />
 
-                    <div className="grid grid-cols-10 gap-1 justify-items-center">
+                    <div
+                        className="grid gap-1 justify-items-center grid-cols-5 grid-rows-4 md:grid-cols-10 md:grid-rows-2">
                         {all_question_ids.map((question_id, index) => {
                             const itemNumber = (currentPage - 1) * meta.per_page + index + 1;
 
@@ -246,13 +251,29 @@ export default function UserExamTake({
                         style={{pointerEvents: currentPage === meta.total_pages ? 'none' : 'auto'}}
                     />
                 </div>
+
+                <div className="mt-10 block md:hidden">
+                    <MobileOverview
+                        timeLeft={timeLeft}
+                        totalQuestion={total_question}
+                        totalAnsweredQuestion={answered_question_ids.length}
+                        unansweredQuestions={total_question - answered_question_ids.length}
+                        setIsFinishDialogOpen={setIsFinishDialogOpen}/>
+                </div>
+
             </BknLayout>
 
-            <Timer timer={timer}/>
-            <Overview timeLeft={timeLeft} totalQuestion={total_question}
-                      totalAnsweredQuestion={answered_question_ids.length}
-                      unansweredQuestions={total_question - answered_question_ids.length}
-                      setIsFinishDialogOpen={setIsFinishDialogOpen}/>
+            <Timer timer={timer}
+                   classes={'hidden md:block absolute bottom-5 right-5 p-5 text-white shadow-md rounded'}/>
+
+            <Overview
+                timeLeft={timeLeft}
+                totalQuestion={total_question}
+                totalAnsweredQuestion={answered_question_ids.length}
+                unansweredQuestions={total_question - answered_question_ids.length}
+                setIsFinishDialogOpen={setIsFinishDialogOpen}
+                classes={'hidden md:absolute md:top-5 md:right-5 md:bg-white md:bg-opacity-90 md:border-2 md:p-1 md:block'}
+            />
 
             <Dialog open={isFinishDialogOpen} onClose={() => setIsFinishDialogOpen(false)}>
                 <DialogTitle>Selesaikan Ujian?</DialogTitle>
