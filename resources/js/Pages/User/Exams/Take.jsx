@@ -37,7 +37,7 @@ export default function UserExamTake({
     const endTime = new Date(convertToISO(end_at)).getTime();
 
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(endTime));
-    const [timer, setTimer] = useState("");
+    const [timer, setTimer] = useState("00:00:00");
 
     const handleAnswerChange = useCallback((optionId) => {
         setAnswers((prevAnswers) => ({
@@ -115,8 +115,6 @@ export default function UserExamTake({
         const perPage = meta.per_page;
         const nextQuestionIndex = current_question_index + 1;
         const nextPage = Math.floor(nextQuestionIndex / perPage) + 1;
-
-        console.log(nextPage)
 
         router.post(route("user.exams.save-answer", exam_session_id), {
             question_id: current_question.id,

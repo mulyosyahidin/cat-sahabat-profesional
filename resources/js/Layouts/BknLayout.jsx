@@ -17,7 +17,10 @@ export default function BknLayout({ header, title = 'SIMULASI CAT', children, ..
                             backgroundRepeat: "no-repeat",
                         }}
                     >
-                        <img src="/assets/images/profesional.png" alt="Logo" className="w-32"/>
+                        <div className="flex gap-2">
+                            <img src="/assets/images/profesional.png" alt="Logo" className="w-32"/>
+                            <img src="/assets/images/karir.png" alt="Logo" className="w-32"/>
+                        </div>
                     </div>
 
                     <div

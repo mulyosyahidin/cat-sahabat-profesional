@@ -124,6 +124,10 @@ class ExamController extends Controller
     {
         $exam->load(['participants.user', 'participants.position', 'participants.session.typeScores.questionType', 'formation.positions.questionTypes']);
 
+        $exam->participants = $exam->participants->filter(function ($participant) {
+            return $participant->session->status === 'finished';
+        });
+
         $exam->participants = $exam->participants->sortByDesc(function ($participant) {
             return $participant->session->total_score;
         });
@@ -137,6 +141,13 @@ class ExamController extends Controller
             'questionTypes' => $questionTypes,
         ]);
 
-        return $pdf->download('Hasil Ujian ' . $exam->name . '.pdf');
+        $fileName = 'Hasil Ujian ' . $exam->name . '-' . time() . '.pdf';
+
+        $filePath = 'public/' . date('Y/m') . '/' . $fileName;
+        $pdf->save(storage_path('app/' . $filePath));
+
+        return response()->json([
+            'download_url' => asset('storage/' . date('Y/m') . '/' . $fileName)
+        ]);
     }
 }

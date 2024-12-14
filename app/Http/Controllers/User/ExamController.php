@@ -36,6 +36,13 @@ class ExamController extends Controller
         $activeQuestionId = $currentQuestionIdFromRequest ?? ($examSession->current_question_id ?? $allQuestionIds[0]->id);
         $indexNumber = array_search($activeQuestionId, array_column($allQuestionsData, 'id'));
 
+        if ($examSession->maximum_duration_end_at < Carbon::now()) {
+            return redirect()->route('user.exams.finish-by-system', [
+                'exam_session' => $examSession,
+                'total_question' => count($allQuestionsData),
+            ]);
+        }
+
         if ($examSession->status === 'finished') {
             return redirect()->route('user.exams.result', $examSession);
         }
@@ -175,6 +182,89 @@ class ExamController extends Controller
         ]);
 
         return redirect()->route('user.exams.result', $exam_session)->with('success', 'Berhasil menyelesaikan ujian!');
+    }
+
+    public function finishBySystem(Request $request, Exam_session $exam_session)
+    {
+        $answers = Exam_question_answer::where('exam_session_id', $exam_session->id)
+            ->with([
+                'questionType:id,weighting_type',
+                'answerOption:id,is_correct,score',
+            ])
+            ->get();
+
+        $totalQuestion = $request->total_question;
+        $answeredQuestionsCount = $answers->count();
+        $unAnsweredQuestionsCount = $totalQuestion - $answeredQuestionsCount;
+
+        $totalScore = 0;
+        $totalScorePerTypes = [];
+
+        $totalCorrentAnswersCount = $answers->filter(fn($answer) => $answer->answerOption->is_correct)->count();
+        $totalWrongAnswersCount = $answers->filter(fn($answer) => !$answer->answerOption->is_correct)->count();
+
+        foreach ($answers as $answer) {
+            $questionTypeId = $answer->question_type_id;
+            $questionWeightingType = $answer->questionType->weighting_type;
+
+            $thisAnswerScore = 0;
+            if ($questionWeightingType == 'FIVE_AND_ZERO') {
+                if ($answer->answerOption->is_correct) {
+                    $thisAnswerScore = 5;
+                }
+            } else if ($questionWeightingType == 'FIVE_TO_ONE') {
+                $thisAnswerScore = $answer->answerOption->score;
+            }
+
+            $totalScore += $thisAnswerScore;
+
+            $key = array_search($questionTypeId, array_column($totalScorePerTypes, 'question_type_id'));
+            $isCorrect = $answer->answerOption->is_correct;
+
+            if ($key === false) {
+                $totalScorePerTypes[] = [
+                    'exam_session_id' => $exam_session->id,
+                    'question_type_id' => $questionTypeId,
+                    'score' => $thisAnswerScore,
+                    'correct_answer_count' => $isCorrect ? 1 : 0,
+                    'wrong_answer_count' => $isCorrect ? 0 : 1,
+                ];
+            } else {
+                $totalScorePerTypes[$key]['score'] += $thisAnswerScore;
+                $totalScorePerTypes[$key]['correct_answer_count'] += $isCorrect ? 1 : 0;
+                $totalScorePerTypes[$key]['wrong_answer_count'] += $isCorrect ? 0 : 1;
+            }
+        }
+
+        $allQuestionTypes = $exam_session->examParticipant->position->questionTypes->pluck('id')->toArray();
+
+        foreach ($allQuestionTypes as $questionTypeId) {
+            $existingEntry = collect($totalScorePerTypes)->firstWhere('question_type_id', $questionTypeId);
+
+            if (!$existingEntry) {
+                $totalScorePerTypes[] = [
+                    'exam_session_id' => $exam_session->id,
+                    'question_type_id' => $questionTypeId,
+                    'score' => 0,
+                    'correct_answer_count' => 0,
+                    'wrong_answer_count' => 0,
+                ];
+            }
+        }
+
+        $exam_session->typeScores()->insert($totalScorePerTypes);
+
+        $exam_session->update([
+            'status' => 'finished',
+            'finished_at' => Carbon::now(),
+            'answered_questions_count' => $answeredQuestionsCount,
+            'unanswered_questions_count' => $unAnsweredQuestionsCount,
+            'total_score' => $totalScore,
+            'wrong_answer_count' => $totalWrongAnswersCount,
+            'correct_answer_count' => $totalCorrentAnswersCount,
+        ]);
+
+        return redirect()->route('user.exams.result', $exam_session)->with('success', 'Waktu ujian habis!');
     }
 
     public function result(Exam_session $exam_session)

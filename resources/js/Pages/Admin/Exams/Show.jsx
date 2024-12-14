@@ -19,6 +19,16 @@ export default function AdminExamShow({exam, success}) {
         });
     };
 
+    const downloadExamResults = (examId) => {
+        axios.get(route('admin.exams.download-exam-results', examId))
+            .then(response => {
+                window.location.href = response.data.download_url;
+            })
+            .catch(error => {
+                console.error("Error saat mengunduh file:", error);
+            });
+    };
+
     return (
         <>
             <Head title={'Data Ujian'} />
@@ -80,7 +90,7 @@ export default function AdminExamShow({exam, success}) {
 
                 <div className="flex justify-end gap-1 mt-5">
                     <Button
-                        href={route('admin.exams.download-exam-results', exam.id)}
+                        onClick={() => downloadExamResults(exam.id)}
                         size="small"
                         outline
                         className={'cursor-pointer'}
