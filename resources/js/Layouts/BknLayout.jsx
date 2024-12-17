@@ -18,8 +18,7 @@ export default function BknLayout({ header, title = 'SIMULASI CAT', children, ..
                         }}
                     >
                         <div className="flex gap-2">
-                            <img src="/assets/images/profesional.png" alt="Logo" className="w-32"/>
-                            <img src="/assets/images/karir.png" alt="Logo" className="w-32"/>
+                            <img src="/assets/images/logo-baris.png" alt="Logo" className="w-80"/>
                         </div>
                     </div>
 
@@ -36,9 +35,9 @@ export default function BknLayout({ header, title = 'SIMULASI CAT', children, ..
 
                 <div className="w-full p-5">{children}</div>
 
-                <div className="fixed bottom-0 w-full text-center bg-[#BDC2FD] py-2 hidden lg:block">
-                    <h5 className="text-dark-50">CAT SAHABAT PROFESIONAL</h5>
-                </div>
+                {/*<div className="fixed bottom-0 w-full text-center bg-[#BDC2FD] py-2 hidden lg:block">*/}
+                {/*    <h5 className="text-dark-50">CAT SAHABAT KARIR</h5>*/}
+                {/*</div>*/}
             </div>
         </>
     );

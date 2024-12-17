@@ -103,18 +103,17 @@
 <div style="height:100%;">
     <div class="container-fluid" style="padding:0">
         <div class="row">
-            <div class="col-xs-12 col-md-6" style="padding:30px; height:130px; background-image:url('{{ asset('assets/bkn/images/bg-head.png') }}'); background-position:right; background-repeat:no-repeat; background-color:#E3DEFE">
-                <img src="{{ asset('assets/images/profesional.png') }}" class="img-responsive " style="width: 128px;">
+            <div class="col-xs-12 col-md-6" style="padding:30px; height:130px;">
+                <a href="/"><img src="{{ asset('assets/images/logo-baris.png') }}" class="img-responsive " alt="Logo sahabat profesional" style="width: 60%"></a>
             </div>
-            <div class="col-xs-12 col-md-6 hidden-xs" style="height:130px; background-image:url('{{ asset('assets/bkn/images/top-bg.jpg') }}'); background-position:left">
+            <div class="col-xs-12 col-md-6 hidden-xs" style="height:130px; background-image:url('{{ asset('assets/bkn/images/header-bg.png') }}'); background-repeat: no-repeat; background-size: fill">
             </div>
         </div>
     </div>
 
-
     <div style="height:2px; background-color:#BDC2FD"></div>
 
-    <div class="panel panel-default vh-center" style="width:80%; margin:auto; margin-bottom:100px;">
+    <div class="panel panel-default vh-center" style="width:80%; margin:auto; margin-bottom:100px; margin-top: 40px">
         <div class="panel-heading">
             <h3 class="panel-title">BUAT AKUN</h3>
         </div>
@@ -192,7 +191,7 @@
     </div>
 
     <div class="container-fluid text-center" style="bottom:0; position:fixed; width:100%; background-color:#BDC2FD">
-        <h5>CAT SAHABAT PROFESIONAL</h5>
+        <h5>CAT SAHABAT KARIR</h5>
     </div>
 </div> <!-- MAIN -->
 
