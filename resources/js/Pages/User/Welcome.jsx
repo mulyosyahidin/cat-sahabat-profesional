@@ -103,8 +103,8 @@ export default function UserWelcome({
                                 <div className="w-3/4">: {user.name}</div>
                             </div>
                             <div className="flex">
-                                <div className="w-1/4 font-small">Email</div>
-                                <div className="w-3/4">: {user.email}</div>
+                                <div className="w-1/4 font-small">NIK</div>
+                                <div className="w-3/4">: {user.nik}</div>
                             </div>
                             <div className="flex">
                                 <div className="w-1/4 font-small">No. HP</div>

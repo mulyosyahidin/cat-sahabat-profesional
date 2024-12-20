@@ -131,11 +131,11 @@
                     </div>
                 </div>
 
-                <div class="form-group @error('email') has-error @enderror">
-                    <label for="email" class="col-sm-2 control-label">Email</label>
+                <div class="form-group @error('nik') has-error @enderror">
+                    <label for="nik" class="col-sm-2 control-label">NIK</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="email" placeholder="Email" name="email" value="{{ old('email') }}" required>
-                        @error('email')
+                        <input type="text" class="form-control" id="nik" placeholder="NIK" name="nik" value="{{ old('nik') }}" required>
+                        @error('nik')
                         <span class="help-block">{{ $message }}</span>
                         @enderror
                     </div>

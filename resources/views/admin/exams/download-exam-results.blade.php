@@ -55,7 +55,7 @@
         <tr>
             <th>No</th>
             <th>Nama</th>
-            <th>Email</th>
+            <th>NIK</th>
             <th>Jabatan Dilamar</th>
             @foreach($questionTypes as $questionType)
                 <th>{{ $questionType->name }}</th>
@@ -68,7 +68,7 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $participant->user->name }}</td>
-                <td>{{ $participant->user->email }}</td>
+                <td>{{ $participant->user->nik }}</td>
                 <td>{{ $participant->position->name }}</td>
                 @foreach($questionTypes as $questionType)
                     <td class="text-center">

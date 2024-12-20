@@ -37,18 +37,21 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
-            'password' => ['required', Rules\Password::defaults()],
-            'phone_number' => ['required', 'string', 'max:16'],
-            'address' => ['required', 'string', 'max:255'],
-            'g-recaptcha-response' => ['required'],
+            'nik' => 'required|unique:users,nik',
+            'password' => ['required'],
+            'phone_number' => ['nullable', 'string', 'max:16'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'g-recaptcha-response' => ['nullable'],
         ], [
             'g-recaptcha-response.required' => 'The reCAPTCHA verification failed. Please try again.',
         ]);
 
+        $email = str_replace(' ', '', $request->nik) . '@cbt.app';
+
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => $email,
+            'nik' => $request->nik,
             'password' => Hash::make($request->password),
         ]);
 

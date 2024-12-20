@@ -35,11 +35,18 @@ export default function AdminParticipantShow({exam, examParticipant, participant
                         </TableRow>
 
                         <TableRow key={2}>
-                            <TableCell>Email</TableCell>
+                            <TableCell>NIK</TableCell>
                             <TableCell>
-                                <strong>{examParticipant.user.email}</strong>
+                                <strong>{examParticipant.user.nik}</strong>
                             </TableCell>
                         </TableRow>
+
+                        {/*<TableRow key={2}>*/}
+                        {/*    <TableCell>Email</TableCell>*/}
+                        {/*    <TableCell>*/}
+                        {/*        <strong>{examParticipant.user.email}</strong>*/}
+                        {/*    </TableCell>*/}
+                        {/*</TableRow>*/}
 
                         <TableRow key={3}>
                             <TableCell>No. HP</TableCell>

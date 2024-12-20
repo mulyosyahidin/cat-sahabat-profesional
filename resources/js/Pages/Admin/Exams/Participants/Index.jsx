@@ -52,7 +52,7 @@ export default function AdminParticipantIndex({exam, participants, meta, success
                         <TableRow>
                             <TableHeader>#</TableHeader>
                             <TableHeader>Nama</TableHeader>
-                            <TableHeader>Email</TableHeader>
+                            <TableHeader>NIK</TableHeader>
                             <TableHeader>Jabatan Dilamar</TableHeader>
                             <TableHeader className={'text-center'}>Total Skor</TableHeader>
                             <TableHeader></TableHeader>
@@ -73,7 +73,7 @@ export default function AdminParticipantIndex({exam, participants, meta, success
                                 <TableRow key={participant.id}>
                                     <TableCell>{startIndex + index + 1}</TableCell>
                                     <TableCell className="text-zinc-500">{participant.user.name}</TableCell>
-                                    <TableCell className="text-zinc-500">{participant.user.email}</TableCell>
+                                    <TableCell className="text-zinc-500">{participant.user.nik}</TableCell>
                                     <TableCell className="text-zinc-500">{participant.position.name}</TableCell>
                                     <TableCell className="text-zinc-500 text-center">{participant.session.total_score}</TableCell>
                                     <TableCell className="flex justify-end gap-1">
