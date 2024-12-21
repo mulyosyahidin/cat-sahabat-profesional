@@ -10,7 +10,7 @@ import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/
 import {Input} from "@/Components/Catalyst/input";
 import InputError from "@/Components/InputError";
 
-export default function AdminPositionShow({formation, success, error}) {
+export default function AdminPositionShow({formation, success, error, total_questions}) {
     const {data, setData, post, delete: destroy, processing, errors, reset} = useForm({
         file: null,
         clear_data: false,
@@ -83,6 +83,20 @@ export default function AdminPositionShow({formation, success, error}) {
                                 <strong>{formation.name}</strong>
                             </TableCell>
                         </TableRow>
+
+                        <TableRow key={2}>
+                            <TableCell>Jumlah Jabatan</TableCell>
+                            <TableCell>
+                                <strong>{formation.positions.length} Jabatan</strong>
+                            </TableCell>
+                        </TableRow>
+
+                        <TableRow key={3}>
+                            <TableCell>Total Soal</TableCell>
+                            <TableCell>
+                                <strong>{total_questions}</strong>
+                            </TableCell>
+                        </TableRow>
                     </TableBody>
                 </Table>
 
@@ -129,24 +143,30 @@ export default function AdminPositionShow({formation, success, error}) {
                             <TableHeader>#</TableHeader>
                             <TableHeader>Nama</TableHeader>
                             <TableHeader>Durasi Ujian Maksimal</TableHeader>
+                            <TableHeader className={'text-center'}>Jumlah Soal</TableHeader>
                             <TableHeader></TableHeader>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {formation.positions.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan="4" className="text-center">Tidak ada data untuk
+                                <TableCell colSpan="5" className="text-center">Tidak ada data untuk
                                     ditampilkan</TableCell>
                             </TableRow>
                         )}
 
                         {formation.positions.map((position, index) => {
+                            const questionCount = position.question_types.reduce((total, questionType) =>
+                                total + questionType.questions.length, 0);
+
                             return (
                                 <TableRow key={position.id}>
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell className="text-zinc-500">{position.name}</TableCell>
-                                    <TableCell
-                                        className="text-zinc-500">{position.maximum_test_duration_in_minutes} menit</TableCell>
+                                    <TableCell className="text-zinc-500">
+                                        {position.maximum_test_duration_in_minutes} menit
+                                    </TableCell>
+                                    <TableCell className="text-zinc-500 text-center">{questionCount}</TableCell>
                                     <TableCell className="flex justify-end gap-1">
                                         <Button
                                             outline={true}
@@ -178,6 +198,7 @@ export default function AdminPositionShow({formation, success, error}) {
                         })}
                     </TableBody>
                 </Table>
+
             </ApplicationLayout>
 
             <Dialog open={isDeleteFormationDialogOpen} onClose={() => setIsDeleteFormationDialogOpen(false)}>

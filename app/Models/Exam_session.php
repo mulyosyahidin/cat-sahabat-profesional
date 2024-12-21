@@ -21,6 +21,7 @@ class Exam_session extends Model
         'maximum_duration_end_at',
         'started_at',
         'finished_at',
+        'finished_by',
         'answered_questions_count',
         'unanswered_questions_count',
         'total_score',

@@ -17,11 +17,39 @@ class ExamParticipantController extends Controller
      */
     public function index(Exam $exam)
     {
+        $searchQuery = request('search');
+
         $participants = $exam->participants()
             ->with(['user', 'position', 'session'])
+            ->when($searchQuery, function ($query, $searchQuery) {
+                $query->whereHas('user', function ($query) use ($searchQuery) {
+                    $query->where('name', 'like', '%' . $searchQuery . '%')
+                        ->orWhere('nik', 'like', '%' . $searchQuery . '%');
+                });
+            })
             ->orderBy(Exam_session::select('total_score')
                 ->whereColumn('exam_sessions.exam_participant_id', 'exam_participants.id'), 'desc')
-            ->paginate(10);
+            ->paginate();
+
+        $totalParticipants = $exam->participants()->count();
+
+        $totalFinished = $exam->participants()
+            ->whereHas('session', function ($query) {
+                $query->where('status', 'finished');
+            })
+            ->count();
+
+        $totalActive = $exam->participants()
+            ->whereHas('session', function ($query) {
+                $query->where('status', 'active');
+            })
+            ->count();
+
+        $count = [
+            'total' => $totalParticipants,
+            'finished' => $totalFinished,
+            'active' => $totalActive,
+        ];
 
         return Inertia::render('Admin/Exams/Participants/Index', [
             'exam' => $exam,
@@ -33,6 +61,8 @@ class ExamParticipantController extends Controller
                 'total_items' => $participants->total(),
             ],
             'success' => session('success'),
+            'count' => $count,
+            'search_query' => $searchQuery,
         ]);
     }
 

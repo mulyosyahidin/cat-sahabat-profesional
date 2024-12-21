@@ -11,14 +11,6 @@ use Inertia\Inertia;
 class PositionController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create()
@@ -60,11 +52,17 @@ class PositionController extends Controller
      */
     public function show(Position $position)
     {
-        $position->load('formation', 'questionTypes');
+        $position->load('formation', 'questionTypes.questions');
+        $position->loadCount('questionTypes');
+
+        $totalQuestions = $position->questionTypes->sum(function ($questionType) {
+            return $questionType->questions->count();
+        });
 
         return Inertia::render('Admin/Positions/Show', [
             'position' => $position,
             'success' => session('success'),
+            'total_questions' => $totalQuestions,
         ]);
     }
 

@@ -80,6 +80,11 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder={'Cari User'}
                         value={search}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                performSearch();
+                            }
+                        }}
                     />
                     <Button onClick={performSearch} className={'cursor-pointer'}>
                         <MagnifyingGlassIcon className={'w-5 h-5'} />

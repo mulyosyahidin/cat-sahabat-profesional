@@ -68,6 +68,18 @@
             }
         }
     </style>
+
+    @if(config('google-analytics.enabled'))
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('google-analytics.id') }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '{{ config('google-analytics.id') }}');
+        </script>
+    @endif
 </head>
 <body class="bg-grad">
 
@@ -137,16 +149,18 @@
                         @enderror
                     </div>
                 </div>
-                <div class="form-group @error('g-recaptcha-response') has-error @enderror">
-                    <label for="" class="col-sm-2 control-label">Verifikasi</label>
-                    <div class="col-sm-10">
-                        <div class="g-recaptcha" data-sitekey="6LcEzZUqAAAAAFr63efEGb81fDbz4cCri8FfSeAO"></div>
+                @if(config('app.env') == 'production')
+                    <div class="form-group @error('g-recaptcha-response') has-error @enderror">
+                        <label for="" class="col-sm-2 control-label">Verifikasi</label>
+                        <div class="col-sm-10">
+                            <div class="g-recaptcha" data-sitekey="6LcEzZUqAAAAAFr63efEGb81fDbz4cCri8FfSeAO"></div>
 
-                        @error('g-recaptcha-response')
-                        <span class="help-block">{{ $message }}</span>
-                        @enderror
+                            @error('g-recaptcha-response')
+                            <span class="help-block">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-3">

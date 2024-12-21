@@ -8,7 +8,8 @@ export default function Overview({
                                      totalAnsweredQuestion,
                                      unansweredQuestions,
                                      setIsFinishDialogOpen,
-                                     classes = ''
+                                     classes = '',
+                                    isSubmitButtonDisabled,
                                  }) {
     return (
         <div className={`${classes}`}>
@@ -35,7 +36,7 @@ export default function Overview({
                 </div>
                 <div
                     className="w-full sm:w-1/2 md:w-1/4 lg:w-1/3 xl:w-1/3 text-center p-2 flex justify-center items-center">
-                    <Button type="button" className="cursor-pointer" onClick={() => setIsFinishDialogOpen(true)}>
+                    <Button type="button" className="cursor-pointer" onClick={() => setIsFinishDialogOpen(true)} disabled={isSubmitButtonDisabled}>
                         Selesai Ujian
                     </Button>
                 </div>

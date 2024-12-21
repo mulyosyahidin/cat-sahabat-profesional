@@ -47,6 +47,13 @@ export default function AdminQuestionTypeShow({questionType, success}) {
                             </TableCell>
                         </TableRow>
 
+                        <TableRow key={5}>
+                            <TableCell>Jumlah Soal</TableCell>
+                            <TableCell>
+                                <strong>{questionType.questions_count} soal</strong>
+                            </TableCell>
+                        </TableRow>
+
                         <TableRow key={3}>
                             <TableCell>Jabatan</TableCell>
                             <TableCell>

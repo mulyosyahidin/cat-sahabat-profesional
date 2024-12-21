@@ -7,7 +7,7 @@ import {useCallback, useMemo, useState} from "react";
 import {
     EyeIcon,
     InformationCircleIcon,
-    ListBulletIcon,
+    ListBulletIcon, MagnifyingGlassIcon,
     PencilSquareIcon,
     TrashIcon
 } from "@heroicons/react/24/outline/index.js";
@@ -22,10 +22,12 @@ import {
     PaginationPrevious
 } from "@/Components/Catalyst/pagination";
 import QuestionTypeOverviewDialog from "@/Pages/Admin/QuestionTypes/QuestionTypeOverviewDialog";
+import {Input} from "@/Components/Catalyst/input.jsx";
 
-export default function AdminFormationPositionQuestionTypeQuestionIndex({questionType, questions, meta, success}) {
+export default function AdminFormationPositionQuestionTypeQuestionIndex({questionType, questions, meta, success, search_query}) {
     const [currentPage, setCurrentPage] = useState(meta.current_page);
     const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
+    const [search, setSearch] = useState(search_query);
 
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
@@ -67,6 +69,13 @@ export default function AdminFormationPositionQuestionTypeQuestionIndex({questio
         });
     }
 
+    const performSearch = () => {
+        router.get(route('admin.questions.index', {
+            question_type_id: questionType.id,
+            search,
+        }));
+    };
+
     return (
         <>
             <Head title={'Kelola Soal'}/>
@@ -91,6 +100,22 @@ export default function AdminFormationPositionQuestionTypeQuestionIndex({questio
                         {success}
                     </div>
                 )}
+
+                <div className='mt-5 flex gap-2'>
+                    <Input
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder={'Cari Soal'}
+                        value={search}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                performSearch();
+                            }
+                        }}
+                    />
+                    <Button onClick={performSearch} className={'cursor-pointer'}>
+                        <MagnifyingGlassIcon className={'w-5 h-5'}/>
+                    </Button>
+                </div>
 
                 <Table className="mt-8 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
                     <TableHead>
@@ -168,7 +193,7 @@ export default function AdminFormationPositionQuestionTypeQuestionIndex({questio
                             onClick={() => handlePageChange(meta.current_page - 1)}
                         />
                         <PaginationList>
-                            {paginationPages.map(({ page, isCurrent }) => (
+                            {paginationPages.map(({page, isCurrent}) => (
                                 <PaginationPage
                                     key={page}
                                     href={`?question_type_id=${questionType.id}&page=${page + 1}`}

@@ -18,7 +18,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+        rel="stylesheet">
 
     <style type="text/css">
         body {
@@ -53,7 +55,7 @@
         }
 
         .modal-backdrop {
-            background-color: rgba(255,255,255,0.5);
+            background-color: rgba(255, 255, 255, 0.5);
         }
 
         .modal-content {
@@ -69,11 +71,24 @@
                 width: 100%;
                 margin-bottom: 20px;
             }
+
             .panel-body {
                 padding: 15px;
             }
         }
     </style>
+
+    @if(config('google-analytics.enabled'))
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ config('google-analytics.id') }}"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '{{ config('google-analytics.id') }}');
+        </script>
+    @endif
 </head>
 <body class="bg-grad">
 
@@ -87,7 +102,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
                 <h4 class="modal-title" id="dlgtitle">Modal title</h4>
             </div>
             <div class="modal-body">
@@ -104,9 +120,11 @@
     <div class="container-fluid" style="padding:0">
         <div class="row">
             <div class="col-xs-12 col-md-6" style="padding:30px; height:130px;">
-                <a href="/"><img src="{{ asset('assets/images/logo-baris.png') }}" class="img-responsive " alt="Logo sahabat profesional" style="width: 60%"></a>
+                <a href="/"><img src="{{ asset('assets/images/logo-baris.png') }}" class="img-responsive "
+                                 alt="Logo sahabat profesional" style="width: 60%"></a>
             </div>
-            <div class="col-xs-12 col-md-6 hidden-xs" style="height:130px; background-image:url('{{ asset('assets/bkn/images/header-bg.png') }}'); background-repeat: no-repeat; background-size: fill">
+            <div class="col-xs-12 col-md-6 hidden-xs"
+                 style="height:130px; background-image:url('{{ asset('assets/bkn/images/header-bg.png') }}'); background-repeat: no-repeat; background-size: fill">
             </div>
         </div>
     </div>
@@ -124,7 +142,8 @@
                 <div class="form-group @error('name') has-error @enderror">
                     <label for="Nama" class="col-sm-2 control-label">Nama</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="Nama" placeholder="Nama" name="name" value="{{ old('name') }}" required>
+                        <input type="text" class="form-control" id="Nama" placeholder="Nama" name="name"
+                               value="{{ old('name') }}" required>
                         @error('name')
                         <span class="help-block">{{ $message }}</span>
                         @enderror
@@ -134,7 +153,8 @@
                 <div class="form-group @error('nik') has-error @enderror">
                     <label for="nik" class="col-sm-2 control-label">NIK</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="nik" placeholder="NIK" name="nik" value="{{ old('nik') }}" required>
+                        <input type="text" class="form-control" id="nik" placeholder="NIK" name="nik"
+                               value="{{ old('nik') }}" required>
                         @error('nik')
                         <span class="help-block">{{ $message }}</span>
                         @enderror
@@ -144,7 +164,8 @@
                 <div class="form-group @error('password') has-error @enderror">
                     <label for="password" class="col-sm-2 control-label">Password</label>
                     <div class="col-sm-10">
-                        <input type="password" class="form-control" id="password" placeholder="Password" name="password" minlength="8" required>
+                        <input type="password" class="form-control" id="password" placeholder="Password" name="password"
+                               minlength="8" required>
                         @error('password')
                         <span class="help-block">{{ $message }}</span>
                         @enderror
@@ -154,7 +175,8 @@
                 <div class="form-group @error('phone_number') has-error @enderror">
                     <label for="phone-number" class="col-sm-2 control-label">No. HP</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="phone-number" placeholder="No. HP" maxlength="16" name="phone_number" value="{{ old('phone_number') }}" required>
+                        <input type="text" class="form-control" id="phone-number" placeholder="No. HP" maxlength="16"
+                               name="phone_number" value="{{ old('phone_number') }}" required>
                         @error('phone_number')
                         <span class="help-block">{{ $message }}</span>
                         @enderror
@@ -164,22 +186,25 @@
                 <div class="form-group @error('address') has-error @enderror">
                     <label for="address" class="col-sm-2 control-label">Alamat</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="address" placeholder="Alamat" name="address" required>{{ old('address') }}</textarea>
+                        <textarea class="form-control" id="address" placeholder="Alamat" name="address"
+                                  required>{{ old('address') }}</textarea>
                         @error('address')
                         <span class="help-block">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
 
-                <div class="form-group @error('g-recaptcha-response') has-error @enderror">
-                    <label for="" class="col-sm-2 control-label">Verifikasi</label>
-                    <div class="col-sm-10">
-                        <div class="g-recaptcha" data-sitekey="6LcEzZUqAAAAAFr63efEGb81fDbz4cCri8FfSeAO"></div>
-                        @error('g-recaptcha-response')
-                        <span class="help-block">{{ $message }}</span>
-                        @enderror
+                @if(config('app.env') == 'production')
+                    <div class="form-group @error('g-recaptcha-response') has-error @enderror">
+                        <label for="" class="col-sm-2 control-label">Verifikasi</label>
+                        <div class="col-sm-10">
+                            <div class="g-recaptcha" data-sitekey="6LcEzZUqAAAAAFr63efEGb81fDbz4cCri8FfSeAO"></div>
+                            @error('g-recaptcha-response')
+                            <span class="help-block">{{ $message }}</span>
+                            @enderror
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-3">

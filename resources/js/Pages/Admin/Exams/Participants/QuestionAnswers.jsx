@@ -80,16 +80,26 @@ export default function AdminParticipantShowQuestionAnswers({exam, examParticipa
                             onClick={() => handlePageChange(meta.current_page - 1)}
                         />
                         <PaginationList>
-                            {paginationPages.map(({page, isCurrent}) => (
-                                <PaginationPage
-                                    key={page}
-                                    href={`?page=${page + 1}`}
-                                    current={isCurrent}
-                                    onClick={() => handlePageChange(page + 1)}
-                                >
-                                    {page + 1}
-                                </PaginationPage>
-                            ))}
+                            {paginationPages
+                                .filter(({ page }) => {
+
+                                    return (
+                                        page >= meta.current_page - 2 &&
+                                        page <= meta.current_page + 2 &&
+                                        page >= 0 &&
+                                        page < meta.total_pages
+                                    );
+                                })
+                                .map(({ page, isCurrent }) => (
+                                    <PaginationPage
+                                        key={page}
+                                        href={`?page=${page + 1}`}
+                                        current={isCurrent}
+                                        onClick={() => handlePageChange(page + 1)}
+                                    >
+                                        {page + 1}
+                                    </PaginationPage>
+                                ))}
                         </PaginationList>
                         <PaginationNext
                             href={meta.current_page < meta.total_pages ? `?page=${meta.current_page + 1}` : null}
@@ -97,6 +107,7 @@ export default function AdminParticipantShowQuestionAnswers({exam, examParticipa
                         />
                     </Pagination>
                 )}
+
             </ApplicationLayout>
         </>
     )

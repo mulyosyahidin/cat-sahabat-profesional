@@ -29,7 +29,9 @@ class LoginRequest extends FormRequest
         return [
             'nik' => ['required', 'string'],
             'password' => ['required', 'string'],
-            'g-recaptcha-response' => ['required'],
+            'g-recaptcha-response' => [
+                config('app.env') === 'production' ? 'required' : 'nullable',
+            ],
         ];
     }
 

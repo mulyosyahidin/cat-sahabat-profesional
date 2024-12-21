@@ -117,7 +117,7 @@ class ExamController extends Controller
         $totalScore = 0;
         $totalScorePerTypes = [];
 
-        $totalCorrentAnswersCount = $answers->filter(fn($answer) => $answer->answerOption->is_correct)->count();
+        $totalCorrectAnswersCount = $answers->filter(fn($answer) => $answer->answerOption->is_correct)->count();
         $totalWrongAnswersCount = $answers->filter(fn($answer) => !$answer->answerOption->is_correct)->count();
 
         foreach ($answers as $answer) {
@@ -169,16 +169,21 @@ class ExamController extends Controller
             }
         }
 
+        if ($exam_session->typeScores()->count() > 0) {
+            $exam_session->typeScores()->delete();
+        }
+
         $exam_session->typeScores()->insert($totalScorePerTypes);
 
         $exam_session->update([
             'status' => 'finished',
             'finished_at' => Carbon::now(),
+            'finished_by' => 'user',
             'answered_questions_count' => $answeredQuestionsCount,
             'unanswered_questions_count' => $unAnsweredQuestionsCount,
             'total_score' => $totalScore,
             'wrong_answer_count' => $totalWrongAnswersCount,
-            'correct_answer_count' => $totalCorrentAnswersCount,
+            'correct_answer_count' => $totalCorrectAnswersCount,
         ]);
 
         return redirect()->route('user.exams.result', $exam_session)->with('success', 'Berhasil menyelesaikan ujian!');
@@ -200,7 +205,7 @@ class ExamController extends Controller
         $totalScore = 0;
         $totalScorePerTypes = [];
 
-        $totalCorrentAnswersCount = $answers->filter(fn($answer) => $answer->answerOption->is_correct)->count();
+        $totalCorrectAnswersCount = $answers->filter(fn($answer) => $answer->answerOption->is_correct)->count();
         $totalWrongAnswersCount = $answers->filter(fn($answer) => !$answer->answerOption->is_correct)->count();
 
         foreach ($answers as $answer) {
@@ -252,16 +257,21 @@ class ExamController extends Controller
             }
         }
 
+        if ($exam_session->typeScores()->count() > 0) {
+            $exam_session->typeScores()->delete();
+        }
+
         $exam_session->typeScores()->insert($totalScorePerTypes);
 
         $exam_session->update([
             'status' => 'finished',
             'finished_at' => Carbon::now(),
+            'finished_by' => 'system',
             'answered_questions_count' => $answeredQuestionsCount,
             'unanswered_questions_count' => $unAnsweredQuestionsCount,
             'total_score' => $totalScore,
             'wrong_answer_count' => $totalWrongAnswersCount,
-            'correct_answer_count' => $totalCorrentAnswersCount,
+            'correct_answer_count' => $totalCorrectAnswersCount,
         ]);
 
         return redirect()->route('user.exams.result', $exam_session)->with('success', 'Waktu ujian habis!');
@@ -269,6 +279,10 @@ class ExamController extends Controller
 
     public function result(Exam_session $exam_session)
     {
+        if ($exam_session->examParticipant->user_id != auth()->id()) {
+            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+        }
+
         $exam_session->load('typeScores.questionType');
 
         $exam = $exam_session->examParticipant->exam;

@@ -62,13 +62,20 @@ class FormationController extends Controller
      */
     public function show(Formation $formation)
     {
-        $formation->load('positions');
+        $formation->load(['positions.questionTypes.questions']);
         $formation->loadCount('positions');
+
+        $totalQuestions = $formation->positions->reduce(function ($carry, $position) {
+            return $carry + $position->questionTypes->reduce(function ($carryInner, $questionType) {
+                    return $carryInner + $questionType->questions->count();
+                }, 0);
+        }, 0);
 
         return Inertia::render('Admin/Formations/Show', [
             'formation' => $formation,
             'success' => session('success'),
             'error' => session('error'),
+            'total_questions' => $totalQuestions,
         ]);
     }
 

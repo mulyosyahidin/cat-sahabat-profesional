@@ -4,12 +4,12 @@ import BackButton from "@/Components/BackButton";
 import {Heading} from "@/Components/Catalyst/heading";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
 import {Button} from "@/Components/Catalyst/button";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
 import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
 import {WEIGHTING_TYPES} from "@/utils/utils.js";
 
-export default function AdminPositionShow({position, success}) {
+export default function AdminPositionShow({position, success, total_questions}) {
     const {delete: destroy, processing} = useForm();
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -72,6 +72,20 @@ export default function AdminPositionShow({position, success}) {
                                 <strong>{position.maximum_test_duration_in_minutes} menit</strong>
                             </TableCell>
                         </TableRow>
+
+                        <TableRow key={4}>
+                            <TableCell>Jumlah Jenis Soal</TableCell>
+                            <TableCell>
+                                <strong>{position.question_types_count} jenis</strong>
+                            </TableCell>
+                        </TableRow>
+
+                        <TableRow key={5}>
+                            <TableCell>Jumlah Soal</TableCell>
+                            <TableCell>
+                                <strong>{total_questions} soal</strong>
+                            </TableCell>
+                        </TableRow>
                     </TableBody>
                 </Table>
 
@@ -111,6 +125,7 @@ export default function AdminPositionShow({position, success}) {
                             <TableHeader>Nama</TableHeader>
                             <TableHeader className={'text-center'}>Urutan Ditampilkan</TableHeader>
                             <TableHeader>Jenis Pembobotan</TableHeader>
+                            <TableHeader className="text-center">Jumlah Soal</TableHeader>
                             <TableHeader></TableHeader>
                         </TableRow>
                     </TableHead>
@@ -133,6 +148,7 @@ export default function AdminPositionShow({position, success}) {
                                         <TableCell
                                             className="text-zinc-500 text-center">{item.display_order}</TableCell>
                                         <TableCell className="text-zinc-500">{WEIGHTING_TYPES[item.weighting_type]}</TableCell>
+                                        <TableCell className="text-zinc-500 text-center">{item.questions.length}</TableCell>
                                         <TableCell className="flex justify-end gap-1">
                                             <Button
                                                 outline={true}

@@ -15,8 +15,15 @@ class QuestionController extends Controller
      */
     public function index()
     {
+        $searchQuery = request('search');
+
         $questionType = Question_type::where('id', request('question_type_id'))->with('position.formation')->firstOrFail();
-        $questions = Question::where('question_type_id', $questionType->id)->with('options')->paginate(10);
+        $questions = Question::where('question_type_id', $questionType->id)
+            ->when($searchQuery, function ($query, $searchQuery) {
+                $query->where('question', 'like', '%' . $searchQuery . '%');
+            })
+            ->with('options')
+            ->paginate();
 
         return Inertia::render('Admin/Questions/Index', [
             'questions' => $questions->items(),
@@ -28,6 +35,7 @@ class QuestionController extends Controller
             ],
             'questionType' => $questionType,
             'success' => session('success'),
+            'search_query' => $searchQuery,
         ]);
     }
 

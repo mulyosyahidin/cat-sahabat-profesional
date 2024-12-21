@@ -12,14 +12,6 @@ use Inertia\Inertia;
 class QuestionTypeController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
      * Show the form for creating a new resource.
      */
     public function create()
@@ -56,6 +48,7 @@ class QuestionTypeController extends Controller
     public function show(Question_type $question_type)
     {
         $question_type->load('position.formation');
+        $question_type->loadCount('questions');
 
         return Inertia::render('Admin/QuestionTypes/Show', [
             'questionType' => $question_type,

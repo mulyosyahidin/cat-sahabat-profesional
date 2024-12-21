@@ -41,7 +41,9 @@ class RegisteredUserController extends Controller
             'password' => ['required'],
             'phone_number' => ['nullable', 'string', 'max:16'],
             'address' => ['nullable', 'string', 'max:255'],
-            'g-recaptcha-response' => ['nullable'],
+            'g-recaptcha-response' => [
+                config('app.env') === 'production' ? 'required' : 'nullable',
+            ],
         ], [
             'g-recaptcha-response.required' => 'The reCAPTCHA verification failed. Please try again.',
         ]);

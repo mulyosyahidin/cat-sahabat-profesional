@@ -39,6 +39,8 @@ export default function UserExamTake({
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(endTime));
     const [timer, setTimer] = useState("00:00:00");
 
+    const [isSubmitButtonDisabled, setIsSubmitButtonDisabled] = useState(false);
+
     const handleAnswerChange = useCallback((optionId) => {
         setAnswers((prevAnswers) => ({
             ...prevAnswers,
@@ -141,6 +143,8 @@ export default function UserExamTake({
     }
 
     const handleFinishExam = () => {
+        setIsSubmitButtonDisabled(true);
+
         router.post(route('user.exams.finish', exam_session_id), {
             total_question: total_question,
         });
@@ -271,6 +275,7 @@ export default function UserExamTake({
                 unansweredQuestions={total_question - answered_question_ids.length}
                 setIsFinishDialogOpen={setIsFinishDialogOpen}
                 classes={'hidden md:absolute md:top-5 md:right-5 md:bg-white md:bg-opacity-90 md:border-2 md:p-1 md:block'}
+                isSubmitButtonDisabled={isSubmitButtonDisabled}
             />
 
             <Dialog open={isFinishDialogOpen} onClose={() => setIsFinishDialogOpen(false)}>
@@ -290,6 +295,7 @@ export default function UserExamTake({
                     <Button
                         className="cursor-pointer rounded-none"
                         onClick={handleFinishExam}
+                        disabled={isSubmitButtonDisabled}
                     >
                         YA
                     </Button>
