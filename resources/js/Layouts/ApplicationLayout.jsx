@@ -92,6 +92,14 @@ export default function ApplicationLayout({ children }) {
                                 <SidebarLabel>Ujian</SidebarLabel>
                             </SidebarItem>
                         </SidebarSection>
+
+                        <SidebarSection>
+                            <SidebarHeading>Users</SidebarHeading>
+                            <SidebarItem href="/admin/users" current={pathname.startsWith('/admin/users')}>
+                                <HashtagIcon/>
+                                <SidebarLabel>Users</SidebarLabel>
+                            </SidebarItem>
+                        </SidebarSection>
                     </SidebarBody>
 
                     <SidebarFooter className="max-lg:hidden">

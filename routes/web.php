@@ -43,6 +43,8 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
     Route::get('/exams/{exam}/download-exam-results', [\App\Http\Controllers\Admin\ExamController::class, 'downloadExamResults'])->name('exams.download-exam-results');
 
     Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class);
+
+    Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
 });
 
 Route::group(['middleware' => ['auth', 'role:user'], 'as' => 'user.', 'prefix' => 'user'], function () {
