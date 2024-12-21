@@ -158,8 +158,8 @@ export default function UserExamTake({
                         <div className="w-5/6 font-light">: {user.name}</div>
                     </div>
                     <div className="flex">
-                        <div className="w-1/6 font-light">Email</div>
-                        <div className="w-5/6 font-light">: {user.email}</div>
+                        <div className="w-1/6 font-light">NIK</div>
+                        <div className="w-5/6 font-light">: {user.nik}</div>
                     </div>
                     <div className="mt-2">
                         <strong>{current_question.question_type.name}</strong>
