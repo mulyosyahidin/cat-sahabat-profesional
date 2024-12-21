@@ -32,4 +32,41 @@ class UserController extends Controller
             'search_query' => $searchQuery,
         ]);
     }
+
+    public function edit(User $user)
+    {
+        return Inertia::render('Admin/Users/Edit', [
+            'user' => $user,
+        ]);
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $data = request()->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'nik' => 'required',
+            'password' => 'nullable',
+        ]);
+
+        if ($request->password) {
+            $user->update([
+                'password' => bcrypt($request->password),
+            ]);
+        }
+        else {
+            unset($data['password']);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('admin.users.index')->with('success', 'Berhasil memperbarui profil user');
+    }
+
+    public function destroy(User $user)
+    {
+        $user->delete();
+
+        return redirect()->back()->with('success', 'Berhasil menghapus user');
+    }
 }

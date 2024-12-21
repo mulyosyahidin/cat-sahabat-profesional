@@ -13,15 +13,15 @@ import {
     PaginationPrevious
 } from "@/Components/Catalyst/pagination";
 import {Input} from "@/Components/Catalyst/input.jsx";
-import {MagnifyingGlassIcon, PencilSquareIcon} from "@heroicons/react/24/outline/index.js";
+import {MagnifyingGlassIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
 
 export default function AdminUsersIndex({users, meta, success, search_query}) {
     const [currentPage, setCurrentPage] = useState(meta.current_page);
     const [search, setSearch] = useState(search_query);
     const [filteredUsers, setFilteredUsers] = useState(users);
 
-    const [isEditPasswordDialogOpen, setIsEditPasswordDialogOpen] = useState(false);
-    const [editPasswordId, setEditPasswordId] = useState(null);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [deleteId, setDeleteId] = useState(null);
 
     const handlePageChange = useCallback((page) => {
         setCurrentPage(page);
@@ -36,14 +36,6 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
         }));
     }, [meta]);
 
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [deleteId, setDeleteId] = useState(null);
-
-    const handleOpenDeleteDialog = (id) => {
-        setDeleteId(id);
-        setIsDeleteDialogOpen(true);
-    };
-
     const performSearch = () => {
         router.get(route('admin.users.index', {search}), {
             preserveScroll: true,
@@ -53,9 +45,18 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
         });
     };
 
-    const handleOpenEditPasswordDialog = (id) => {
-        setEditPasswordId(id);
-        setIsEditPasswordDialogOpen(true);
+    const handleOpenDeleteDialog = (id) => {
+        setDeleteId(id);
+        setIsDeleteDialogOpen(true);
+    }
+
+    const handleDelete = () => {
+        router.delete(route('admin.users.destroy', deleteId), {
+            onSuccess: () => {
+                setFilteredUsers(prev => prev.filter(user => user.id !== deleteId)); // Hapus user dari state
+                setIsDeleteDialogOpen(false);
+            },
+        });
     }
 
     return (
@@ -68,6 +69,12 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
                     </div>
                 </div>
 
+                {success && (
+                    <div className="mt-2 text-sm font-medium text-green-600">
+                        {success}
+                    </div>
+                )}
+
                 <div className='mt-5 flex gap-2'>
                     <Input
                         onChange={(e) => setSearch(e.target.value)}
@@ -78,12 +85,6 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
                         <MagnifyingGlassIcon className={'w-5 h-5'} />
                     </Button>
                 </div>
-
-                {success && (
-                    <div className="mt-2 text-sm font-medium text-green-600">
-                        {success}
-                    </div>
-                )}
 
                 <Table className="mt-8 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
                     <TableHead>
@@ -113,14 +114,23 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
                                     <TableCell className="text-zinc-500">{user.nik}</TableCell>
                                     <TableCell className="text-zinc-500">{user.email}</TableCell>
                                     <TableCell className="flex justify-end gap-1">
-                                        {/*<Button*/}
-                                        {/*    outline={true}*/}
-                                        {/*    size="small"*/}
-                                        {/*    className="cursor-pointer"*/}
-                                        {/*    onClick={() => handleOpenEditPasswordDialog(user.id)}*/}
-                                        {/*>*/}
-                                        {/*    <PencilSquareIcon />*/}
-                                        {/*</Button>*/}
+                                        <Button
+                                            outline={true}
+                                            size="small"
+                                            className="cursor-pointer"
+                                            href={route('admin.users.edit', user.id)}
+                                        >
+                                            <PencilSquareIcon />
+                                        </Button>
+
+                                        <Button
+                                            outline={true}
+                                            size="small"
+                                            className="cursor-pointer text-red-500"
+                                            onClick={() => handleOpenDeleteDialog(user.id)}
+                                        >
+                                            <TrashIcon />
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             );
@@ -154,25 +164,25 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
                 )}
             </ApplicationLayout>
 
-            {/*<Dialog open={isEditPasswordDialogOpen} onClose={() => setIsEditPasswordDialogOpen(false)}>*/}
-            {/*    <DialogTitle>Edit Password</DialogTitle>*/}
-            {/*    <DialogBody>*/}
-            {/*        <p>Apakah Anda yakin ingin menghapus formasi ini? Menghapus formasi juga akan menghapus data lain*/}
-            {/*            yang terkait.</p>*/}
-            {/*    </DialogBody>*/}
-            {/*    <DialogActions>*/}
-            {/*        <Button plain className="cursor-pointer" onClick={() => setIsEditPasswordDialogOpen(false)}>*/}
-            {/*            Batal*/}
-            {/*        </Button>*/}
-            {/*        <Button*/}
-            {/*            color={'rose'}*/}
-            {/*            className="cursor-pointer text-red-500"*/}
-            {/*            // onClick={handleDelete}*/}
-            {/*        >*/}
-            {/*            Hapus*/}
-            {/*        </Button>*/}
-            {/*    </DialogActions>*/}
-            {/*</Dialog>*/}
+            <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+                <DialogTitle>Hapus User</DialogTitle>
+                <DialogBody>
+                    <p>Apakah Anda yakin ingin menghapus user ini? Menghapus user juga akan menghapus data lain
+                        yang terkait.</p>
+                </DialogBody>
+                <DialogActions>
+                    <Button plain className="cursor-pointer" onClick={() => setIsDeleteDialogOpen(false)}>
+                        Batal
+                    </Button>
+                    <Button
+                        color={'rose'}
+                        className="cursor-pointer text-red-500"
+                        onClick={handleDelete}
+                    >
+                        Hapus
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }

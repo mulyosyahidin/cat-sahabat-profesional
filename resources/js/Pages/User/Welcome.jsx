@@ -106,14 +106,19 @@ export default function UserWelcome({
                                 <div className="w-1/4 font-small">NIK</div>
                                 <div className="w-3/4">: {user.nik}</div>
                             </div>
-                            <div className="flex">
-                                <div className="w-1/4 font-small">No. HP</div>
-                                <div className="w-3/4">: {user.participant_profile.phone_number}</div>
-                            </div>
-                            <div className="flex">
-                                <div className="w-1/4 font-small">Alamat</div>
-                                <div className="w-3/4">: {user.participant_profile.address}</div>
-                            </div>
+                            {user.participant_profile && (
+                                <>
+                                    <div className="flex">
+                                        <div className="w-1/4 font-small">No. HP</div>
+                                        <div className="w-3/4">: {user.participant_profile.phone_number}</div>
+                                    </div>
+                                    <div className="flex">
+                                        <div className="w-1/4 font-small">Alamat</div>
+                                        <div className="w-3/4">: {user.participant_profile.address}</div>
+                                    </div>
+
+                                </>
+                            )}
                         </div>
                     </div>
 

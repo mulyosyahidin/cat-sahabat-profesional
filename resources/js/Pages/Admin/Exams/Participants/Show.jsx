@@ -48,19 +48,25 @@ export default function AdminParticipantShow({exam, examParticipant, participant
                         {/*    </TableCell>*/}
                         {/*</TableRow>*/}
 
-                        <TableRow key={3}>
-                            <TableCell>No. HP</TableCell>
-                            <TableCell>
-                                <strong>{participantProfile.phone_number}</strong>
-                            </TableCell>
-                        </TableRow>
+                        {
+                            participantProfile && (
+                                <>
+                                    <TableRow key={3}>
+                                        <TableCell>No. HP</TableCell>
+                                        <TableCell>
+                                            <strong>{participantProfile.phone_number}</strong>
+                                        </TableCell>
+                                    </TableRow>
 
-                        <TableRow key={4}>
-                            <TableCell>Alamat</TableCell>
-                            <TableCell>
-                                <strong>{participantProfile.address}</strong>
-                            </TableCell>
-                        </TableRow>
+                                    <TableRow key={4}>
+                                        <TableCell>Alamat</TableCell>
+                                        <TableCell>
+                                            <strong>{participantProfile.address}</strong>
+                                        </TableCell>
+                                    </TableRow>
+                                </>
+                            )
+                        }
 
                         <TableRow key={5}>
                             <TableCell>Jabatan Dilamar</TableCell>

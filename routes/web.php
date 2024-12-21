@@ -45,6 +45,9 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
     Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class);
 
     Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
 });
 
 Route::group(['middleware' => ['auth', 'role:user'], 'as' => 'user.', 'prefix' => 'user'], function () {
