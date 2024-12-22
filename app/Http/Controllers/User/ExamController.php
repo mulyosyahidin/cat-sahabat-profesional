@@ -98,6 +98,10 @@ class ExamController extends Controller
             ]);
         }
 
+        $exam_session->update([
+            'current_answered_questions' => $exam_session->current_answered_questions + 1,
+        ]);
+
         return redirect()->back()->with('success', 'Jawaban berhasil disimpan!');
     }
 

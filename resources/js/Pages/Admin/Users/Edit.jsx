@@ -39,7 +39,7 @@ export default function AdminUserEdit({user, success}) {
                 </div>
 
                 <form method="post" className="mx-auto mt-10" onSubmit={submit}>
-                    <Heading>Tambah User Baru</Heading>
+                    <Heading>Edit User</Heading>
 
                     {success && (
                         <div className="mb-4 mt-2 text-sm font-medium text-green-600">

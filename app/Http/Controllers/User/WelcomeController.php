@@ -27,8 +27,6 @@ class WelcomeController extends Controller
         $activeExamSession = $activeExamParticipant->session ?? null;
         $activeExamPosition = $activeExamParticipant->position ?? null;
 
-//        $examParticipationHistories = Exam_participant::where('user_id', auth()->id())->with('exam', 'position')->get();
-
         return Inertia::render('User/Welcome', [
             'status' => session('status'),
             'exam_positions' => session('exam_positions'),
@@ -36,7 +34,6 @@ class WelcomeController extends Controller
             'active_exam' => $activeExam,
             'active_exam_position' => $activeExamPosition,
             'active_exam_session' => $activeExamSession ?? null,
-//            'exam_participation_histories' => $examParticipationHistories,
         ]);
     }
 
@@ -88,10 +85,16 @@ class WelcomeController extends Controller
             ]
         );
 
+        $position = $examParticipant->position()->with('formation', 'questionTypes.questions')->first();
+        $totalQuestions = $position->questionTypes->sum(function ($questionType) {
+            return $questionType->questions->count();
+        });
+
         $examSession = $examParticipant->session()->create([
             'status' => 'active',
             'maximum_duration' => $examParticipant->position->maximum_test_duration_in_minutes,
             'maximum_duration_end_at' => now()->addMinutes($examParticipant->position->maximum_test_duration_in_minutes),
+            'total_questions' => $totalQuestions,
             'started_at' => now(),
         ]);
 

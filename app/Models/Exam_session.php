@@ -19,6 +19,8 @@ class Exam_session extends Model
         'status',
         'maximum_duration',
         'maximum_duration_end_at',
+        'total_questions',
+        'current_answered_questions',
         'started_at',
         'finished_at',
         'finished_by',

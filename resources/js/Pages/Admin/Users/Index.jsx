@@ -13,7 +13,7 @@ import {
     PaginationPrevious
 } from "@/Components/Catalyst/pagination";
 import {Input} from "@/Components/Catalyst/input.jsx";
-import {MagnifyingGlassIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
+import {EyeIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
 
 export default function AdminUsersIndex({users, meta, success, search_query}) {
     const [currentPage, setCurrentPage] = useState(meta.current_page);
@@ -119,6 +119,15 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
                                     <TableCell className="text-zinc-500">{user.nik}</TableCell>
                                     <TableCell className="text-zinc-500">{user.email}</TableCell>
                                     <TableCell className="flex justify-end gap-1">
+                                        <Button
+                                            outline={true}
+                                            size="small"
+                                            className="cursor-pointer"
+                                            href={route('admin.users.show', user.id)}
+                                        >
+                                            <EyeIcon />
+                                        </Button>
+
                                         <Button
                                             outline={true}
                                             size="small"

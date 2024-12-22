@@ -196,12 +196,21 @@ export default function AdminParticipantShow({
                         </TableRow>
 
                         {examParticipant.session.status == 'finished' && (
-                            <TableRow key={15}>
-                                <TableCell>Waktu Selesai</TableCell>
-                                <TableCell>
-                                    <strong>{formatDateTime(examParticipant.session.finished_at)}</strong>
-                                </TableCell>
-                            </TableRow>
+                            <>
+                                <TableRow key={15}>
+                                    <TableCell>Waktu Selesai</TableCell>
+                                    <TableCell>
+                                        <strong>{formatDateTime(examParticipant.session.finished_at)}</strong>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow key={15}>
+                                    <TableCell>Diselesaikan Oleh</TableCell>
+                                    <TableCell>
+                                        <strong>{examParticipant.session.finished_by}</strong>
+                                    </TableCell>
+                                </TableRow>
+                            </>
                         )}
 
                         {examParticipant.session.status == 'active' && (
@@ -213,10 +222,34 @@ export default function AdminParticipantShow({
                                     </TableCell>
                                 </TableRow>
 
+                                <TableRow key={15}>
+                                    <TableCell>Batas Waktu Sampai</TableCell>
+                                    <TableCell>
+                                        <strong>{formatDateTime(examParticipant.session.maximum_duration_end_at)}</strong>
+                                    </TableCell>
+                                </TableRow>
+
                                 <TableRow key={14}>
                                     <TableCell>Sisa Waktu</TableCell>
                                     <TableCell>
                                         <strong>{remainingTime}</strong>
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow key={16}>
+                                    <TableCell>Progress Pengerjaan</TableCell>
+                                    <TableCell>
+                                        {
+                                            examParticipant.session.total_questions > 0 && (
+                                                <strong>{examParticipant.session.current_answered_questions} / {examParticipant.session.total_questions} Soal</strong>
+                                            )
+                                        }
+
+                                        {
+                                            examParticipant.session.total_questions == 0 && (
+                                                <strong>Tidak ada data</strong>
+                                            )
+                                        }
                                     </TableCell>
                                 </TableRow>
                             </>

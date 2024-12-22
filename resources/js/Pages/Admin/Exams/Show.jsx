@@ -6,6 +6,7 @@ import {Table, TableBody, TableCell, TableRow} from "@/Components/Catalyst/table
 import {Button} from "@/Components/Catalyst/button";
 import {useState} from "react";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
+import {formatDate} from "@/utils/utils.js";
 
 export default function AdminExamShow({exam, success}) {
     const {delete: destroy, processing} = useForm();
@@ -68,7 +69,7 @@ export default function AdminExamShow({exam, success}) {
                         <TableRow key={3}>
                             <TableCell>Tanggal</TableCell>
                             <TableCell>
-                                <strong>{exam.date}</strong>
+                                <strong>{formatDate(exam.date)}</strong>
                             </TableCell>
                         </TableRow>
 

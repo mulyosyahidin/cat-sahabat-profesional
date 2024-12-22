@@ -102,4 +102,11 @@ class ExamParticipantController extends Controller
             ],
         ]);
     }
+
+    public function destroy(Exam $exam, Exam_participant $examParticipant)
+    {
+        $examParticipant->delete();
+
+        return redirect()->route('admin.exams.participants.index', $exam)->with('success', 'Peserta berhasil dihapus dari ujian.');
+    }
 }

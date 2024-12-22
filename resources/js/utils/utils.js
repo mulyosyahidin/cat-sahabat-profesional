@@ -77,6 +77,19 @@ export const formatDateTime = (datetime) => {
         date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', hour12: false });
 };
 
+export const formatDate = (datetime) => {
+    const date = new Date(datetime);
+
+    const options = {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+        timeZone: 'Asia/Jakarta',
+    };
+
+    return date.toLocaleDateString('id-ID', options);
+}
+
 export const timeLeft = (startedAt, maximumDuration) => {
     const now = new Date();
     const startedTime = new Date(startedAt);

@@ -38,6 +38,7 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
 
     Route::get('/exams/{exam}/participants', [\App\Http\Controllers\Admin\ExamParticipantController::class, 'index'])->name('exams.participants.index');
     Route::get('/exams/{exam}/participants/{exam_participant}', [\App\Http\Controllers\Admin\ExamParticipantController::class, 'show'])->name('exams.participants.show');
+    Route::delete('/exams/{exam}/participants/{exam_participant}', [\App\Http\Controllers\Admin\ExamParticipantController::class, 'destroy'])->name('exams.participants.destroy');
     Route::get('/exams/{exam}/participants/{exam_participant}/question-answers', [\App\Http\Controllers\Admin\ExamParticipantController::class, 'questionAnswers'])->name('exams.participants.question-answers');
 
     Route::get('/exams/{exam}/download-exam-results', [\App\Http\Controllers\Admin\ExamController::class, 'downloadExamResults'])->name('exams.download-exam-results');
@@ -45,6 +46,7 @@ Route::group(['middleware' => ['auth', 'role:admin'], 'as' => 'admin.', 'prefix'
     Route::resource('exams', \App\Http\Controllers\Admin\ExamController::class);
 
     Route::get('/users', [\App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
     Route::get('/users/{user}/edit', [\App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [\App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');

@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react";
 import ApplicationLayout from "@/Layouts/ApplicationLayout";
-import {Head, router} from "@inertiajs/react";
+import {Head, Link, router, useForm} from "@inertiajs/react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
 import {
     Pagination,
@@ -13,11 +13,17 @@ import BackButton from "@/Components/BackButton";
 import {timeLeft, timeLeftInMinute} from "@/utils/utils.js";
 import {Heading} from "@/Components/Catalyst/heading.jsx";
 import {Button} from "@/Components/Catalyst/button.jsx";
-import {EyeIcon, MagnifyingGlassIcon} from "@heroicons/react/24/outline/index.js";
+import {ArrowPathIcon, EyeIcon, MagnifyingGlassIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
 import {Input} from "@/Components/Catalyst/input.jsx";
+import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog.jsx";
 
 export default function AdminParticipantIndex({exam, participants, meta, success, count, search_query}) {
     const [search, setSearch] = useState(search_query);
+
+    const {delete: destroy} = useForm();
+
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [selectedParticipantId, setSelectedParticipantId] = useState(null);
 
     const [remainingTimes, setRemainingTimes] = useState(() =>
         participants.map((participant) =>
@@ -48,6 +54,23 @@ export default function AdminParticipantIndex({exam, participants, meta, success
         router.get(route('admin.exams.participants.index', {exam: exam.id, search}));
     }
 
+    const refreshPage = () => {
+        router.get(route('admin.exams.participants.index', {exam: exam.id}));
+    }
+
+    const handleDeleteParticipant = (id) => {
+        setSelectedParticipantId(id);
+        setIsDeleteDialogOpen(true);
+    }
+
+    const handleDelete = () => {
+        destroy(route('admin.exams.participants.destroy', [exam.id, selectedParticipantId]), {
+            onSuccess: () => {
+                setIsDeleteDialogOpen(false);
+            }
+        });
+    }
+
     return (
         <>
             <Head title={"Kelola Formasi"}/>
@@ -62,6 +85,12 @@ export default function AdminParticipantIndex({exam, participants, meta, success
                             className="inline-flex items-center gap-x-1.5 rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">
                             <small>{count['active']}</small>/{count['total']} ({count['finished']} selesai)
                         </span>
+
+                        <Link
+                            onClick={refreshPage}
+                            className="cursor-pointer ml-5">
+                            <ArrowPathIcon className="w-5 h-5"/>
+                        </Link>
                     </div>
                 </div>
 
@@ -93,16 +122,17 @@ export default function AdminParticipantIndex({exam, participants, meta, success
                             <TableHeader>#</TableHeader>
                             <TableHeader>Nama</TableHeader>
                             <TableHeader>NIK</TableHeader>
-                            <TableHeader>Jabatan Dilamar</TableHeader>
+                            {/*<TableHeader>Jabatan Dilamar</TableHeader>*/}
                             <TableHeader className={"text-center"}>Total Skor</TableHeader>
                             <TableHeader className={"text-center"}>Sisa Waktu</TableHeader>
+                            <TableHeader className={"text-center"}>Progress</TableHeader>
                             <TableHeader></TableHeader>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {participants.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan="7" className="text-center">
+                                <TableCell colSpan="8" className="text-center">
                                     Tidak ada data untuk ditampilkan
                                 </TableCell>
                             </TableRow>
@@ -117,7 +147,7 @@ export default function AdminParticipantIndex({exam, participants, meta, success
                                     <TableCell>{startIndex + index + 1}</TableCell>
                                     <TableCell className="text-zinc-500">{participant.user.name}</TableCell>
                                     <TableCell className="text-zinc-500">{participant.user.nik}</TableCell>
-                                    <TableCell className="text-zinc-500">{participant.position.name}</TableCell>
+                                    {/*<TableCell className="text-zinc-500">{participant.position.name}</TableCell>*/}
                                     <TableCell className="text-zinc-500 text-center">
                                         {participant.session.status === "finished" ? (
                                             <span className="text-green-500">{participant.session.total_score}</span>
@@ -137,8 +167,30 @@ export default function AdminParticipantIndex({exam, participants, meta, success
                                     </TableCell>
                                     <TableCell className="text-zinc-500 text-center">
                                         {participant.session.status === "finished"
-                                            ? "Selesai"
+                                            ? '-'
                                             : remainingTimes[index]}
+                                    </TableCell>
+                                    <TableCell className="text-zinc-500 text-center">
+                                        {
+                                            participant.session.status === "finished" && 'Selesai'
+                                        }
+                                        {
+                                            participant.session.status === "active" && participant.session.total_questions > 0 && (
+                                                <span
+                                                    className="inline-flex items-center gap-x-1.5 rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700">
+                                               {participant.session.current_answered_questions}/{participant.session.total_questions} Soal
+                                            </span>
+                                            )
+                                        }
+
+                                        {
+                                            participant.session.status === "active" && participant.session.total_questions == 0 && (
+                                                <span
+                                                    className="inline-flex items-center gap-x-1.5 rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700">
+                                               Tidak ada data
+                                            </span>
+                                            )
+                                        }
                                     </TableCell>
                                     <TableCell className="flex justify-end gap-1">
                                         <Button
@@ -151,6 +203,15 @@ export default function AdminParticipantIndex({exam, participants, meta, success
                                             className="cursor-pointer"
                                         >
                                             <EyeIcon/>
+                                        </Button>
+
+                                        <Button
+                                            outline={true}
+                                            onClick={() => handleDeleteParticipant(participant.id)}
+                                            size="small"
+                                            className="cursor-pointer"
+                                        >
+                                            <TrashIcon/>
                                         </Button>
                                     </TableCell>
                                 </TableRow>
@@ -192,6 +253,26 @@ export default function AdminParticipantIndex({exam, participants, meta, success
                     </Pagination>
                 )}
             </ApplicationLayout>
+
+            <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+                <DialogTitle>Hapus Peserta?</DialogTitle>
+                <DialogBody>
+                    <p>Apakah Anda yakin ingin menghapus peserta ini? Menghapus peserta juga akan menghapus data lain
+                        yang terkait. Namun, peserta masih dapat mengikuti ujian dengan menggunakan kode token yang sama.</p>
+                </DialogBody>
+                <DialogActions>
+                    <Button plain className="cursor-pointer" onClick={() => setIsDeleteDialogOpen(false)}>
+                        Batal
+                    </Button>
+                    <Button
+                        color={'rose'}
+                        className="cursor-pointer text-red-500"
+                        onClick={handleDelete}
+                    >
+                        Hapus
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </>
     );
 }

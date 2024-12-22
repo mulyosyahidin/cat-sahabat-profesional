@@ -69,4 +69,15 @@ class UserController extends Controller
 
         return redirect()->back()->with('success', 'Berhasil menghapus user');
     }
+
+    public function show(User $user)
+    {
+        $user->load('examParticipants.exam', 'examParticipants.position', 'examParticipants.session');
+        $user->loadCount('examParticipants');
+
+        return Inertia::render('Admin/Users/Show', [
+            'user' => $user,
+            'success' => session('success'),
+        ]);
+    }
 }
