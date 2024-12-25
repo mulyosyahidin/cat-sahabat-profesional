@@ -4,9 +4,9 @@ import {ArrowRightIcon} from "@heroicons/react/24/outline/index.js";
 
 export function Hero() {
     return (
-        <div className={'bg-[#004aad]'}>
+        <div className={'bg-[#004aad] overflow-hidden'}>
             <img
-                className="absolute left-1/2 top-1/2 max-w-none translate-x-[-44%] translate-y-[-42%] z-0"
+                className="absolute left-1/2 top-1/2 max-w-none translate-x-[-44%] translate-y-[-42%] z-0 hidden md:block"
                 src={'/assets/images/background-features.jpg'}
                 alt=""
                 width={2245}
@@ -54,6 +54,7 @@ export function Hero() {
                 </div>
             </Container>
         </div>
+
     );
 }
 
