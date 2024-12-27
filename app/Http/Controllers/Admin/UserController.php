@@ -3,22 +3,28 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Imports\FormationQuestionImport;
+use App\Imports\UserImport;
 use App\Models\User;
+use App\Services\FileService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
     public function index()
     {
         $searchQuery = request('search');
-        $users = User::where('role', 'user')
-            ->when($searchQuery, function ($query, $searchQuery) {
-                return $query->where('name', 'LIKE', "%$searchQuery%")
-                    ->orWhere('email', 'LIKE', "%$searchQuery%")
-                    ->orWhere('nik', 'LIKE', "%$searchQuery%");
-            })
-            ->paginate();
+        $usersQuery = User::where('role', 'user');
+
+        $totalCount = $usersQuery->when($searchQuery, function ($query, $searchQuery) {
+            return $query->where('name', 'LIKE', "%$searchQuery%")
+                ->orWhere('email', 'LIKE', "%$searchQuery%")
+                ->orWhere('nik', 'LIKE', "%$searchQuery%");
+        })->count();
+
+        $users = $usersQuery->paginate();
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users->items(),
@@ -30,6 +36,7 @@ class UserController extends Controller
             ],
             'success' => session('success'),
             'search_query' => $searchQuery,
+            'count' => $totalCount,
         ]);
     }
 
@@ -79,5 +86,26 @@ class UserController extends Controller
             'user' => $user,
             'success' => session('success'),
         ]);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx',
+        ]);
+
+        $file = FileService::upload('file');
+        if ($file) {
+
+            try {
+                Excel::import(new UserImport(), storage_path('app/public/' . $file['path']));
+
+                return redirect()->back()->with('success', 'Berhasil mengimpor file');
+            } catch (\Exception $e) {
+                return redirect()->back()->with('error', $e->getMessage());
+            }
+        }
+
+        return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunggah file');
     }
 }

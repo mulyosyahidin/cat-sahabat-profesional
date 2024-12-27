@@ -1,7 +1,7 @@
 import ApplicationLayout from "@/Layouts/ApplicationLayout";
-import {Head, Link, router} from "@inertiajs/react";
+import {Head, Link, router, useForm} from "@inertiajs/react";
 import {useCallback, useMemo, useState} from "react";
-import {Heading} from "@/Components/Catalyst/heading";
+import {Heading, Subheading} from "@/Components/Catalyst/heading";
 import {Button} from "@/Components/Catalyst/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
@@ -14,14 +14,21 @@ import {
 } from "@/Components/Catalyst/pagination";
 import {Input} from "@/Components/Catalyst/input.jsx";
 import {EyeIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
+import InputError from "@/Components/InputError.jsx";
 
-export default function AdminUsersIndex({users, meta, success, search_query}) {
+export default function AdminUsersIndex({users, meta, success, search_query, count}) {
     const [currentPage, setCurrentPage] = useState(meta.current_page);
     const [search, setSearch] = useState(search_query);
     const [filteredUsers, setFilteredUsers] = useState(users);
 
+    const {data, setData, post, delete: destroy, processing, errors, reset} = useForm({
+        file: null,
+    });
+
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [deleteId, setDeleteId] = useState(null);
+
+    const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
 
     const handlePageChange = useCallback((page) => {
         setCurrentPage(page);
@@ -59,6 +66,15 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
         });
     }
 
+    const handleImport = () => {
+        post(route('admin.users.import'), {
+            onSuccess: () => {
+                setIsImportDialogOpen(false);
+                reset();
+            },
+        });
+    }
+
     return (
         <>
             <Head title={'Kelola User'} />
@@ -66,7 +82,12 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
                 <div className="flex items-center justify-between">
                     <div>
                         <Heading>Kelola User</Heading>
+                        <Subheading>{count} User</Subheading>
                     </div>
+
+                    <Button
+                        onClick={() => setIsImportDialogOpen(true)}
+                        className={'cursor-pointer'}>Import User</Button>
                 </div>
 
                 {success && (
@@ -194,6 +215,36 @@ export default function AdminUsersIndex({users, meta, success, search_query}) {
                         onClick={handleDelete}
                     >
                         Hapus
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={isImportDialogOpen} onClose={() => setIsImportDialogOpen(false)}>
+                <DialogTitle>Import User</DialogTitle>
+                <DialogBody>
+                    <section className="mb-5 mt-5">
+                        <Input type="file" name="file" onChange={(e) => setData('file', e.target.files[0])}/>
+
+                        {errors.file ? (
+                            <InputError message={errors.file} className="mt-2"/>
+                        ) : (
+                            <small className="text-zinc-500">
+                                Download template import <a href="/assets/files/template_import_user.xlsx"
+                                                                 className={'text-blue-500'}>disini</a>.
+                            </small>
+                        )}
+                    </section>
+                </DialogBody>
+                <DialogActions>
+                    <Button plain className="cursor-pointer" onClick={() => setIsImportDialogOpen(false)}>
+                        Batal
+                    </Button>
+                    <Button
+                        className="cursor-pointer"
+                        onClick={handleImport}
+                        disabled={processing}
+                    >
+                        Import
                     </Button>
                 </DialogActions>
             </Dialog>
