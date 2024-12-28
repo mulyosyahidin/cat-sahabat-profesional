@@ -71,11 +71,13 @@ class ExamParticipantController extends Controller
      */
     public function show(Exam $exam, Exam_participant $examParticipant)
     {
-        $examParticipant->load(['user', 'position', 'session']);
+        $examParticipant->load(['user', 'position', 'session.currentQuestion']);
 
         $participantProfile = $examParticipant->user->participantProfile;
         $typeScores = $examParticipant->session->typeScores()->with('questionType')->get();
         $questionAnswers = $examParticipant->session->answers()->with('question', 'questionType', 'answerOption')->get();
+
+        $currentQuestion = $examParticipant->session->currentQuestion;
 
         return Inertia::render('Admin/Exams/Participants/Show', [
             'exam' => $examParticipant->exam,
@@ -83,6 +85,7 @@ class ExamParticipantController extends Controller
             'participantProfile' => $participantProfile,
             'typeScores' => $typeScores,
             'questionAnswers' => $questionAnswers,
+            'current_question' => $currentQuestion,
         ]);
     }
 

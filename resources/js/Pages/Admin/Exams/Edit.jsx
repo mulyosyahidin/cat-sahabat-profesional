@@ -13,7 +13,10 @@ export default function AdminExamEdit({exam, formations, success}) {
     const {data, setData, put, processing, errors} = useForm({
         name: exam.name || '',
         token: exam.token || '',
+        date: exam.date || '',
         description: exam.description || '',
+        is_open: exam.is_open || false,
+        formation_id: exam.formation_id || '',
     });
 
     const handleChange = (e) => {
@@ -24,6 +27,15 @@ export default function AdminExamEdit({exam, formations, success}) {
             [name]: value,
         }));
     };
+
+    const handleCheckboxChange = (e) => {
+        const {name, checked} = e.target;
+
+        setData((prevData) => ({
+            ...prevData,
+            [name]: checked,
+        }));
+    }
 
     const submit = (e) => {
         e.preventDefault();
@@ -38,7 +50,7 @@ export default function AdminExamEdit({exam, formations, success}) {
             <Head title={`${exam.name} - Edit Ujian`}/>
             <ApplicationLayout>
                 <div>
-                    <BackButton link={route('admin.exams.index')}/>
+                    <BackButton link={route('admin.exams.show', exam.id)}/>
                 </div>
 
                 <form method="post" className="mx-auto mt-10" onSubmit={submit}>
@@ -74,13 +86,27 @@ export default function AdminExamEdit({exam, formations, success}) {
                             <Subheading>Formasi</Subheading>
                         </div>
                         <div>
-                            <Select aria-label="Formasi diujikan" name="formation_id" onChange={handleChange} value={exam.formation_id}>
+                            <Select aria-label="Formasi diujikan" name="formation_id" onChange={handleChange}
+                                    value={exam.formation_id}>
                                 <option value="">Pilih formasi</option>
                                 {formations.map(formation => (
                                     <option key={formation.id} value={formation.id}>{formation.name}</option>
                                 ))}
                             </Select>
                             <InputError message={errors.formation_id} className="mt-2"/>
+                        </div>
+                    </section>
+
+                    <Divider className="my-10" soft/>
+
+                    <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                        <div className="space-y-1">
+                            <Subheading>Tanggal</Subheading>
+                        </div>
+                        <div>
+                            <Input type={'date'} aria-label="Tanggal ujian" name="date" value={data.date}
+                                   onChange={handleChange}/>
+                            <InputError message={errors.date} className="mt-2"/>
                         </div>
                     </section>
 
@@ -116,6 +142,24 @@ export default function AdminExamEdit({exam, formations, success}) {
                                 onChange={handleChange}
                             />
                             <InputError message={errors.description} className="mt-2"/>
+                        </div>
+                    </section>
+
+                    <Divider className="my-10" soft/>
+
+                    <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                        <div className="space-y-1">
+                            <Subheading>Buka Ujian</Subheading>
+                        </div>
+                        <div>
+                            <label>
+                                <input type={'checkbox'} aria-label="Buka ujian" name="is_open" checked={data.is_open}
+                                       onChange={handleCheckboxChange}
+                                       className="h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500 rounded"/>
+                                <span className="ml-2 text-sm text-gray-900">Buka ujian</span>
+                            </label>
+
+                            <InputError message={errors.token} className="mt-2"/>
                         </div>
                     </section>
 

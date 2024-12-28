@@ -19,6 +19,7 @@ class Exam extends Model
         'date',
         'description',
         'token',
+        'is_open',
     ];
 
     /**

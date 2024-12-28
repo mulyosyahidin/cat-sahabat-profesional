@@ -62,6 +62,11 @@ export default function UserWelcome({
         reset();
         setIsTakeExamDialogOpen(false);
         setTakeExamStep(0);
+
+        // set errors token to null
+        if (errors.token) {
+            errors.token = null;
+        }
     };
 
     const submit = () => {

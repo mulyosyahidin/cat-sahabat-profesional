@@ -1,4 +1,4 @@
-import {Head, useForm} from "@inertiajs/react";
+import {Head, Link, useForm} from "@inertiajs/react";
 import ApplicationLayout from "@/Layouts/ApplicationLayout";
 import BackButton from "@/Components/BackButton";
 import {Heading} from "@/Components/Catalyst/heading";
@@ -6,9 +6,9 @@ import {Button} from "@/Components/Catalyst/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
 import {Dialog, DialogTitle, DialogBody, DialogActions} from "@/Components/Catalyst/dialog";
 import {useEffect, useState} from "react";
-import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
+import {ArrowRightIcon, EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
 import NextButton from "@/Components/NextButton";
-import {formatDateTime, timeLeft} from "@/utils/utils.js";
+import {formatDateTime, limitPlainText, timeLeft} from "@/utils/utils.js";
 
 export default function AdminParticipantShow({
                                                  exam,
@@ -16,7 +16,8 @@ export default function AdminParticipantShow({
                                                  participantProfile,
                                                  typeScores,
                                                  questionAnswers,
-                                                 success
+                                                 success,
+                                                 current_question
                                              }) {
     const [remainingTime, setRemainingTime] = useState(
         timeLeft(examParticipant.session.started_at, examParticipant.session.maximum_duration)
@@ -250,6 +251,16 @@ export default function AdminParticipantShow({
                                                 <strong>Tidak ada data</strong>
                                             )
                                         }
+                                    </TableCell>
+                                </TableRow>
+
+                                <TableRow key={15}>
+                                    <TableCell>Soal Sedang Dikerjakan</TableCell>
+                                    <TableCell className={'flex items-center'}>
+                                        <Link href={route('admin.questions.show', [current_question.id])}
+                                              className={'text-blue-500'}>
+                                            <strong>{limitPlainText(current_question.question, 30)}</strong>
+                                        </Link>
                                     </TableCell>
                                 </TableRow>
                             </>

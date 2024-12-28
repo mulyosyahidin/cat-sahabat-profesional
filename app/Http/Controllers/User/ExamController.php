@@ -96,11 +96,9 @@ class ExamController extends Controller
                 'question_type_id' => $request->question_type_id,
                 'answer_option_id' => $request->answer_id,
             ]);
-        }
 
-        $exam_session->update([
-            'current_answered_questions' => $exam_session->current_answered_questions + 1,
-        ]);
+            $exam_session->increment('current_answered_questions');
+        }
 
         return redirect()->back()->with('success', 'Jawaban berhasil disimpan!');
     }

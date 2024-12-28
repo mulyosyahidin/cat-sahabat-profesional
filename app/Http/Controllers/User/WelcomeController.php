@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Exam;
 use App\Models\Exam_participant;
 use App\Models\Exam_session;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
@@ -14,7 +15,7 @@ class WelcomeController extends Controller
 {
     public function index()
     {
-        $currentUserExamParticipant = Exam_participant::where('user_id', auth()->id())->with('exam', 'position')->get();
+        $currentUserExamParticipant = Exam_participant::where('user_id', auth()->id())->with('exam', 'position', 'session')->get();
         $hasActiveExamSession = $currentUserExamParticipant->filter(function ($examParticipant) {
             return $examParticipant->session()->where('status', 'active')->exists();
         })->isNotEmpty();
@@ -50,6 +51,21 @@ class WelcomeController extends Controller
         if ($exam->participants()->where('user_id', auth()->id())->exists()) {
             return redirect()->back()->withErrors([
                 'token' => 'Anda sudah pernah mengikuti ujian ini!',
+            ]);
+        }
+
+        // check if exam is open
+        if (!$exam->is_open) {
+            return redirect()->back()->withErrors([
+                'token' => 'Ujian ini ditutup',
+            ]);
+        }
+
+        // check is exam date is today
+        $examDate = Carbon::parse($exam->date);
+        if (!$examDate->isToday()) {
+            return redirect()->back()->withErrors([
+                'token' => 'Ujian ini tidak bisa diikuti hari ini!',
             ]);
         }
 

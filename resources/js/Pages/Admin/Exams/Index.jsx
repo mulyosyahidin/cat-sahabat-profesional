@@ -4,7 +4,7 @@ import {useCallback, useMemo, useState} from "react";
 import {Heading} from "@/Components/Catalyst/heading";
 import {Button} from "@/Components/Catalyst/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
-import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
+import {EyeIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
 import {
     Pagination,
     PaginationList,
@@ -13,9 +13,14 @@ import {
     PaginationPrevious
 } from "@/Components/Catalyst/pagination";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
+import {formatDate} from "@/utils/utils.js";
+import {Input} from "@/Components/Catalyst/input.jsx";
 
-export default function AdminExamIndex({exams, meta, success}) {
+export default function AdminExamIndex({exams, meta, success, search_query}) {
     const [currentPage, setCurrentPage] = useState(meta.current_page);
+
+    const [search, setSearch] = useState(search_query);
+    const [filteredExams, setFilteredExams] = useState(exams);
 
     const handlePageChange = useCallback((page) => {
         setCurrentPage(page);
@@ -49,6 +54,14 @@ export default function AdminExamIndex({exams, meta, success}) {
         });
     }
 
+    const performSearch = () => {
+        router.get(route('admin.exams.index', {search}), {
+            onSuccess: (response) => {
+                setFilteredExams(response.props.exams);
+            }
+        });
+    };
+
     return (
         <>
             <Head title={'Kelola Ujian'}/>
@@ -68,13 +81,29 @@ export default function AdminExamIndex({exams, meta, success}) {
                     </div>
                 )}
 
+                <div className='mt-5 flex gap-2'>
+                    <Input
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder={'Cari nama ujian, nama formasi atau kode token'}
+                        value={search}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                performSearch();
+                            }
+                        }}
+                    />
+                    <Button onClick={performSearch} className={'cursor-pointer'}>
+                        <MagnifyingGlassIcon className={'w-5 h-5'}/>
+                    </Button>
+                </div>
+
                 <Table className="mt-8 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
                     <TableHead>
                         <TableRow>
                             <TableHeader>#</TableHeader>
-                            <TableHeader>Nama</TableHeader>
-                            <TableHeader>Formasi</TableHeader>
+                            <TableHeader>Nama / Formasi</TableHeader>
                             <TableHeader>Token</TableHeader>
+                            <TableHeader>Tanggal</TableHeader>
                             <TableHeader className={'text-center'}>Jumlah Peserta</TableHeader>
                             <TableHeader></TableHeader>
                         </TableRow>
@@ -82,7 +111,8 @@ export default function AdminExamIndex({exams, meta, success}) {
                     <TableBody>
                         {exams.length === 0 && (
                             <TableRow>
-                                <TableCell colSpan="5" className="text-center">Tidak ada data untuk ditampilkan</TableCell>
+                                <TableCell colSpan="5" className="text-center">Tidak ada data untuk
+                                    ditampilkan</TableCell>
                             </TableRow>
                         )}
 
@@ -93,10 +123,15 @@ export default function AdminExamIndex({exams, meta, success}) {
                             return (
                                 <TableRow key={exam.id}>
                                     <TableCell>{startIndex + index + 1}</TableCell>
-                                    <TableCell className="text-zinc-500">{exam.name}</TableCell>
-                                    <TableCell className="text-zinc-500">{exam.formation.name}</TableCell>
+                                    <TableCell className="text-zinc-500">
+                                        {exam.name}
+                                        <br/>
+                                        <small>{exam.formation.name}</small>
+                                    </TableCell>
                                     <TableCell className="text-zinc-500">{exam.token}</TableCell>
-                                    <TableCell className="text-zinc-500 text-center">{exam.participants_count} Peserta</TableCell>
+                                    <TableCell className="text-zinc-500">{formatDate(exam.date)}</TableCell>
+                                    <TableCell
+                                        className="text-zinc-500 text-center">{exam.participants_count} Peserta</TableCell>
                                     <TableCell className="flex justify-end gap-1">
                                         <Button
                                             outline={true}
@@ -104,7 +139,7 @@ export default function AdminExamIndex({exams, meta, success}) {
                                             size="small"
                                             className="cursor-pointer"
                                         >
-                                            <EyeIcon />
+                                            <EyeIcon/>
                                         </Button>
                                         <Button
                                             outline={true}
@@ -112,7 +147,7 @@ export default function AdminExamIndex({exams, meta, success}) {
                                             size="small"
                                             className="cursor-pointer"
                                         >
-                                            <PencilSquareIcon />
+                                            <PencilSquareIcon/>
                                         </Button>
                                         <Button
                                             outline={true}
@@ -120,7 +155,7 @@ export default function AdminExamIndex({exams, meta, success}) {
                                             className="cursor-pointer text-red-500"
                                             onClick={() => handleOpenDeleteDialog(exam.id)}
                                         >
-                                            <TrashIcon />
+                                            <TrashIcon/>
                                         </Button>
                                     </TableCell>
                                 </TableRow>

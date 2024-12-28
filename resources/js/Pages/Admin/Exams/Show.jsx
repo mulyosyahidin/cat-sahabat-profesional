@@ -66,14 +66,14 @@ export default function AdminExamShow({exam, success}) {
                             </TableCell>
                         </TableRow>
 
-                        <TableRow key={3}>
+                        <TableRow key={31}>
                             <TableCell>Tanggal</TableCell>
                             <TableCell>
                                 <strong>{formatDate(exam.date)}</strong>
                             </TableCell>
                         </TableRow>
 
-                        <TableRow key={3}>
+                        <TableRow key={32}>
                             <TableCell>Jumlah Peserta</TableCell>
                             <TableCell>
                                 <strong>{exam.participants_count} Peserta</strong>
@@ -84,6 +84,19 @@ export default function AdminExamShow({exam, success}) {
                             <TableCell>Keterangan</TableCell>
                             <TableCell>
                                 <strong>{exam.description}</strong>
+                            </TableCell>
+                        </TableRow>
+
+                        <TableRow key={7}>
+                            <TableCell>Status</TableCell>
+                            <TableCell>
+                                {
+                                    exam.is_open == 0 ? (
+                                        <span className="text-red-500">Tutup. Peserta tidak dapat bergabung</span>
+                                    ) : (
+                                        <span className="text-green-500">Buka. Peserta dapat bergabung pada tanggal yang ditentukan dengan kode token</span>
+                                    )
+                                }
                             </TableCell>
                         </TableRow>
                     </TableBody>

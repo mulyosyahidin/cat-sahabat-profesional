@@ -139,7 +139,7 @@ export default function UserExamTake({
     }
 
     const getButtonClass = (id) => {
-        return answered_question_ids.includes(id) ? 'bg-green-500' : 'bg-red-500';
+        return answered_question_ids.includes(id) ? 'bg-green-500' : (current_question.id === id ? 'bg-blue-500' : 'bg-red-500');
     }
 
     const handleFinishExam = () => {

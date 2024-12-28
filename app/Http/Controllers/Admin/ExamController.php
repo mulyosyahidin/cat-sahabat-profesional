@@ -17,7 +17,20 @@ class ExamController extends Controller
      */
     public function index()
     {
-        $exams = Exam::with('formation')->withCount('participants')->latest()->paginate(10);
+        $search = request('search', '');
+
+        $exams = Exam::with('formation')
+            ->withCount('participants')
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('description', 'like', '%' . $search . '%')
+                ->orWhere('token', 'like', '%' . $search . '%')
+                ->orWhereHas('formation', function ($query) use ($search) {
+                    $query->where('name', 'like', '%' . $search . '%');
+                });
+            })
+            ->latest()
+            ->paginate();
 
         return Inertia::render('Admin/Exams/Index', [
             'exams' => $exams->items(),
@@ -28,6 +41,7 @@ class ExamController extends Controller
                 'total_items' => $exams->total(),
             ],
             'success' => session('success'),
+            'search_query' => $search,
         ]);
     }
 

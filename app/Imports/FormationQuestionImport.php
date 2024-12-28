@@ -44,8 +44,8 @@ class FormationQuestionImport implements ToCollection, WithHeadingRow
             );
 
             $question = $questionType->questions()->firstOrCreate(
-                ['question' => $row['soal']],
-                ['discussion' => $row['pembahasan']]
+                ['question' => trim($row['soal'])],
+                ['discussion' => trim($row['pembahasan'])]
             );
 
             $options = [

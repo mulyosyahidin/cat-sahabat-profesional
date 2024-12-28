@@ -36,7 +36,7 @@ export default function AdminFormationEdit({formation, success}) {
                 </div>
 
                 <form method="post" className="mx-auto mt-10" onSubmit={submit}>
-                    <Heading>Tambah Formasi Baru</Heading>
+                    <Heading>Edit Formasi</Heading>
 
                     {success && (
                         <div className="mb-4 mt-2 text-sm font-medium text-green-600">
