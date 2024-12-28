@@ -10,7 +10,7 @@ import {EyeIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/
 import {Input} from "@/Components/Catalyst/input";
 import InputError from "@/Components/InputError";
 
-export default function AdminPositionShow({formation, success, error, total_questions}) {
+export default function AdminPositionShow({formation, success, error, errorMessages, total_questions}) {
     const {data, setData, post, delete: destroy, processing, errors, reset} = useForm({
         file: null,
         clear_data: false,
@@ -68,6 +68,14 @@ export default function AdminPositionShow({formation, success, error, total_ques
                         {success}
                     </div>
                 )}
+
+                {errorMessages &&
+                    errorMessages.map((message, index) => (
+                        <div key={index} className="mb-4 mt-2 text-sm font-medium text-red-600">
+                            {message}
+                        </div>
+                    ))
+                }
 
                 {error && (
                     <div className="mb-4 mt-2 text-sm font-medium text-red-600">

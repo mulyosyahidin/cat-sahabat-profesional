@@ -76,6 +76,7 @@ class FormationController extends Controller
             'success' => session('success'),
             'error' => session('error'),
             'total_questions' => $totalQuestions,
+            'errorMessages' => session('errorMessages'),
         ]);
     }
 
@@ -135,7 +136,13 @@ class FormationController extends Controller
                 return redirect()->back()->with('success', 'Berhasil mengimpor file');
             } catch (\Exception $e) {
                 \Log::error($e->getMessage());
-                return redirect()->back()->with('error', 'File excel yang anda import tidak valid. Pastikan jumlah kolom sesuai dengan template, dan ubah semua nilai menjadi ACTUAL VALUE (bukan rumus)');
+
+                $messages = [
+                    $e->getMessage(),
+                    'File excel yang anda import tidak valid. Pastikan jumlah kolom sesuai dengan template, dan ubah semua nilai menjadi ACTUAL VALUE (bukan rumus). Periksa kembali file Excel Anda',
+                ];
+
+                return redirect()->back()->with('errorMessages', $messages);
             }
         }
 
