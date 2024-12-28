@@ -259,7 +259,7 @@ export default function AdminPositionShow({formation, success, error, total_ques
                 <DialogTitle>Import Soal</DialogTitle>
                 <DialogBody>
                     <p>
-                        Pastikan kolom <b>soal</b>, <b>pilihan jawaban A, B, C, D, E</b>, dan <b>nilai A, B, C, D, E</b> tidak kosong.
+                        Pastikan semua kolom yang dibutuhkan tidak kosong dan ubah nilai menjadi <b>actual value</b>.
                     </p>
 
                     <section className="mb-5 mt-5">

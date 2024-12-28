@@ -125,16 +125,17 @@ class FormationController extends Controller
 
         $file = FileService::upload('file');
         if ($file) {
-            if ($request->clear_data) {
-                $formation->positions()->delete();
-            }
-
             try {
+                if ($request->clear_data) {
+                    $formation->positions()->delete();
+                }
+
                 Excel::import(new FormationQuestionImport($formation), storage_path('app/public/' . $file['path']));
 
                 return redirect()->back()->with('success', 'Berhasil mengimpor file');
             } catch (\Exception $e) {
-                return redirect()->back()->with('error', $e->getMessage());
+                \Log::error($e->getMessage());
+                return redirect()->back()->with('error', 'File excel yang anda import tidak valid. Pastikan jumlah kolom sesuai dengan template, dan ubah semua nilai menjadi ACTUAL VALUE (bukan rumus)');
             }
         }
 

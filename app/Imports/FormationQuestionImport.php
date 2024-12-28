@@ -53,8 +53,17 @@ class FormationQuestionImport implements ToCollection, WithHeadingRow
                 ['question_id' => $question->id, 'option' => 'B', 'value' => $row['pilgan_b'] ?? '', 'is_correct' => $row['kunci'] === 'B', 'score' => $row['nilai_b'] ?? 0],
                 ['question_id' => $question->id, 'option' => 'C', 'value' => $row['pilgan_c'] ?? '', 'is_correct' => $row['kunci'] === 'C', 'score' => $row['nilai_c'] ?? 0],
                 ['question_id' => $question->id, 'option' => 'D', 'value' => $row['pilgan_d'] ?? '', 'is_correct' => $row['kunci'] === 'D', 'score' => $row['nilai_d'] ?? 0],
-                ['question_id' => $question->id, 'option' => 'E', 'value' => $row['pilgan_e'] ?? '', 'is_correct' => $row['kunci'] === 'E', 'score' => $row['nilai_e'] ?? 0],
             ];
+
+            if (!empty($row['pilgan_e']) || isset($row['nilai_e'])) {
+                $options[] = [
+                    'question_id' => $question->id,
+                    'option' => 'E',
+                    'value' => $row['pilgan_e'] ?? '',
+                    'is_correct' => $row['kunci'] === 'E',
+                    'score' => $row['nilai_e'] ?? 0,
+                ];
+            }
 
             $question->options()->delete();
             $question->options()->insert($options);
