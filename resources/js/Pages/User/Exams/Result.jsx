@@ -46,7 +46,7 @@ export default function UserExamResult({exam, examSession, examParticipant}) {
                             <div className="w-3/4">: {user.name}</div>
                         </div>
                         <div className="flex mb-5">
-                            <div className="w-1/4 font-small">NIK</div>
+                            <div className="w-1/4 font-small">No. HP</div>
                             <div className="w-3/4">: {user.nik}</div>
                         </div>
                         {examSession.type_scores.map((typeScore, index) => (
