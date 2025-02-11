@@ -91,12 +91,11 @@ class UserController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|file|mimes:xlsx',
+            'file' => 'required|file|mimetypes:text/plain,text/csv,application/csv',
         ]);
 
         $file = FileService::upload('file');
         if ($file) {
-
             try {
                 Excel::import(new UserImport(), storage_path('app/public/' . $file['path']));
 

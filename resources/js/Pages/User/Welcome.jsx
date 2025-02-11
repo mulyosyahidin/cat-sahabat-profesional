@@ -84,7 +84,6 @@ export default function UserWelcome({
         }
     };
 
-
     return (
         <>
             <BknLayout>
@@ -106,10 +105,6 @@ export default function UserWelcome({
                             <div className="flex">
                                 <div className="w-1/4 font-small">Nama Lengkap</div>
                                 <div className="w-3/4">: {user.name}</div>
-                            </div>
-                            <div className="flex">
-                                <div className="w-1/4 font-small">NIK</div>
-                                <div className="w-3/4">: {user.nik}</div>
                             </div>
                             {user.participant_profile && (
                                 <>

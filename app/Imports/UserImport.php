@@ -16,12 +16,12 @@ class UserImport implements ToCollection, WithHeadingRow
     {
         foreach ($rows as $row) {
             $name = $row['name'];
-            $nik = $row['nik'];
+            $nik = $row['no_hp'];
 
             if (!empty($name) && !empty($nik)) {
                 $email = $nik . '@cbt.app';
 
-                User::firstOrCreate(
+                $user = User::firstOrCreate(
                     ['nik' => $nik],
                     [
                         'name' => $name,
@@ -31,6 +31,11 @@ class UserImport implements ToCollection, WithHeadingRow
                         'email_verified_at' => now(),
                     ]
                 );
+
+                $user->participantProfile()->create([
+                    'phone_number' => $nik,
+                    'address' => '-',
+                ]);
             }
         }
     }

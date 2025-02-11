@@ -25,6 +25,7 @@ export default function Welcome({ auth }) {
 
     return (
         <>
+            <Head title={'Web CAT'} />
             <header className="py-10">
                 <Container>
                     <nav className="relative z-50 flex justify-between">

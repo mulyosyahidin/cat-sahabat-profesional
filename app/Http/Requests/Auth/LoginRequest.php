@@ -2,9 +2,12 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\Participant_profile;
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -27,7 +30,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'nik' => ['required', 'string'],
+            'no_hp' => ['required', 'string'],
             'password' => ['required', 'string'],
             'g-recaptcha-response' => [
                 config('app.env') === 'production' ? 'required' : 'nullable',
@@ -54,13 +57,39 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('nik', 'password'), $this->boolean('remember'))) {
+        $phoneNumber = $this->input('no_hp');
+
+        // Cari user berdasarkan nomor HP di tabel participant_profiles
+        $participant = Participant_profile::where('phone_number', $phoneNumber)->first();
+        if (!$participant) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'nik' => trans('auth.failed'),
+                'no_hp' => 'No. HP atau password salah',
             ]);
         }
+
+        // Ambil user berdasarkan user_id dari tabel participant_profiles
+        $user = User::find($participant->user_id);
+        if (!$user) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'no_hp' => 'No. HP atau password salah',
+            ]);
+        }
+
+        // Periksa password yang dimasukkan
+        if (! Hash::check($this->input('password'), $user->password)) {
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'no_hp' => 'No. HP atau password salah',
+            ]);
+        }
+
+        // Jika password benar, login user
+        Auth::login($user);
 
         RateLimiter::clear($this->throttleKey());
     }
@@ -72,7 +101,7 @@ class LoginRequest extends FormRequest
      */
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -93,6 +122,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
     }
 }

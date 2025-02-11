@@ -85,24 +85,7 @@
 
 <div class="modal-backdrop" id="loader">
     <div class="vh-center">
-        <img src="{{ asset('assets/bkn/images/ajax_loader_blue_512.gif') }}" style="width:30px">
-    </div>
-</div>
-
-<div class="modal fade" tabindex="-1" role="dialog" id="cat-dlg">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="dlgtitle">Modal title</h4>
-            </div>
-            <div class="modal-body">
-                <p id="dlgmessage">One fine body&hellip;</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">OK</button>
-            </div>
-        </div>
+        <img src="{{ asset('assets/bkn/images/ajax_loader_blue_512.gif') }}" style="width:30px" />
     </div>
 </div>
 
@@ -129,12 +112,12 @@
                 @csrf
 
                 <div class="form-group @error('nik') has-error @enderror">
-                    <label for="nik" class="col-sm-2 control-label">NIK</label>
+                    <label for="no-hp" class="col-sm-2 control-label">No. HP</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="nik" placeholder="NIK" name="nik"
-                               value="{{ old('nik') }}">
+                        <input type="text" class="form-control" id="no-hp" placeholder="No. HP" name="no_hp"
+                               value="{{ old('no_hp') }}">
 
-                        @error('nik')
+                        @error('no_hp')
                         <span class="help-block">{{ $message }}</span>
                         @enderror
                     </div>
