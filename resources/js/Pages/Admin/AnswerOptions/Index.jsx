@@ -20,12 +20,29 @@ export default function AdminAnswerOptionsIndex({question, newOptionId, success}
                     </div>
                 )}
 
-                <div className="mt-8 shadow p-5 rounded-lg">
-                    <Subheading level={4}>Pertanyaan</Subheading>
-                    <div className="mt-2">
-                        {question.question}
-                    </div>
-                </div>
+                {
+                    question.type === 'text' && (
+                        <div className="mt-8 shadow p-5 rounded-lg">
+                            <Subheading level={4}>Pertanyaan</Subheading>
+                            <div className="mt-2">
+                                {question.question}
+                            </div>
+                        </div>
+                    )
+                }
+
+                {
+                    question.type === 'image' && (
+                        <>
+                            <Subheading level={4} className={'mt-8'}>Pertanyaan</Subheading>
+                            <div className="shadow mt-2 rounded-lg">
+                                <div className="mt-2">
+                                    <img src={'/storage/' + question.question} alt="Pertanyaan"/>
+                                </div>
+                            </div>
+                        </>
+                    )
+                }
 
                 {
                     question.question_type.weighting_type === 'FIVE_AND_ZERO' ?

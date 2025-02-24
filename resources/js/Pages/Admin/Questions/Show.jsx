@@ -31,12 +31,29 @@ export default function AdminQuestionShow({question, success}) {
                     </div>
                 )}
 
-                <div className="mt-8 shadow p-5 rounded-lg">
-                    <Subheading level={4}>Pertanyaan</Subheading>
-                    <div className="mt-2">
-                        {question.question}
-                    </div>
-                </div>
+                {
+                    question.type === 'text' && (
+                        <div className="mt-8 shadow p-5 rounded-lg">
+                            <Subheading level={4}>Pertanyaan</Subheading>
+                            <div className="mt-2">
+                                {question.question}
+                            </div>
+                        </div>
+                    )
+                }
+
+                {
+                    question.type === 'image' && (
+                        <>
+                            <Subheading level={4} className={'mt-8'}>Pertanyaan</Subheading>
+                            <div className="shadow mt-2 rounded-lg">
+                                <div className="mt-2">
+                                    <img src={'/storage/' + question.question} alt="Pertanyaan"/>
+                                </div>
+                            </div>
+                        </>
+                    )
+                }
 
                 {question.discussion !== null && (
                     <div className="mt-8 shadow p-5 rounded-lg">
@@ -129,13 +146,19 @@ export default function AdminQuestionShow({question, success}) {
                                                         <div
                                                             className={`flex items-center justify-center w-8 h-8 text-lg font-bold text-gray-800
                                                                 ${option.is_correct ? 'bg-green-500 border-green-600 text-white' : 'bg-gray-200 border-gray-300 text-gray-800'}`}
-                                                            >
+                                                        >
                                                             {option.score}
                                                         </div>
                                                     )
                                                 }
                                             </div>
-                                            <span className="text-sm text-gray-700">{option.value}</span>
+                                            {
+                                                option.type === 'text' && <span className="text-sm text-gray-700">{option.value}</span>
+                                            }
+
+                                            {
+                                                option.type === 'image' && <a className={'text-blue-600'} target="_blank" href={`/storage/${option.value}`}>lihat gambar</a>
+                                            }
                                         </div>
                                     </div>
                                 ))}

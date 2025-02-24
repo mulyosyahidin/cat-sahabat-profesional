@@ -6,31 +6,36 @@ import {Heading, Subheading} from "@/Components/Catalyst/heading";
 import {Divider} from "@/Components/Catalyst/divider";
 import {Textarea} from "@/Components/Catalyst/textarea";
 import InputError from "@/Components/InputError";
+import {Select} from "@/Components/Catalyst/select.jsx";
+import {Input} from "@/Components/Catalyst/input.jsx";
 
 export default function AdminQuestionEdit({question, success}) {
-    const {data, setData, put, processing, errors, reset} = useForm({
-        question: question.question || '',
+    const {data, setData, post, processing, errors, reset} = useForm({
+        question: question.type === 'text' ? question.question : '',
+        type: question.type || '',
         discussion: question.discussion || '',
+        question_image: '',
+        _method: 'PUT',
     })
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, type, value, files } = e.target;
 
         setData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: type === "file" ? files[0] : value,
         }));
-    }
+    };
 
     const submit = (e) => {
         e.preventDefault();
 
-        put(route('admin.questions.update', question.id));
+        post(route('admin.questions.update', question.id));
     };
 
     return (
         <>
-            <Head title={'Edit Soal'} />
+            <Head title={'Edit Soal'}/>
             <ApplicationLayout>
                 <BackButton
                     link={route('admin.questions.show', question.id)}/>
@@ -45,20 +50,63 @@ export default function AdminQuestionEdit({question, success}) {
                     )}
                     <Divider className="my-10 mt-6"/>
 
-                    <section>
-                        <Subheading>Pertanyaan <span
-                            className={'text-red-500 font-bold'}>*</span></Subheading>
-                        <Textarea
-                            aria-label="Pertanyaan"
-                            name={'question'}
-                            value={data.question}
-                            onChange={handleChange}
-                            className="w-full mt-5"
-                        />
-                        <InputError message={errors.question} className="mt-2"/>
+                    <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                        <div className="space-y-1">
+                            <Subheading>Tipe Pertanyaan</Subheading>
+                        </div>
+                        <div>
+                            <Select aria-label="Tipe pertanyaan" name="type" value={data.type} onChange={handleChange}>
+                                <option selected disabled>Pilih tipe</option>
+                                <option value="text">Text</option>
+                                <option value="image">Gambar</option>
+                            </Select>
+                            <InputError message={errors.type} className="mt-2"/>
+                        </div>
                     </section>
 
                     <Divider className="my-10" soft/>
+
+                    {
+                        data.type === 'text' && (
+                            <>
+                                <section>
+                                    <Subheading>Pertanyaan <span
+                                        className={'text-red-500 font-bold'}>*</span></Subheading>
+                                    <Textarea
+                                        aria-label="Pertanyaan"
+                                        name={'question'}
+                                        value={data.question}
+                                        onChange={handleChange}
+                                        className="w-full mt-5"
+                                    />
+                                    <InputError message={errors.question} className="mt-2"/>
+                                </section>
+
+                                <Divider className="my-10" soft/>
+                            </>
+                        )
+                    }
+
+                    {
+                        data.type === 'image' && (
+                            <>
+                                <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                                    <div className="space-y-1">
+                                        <Subheading>Pertanyaan <span
+                                            className={'text-red-500 font-bold'}>*</span></Subheading>
+                                    </div>
+                                    <div>
+                                        <Input type="file" aria-label="Pertanyaan" name={'question_image'}
+                                               onChange={handleChange}
+                                               className="w-full"/>
+                                        <InputError message={errors.question_image} className="mt-2"/>
+                                    </div>
+                                </section>
+
+                                <Divider className="my-10" soft/>
+                            </>
+                        )
+                    }
 
                     <section>
                         <Subheading>Pembahasan Soal</Subheading>

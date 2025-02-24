@@ -5,25 +5,28 @@ import {Input} from "@/Components/Catalyst/input";
 import InputError from "@/Components/InputError";
 import {useState} from "react";
 import {useForm} from "@inertiajs/react";
+import {Select} from "@/Components/Catalyst/select.jsx";
 
 export default function FiveAndZeroTypeAddSingle({question, setOptions}) {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
     const {data, setData, post, processing, errors, reset} = useForm({
         option: '',
+        type: 'text',
         value: '',
+        value_image: '',
         is_correct: false,
         score: 0,
     });
 
     const handleChange = (e) => {
-        const {name, type, value, checked} = e.target;
+        const { name, type, value, checked, files } = e.target;
 
         setData((prevData) => ({
             ...prevData,
-            [name]: type === 'checkbox' ? checked : value,
+            [name]: type === "file" ? files[0] : type === "checkbox" ? checked : value,
         }));
-    }
+    };
 
     const addOption = (e) => {
         e.preventDefault();
@@ -43,6 +46,7 @@ export default function FiveAndZeroTypeAddSingle({question, setOptions}) {
                     updatedOptions.push({
                         option: data.option,
                         value: data.value,
+                        type: data.type,
                         is_correct: data.is_correct,
                         score: data.score,
                         id: response.props.newOptionId,
@@ -81,15 +85,47 @@ export default function FiveAndZeroTypeAddSingle({question, setOptions}) {
 
                     <section className="grid gap-x-8 gap-y-6 sm:grid-cols-12 mt-4">
                         <div className="sm:col-span-4 space-y-1">
-                            <Subheading>Jawaban</Subheading>
+                            <Subheading>Tipe Pertanyaan</Subheading>
                         </div>
-
                         <div className="sm:col-span-8">
-                            <Input aria-label="Jawaban" name="value" value={data.value} onChange={handleChange}
-                                   required/>
-                            <InputError message={errors.value} className="mt-2"/>
+                            <Select aria-label="Tipe pertanyaan" name="type" value={data.type} onChange={handleChange}>
+                                <option selected disabled>Pilih tipe</option>
+                                <option value="text">Text</option>
+                                <option value="image">Gambar</option>
+                            </Select>
+                            <InputError message={errors.type} className="mt-2"/>
                         </div>
                     </section>
+
+                    {
+                        data.type === 'text' && (
+                            <section className="grid gap-x-8 gap-y-6 sm:grid-cols-12 mt-4">
+                                <div className="sm:col-span-4 space-y-1">
+                                    <Subheading>Jawaban</Subheading>
+                                </div>
+
+                                <div className="sm:col-span-8">
+                                    <Input aria-label="Jawaban" name="value" value={data.value} onChange={handleChange}/>
+                                    <InputError message={errors.value} className="mt-2"/>
+                                </div>
+                            </section>
+                        )
+                    }
+
+                    {
+                        data.type === 'image' && (
+                            <section className="grid gap-x-8 gap-y-6 sm:grid-cols-12 mt-4">
+                                <div className="sm:col-span-4 space-y-1">
+                                    <Subheading>Jawaban</Subheading>
+                                </div>
+
+                                <div className="sm:col-span-8">
+                                    <Input type="file" aria-label="Jawaban" name="value_image" onChange={handleChange}/>
+                                    <InputError message={errors.value_image} className="mt-2"/>
+                                </div>
+                            </section>
+                        )
+                    }
 
                     <section className="grid gap-x-8 gap-y-6 sm:grid-cols-12 mt-4">
                         <div className="sm:col-span-4 space-y-1">

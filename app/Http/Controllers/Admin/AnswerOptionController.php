@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Answer_option;
 use App\Models\Question;
+use App\Services\FileService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -42,7 +43,9 @@ class AnswerOptionController extends Controller
             $request->validate([
                 'is_correct' => 'nullable|boolean',
                 'option' => 'required|string|max:1|regex:/^[A-Z]$/|unique:answer_options,option,NULL,id,question_id,' . $question->id,
-                'value' => 'required|string|max:255',
+                'type' => 'required|in:image,text',
+                'value' => 'nullable|string|max:255',
+                'value_image' => 'nullable|image',
                 'score' => 'nullable|integer',
             ]);
 
@@ -50,7 +53,23 @@ class AnswerOptionController extends Controller
                 $question->options()->update(['is_correct' => false, 'score' => 5]);
             }
 
-            $option = $question->options()->create($request->all());
+            $data = [
+                'is_correct' => $request->is_correct ?? false,
+                'option' => $request->option,
+                'type' => $request->type,
+                'score' => $request->score,
+            ];
+
+            if ($request->type == 'text') {
+                $data['value'] = $request->value;
+            } else {
+                $file = FileService::upload('value_image');
+                if ($file) {
+                    $data['value'] = $file['path'];
+                }
+            }
+
+            $option = $question->options()->create($data);
         } else if ($question->questionType->weighting_type == 'FIVE_TO_ONE') {
             $request->validate([
                 'is_correct' => 'nullable|boolean',
@@ -106,7 +125,9 @@ class AnswerOptionController extends Controller
         if ($question->questionType->weighting_type == 'FIVE_AND_ZERO') {
             $request->validate([
                 'option' => 'required|string|max:1|regex:/^[A-Z]$/|unique:answer_options,option,' . $answer_option->id . ',id,question_id,' . $question->id,
-                'value' => 'required|string|max:255',
+                'type' => 'required|in:text,image',
+                'value' => 'required_if:type,text|nullable|string|max:255',
+                'value_image' => 'required_if:type,image|nullable|image',
             ]);
 
             if ($request->is_correct) {
@@ -115,7 +136,27 @@ class AnswerOptionController extends Controller
                 ]);
             }
 
-            $answer_option->update($request->all());
+            $value = $request->value;
+
+            if ($request->type == 'image') {
+                $file = FileService::upload('value_image');
+                if ($file) {
+                    if ($answer_option->type == 'image') {
+                        FileService::delete(storage_path('app/public/'. $answer_option->value));
+                    }
+
+                    $value = $file['path'];
+                }
+            }
+
+            $data = [
+                'is_correct' => $request->is_correct ?? false,
+                'option' => $request->option,
+                'type' => $request->type,
+                'value' => $value,
+            ];
+
+            $answer_option->update($data);
         } else if ($question->questionType->weighting_type == 'FIVE_TO_ONE') {
             $request->validate([
                 'option' => 'required|string|max:1|regex:/^[A-Z]$/|unique:answer_options,option,' . $answer_option->id . ',id,question_id,' . $question->id,
@@ -146,6 +187,9 @@ class AnswerOptionController extends Controller
      */
     public function destroy(Question $question, Answer_option $answer_option)
     {
+        if ($answer_option->type == 'image') {
+            FileService::delete(storage_path('app/public/'. $answer_option->value));
+        }
         $answer_option->delete();
 
         return redirect()->back()->with('success', 'Berhasil menghapus pilihan jawaban');

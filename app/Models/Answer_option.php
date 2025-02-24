@@ -13,6 +13,7 @@ class Answer_option extends Model
      */
     protected $fillable = [
         'question_id',
+        'type',
         'option',
         'value',
         'is_correct',

@@ -143,7 +143,15 @@ export default function AdminFormationPositionQuestionTypeQuestionIndex({questio
                                 <TableRow key={question.id}>
                                     <TableCell>{startIndex + index + 1}</TableCell>
                                     <TableCell
-                                        className="text-zinc-500">{limitPlainText(question.question, 50)}</TableCell>
+                                        className="text-zinc-500">
+                                        {
+                                            question.type === 'text' && limitPlainText(question.question, 50)
+                                        }
+
+                                        {
+                                            question.type === 'image' && '[Gambar]'
+                                        }
+                                    </TableCell>
                                     <TableCell
                                         className="text-zinc-500 text-center">{question.options.length}</TableCell>
                                     <TableCell className="flex justify-end gap-1">

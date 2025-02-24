@@ -161,10 +161,10 @@ export default function UserExamTake({
                         <div className="w-1/6 font-light">Nama</div>
                         <div className="w-5/6 font-light">: {user.name}</div>
                     </div>
-                    <div className="flex">
-                        <div className="w-1/6 font-light">NIK</div>
-                        <div className="w-5/6 font-light">: {user.nik}</div>
-                    </div>
+                    {/*<div className="flex">*/}
+                    {/*    <div className="w-1/6 font-light">NIK</div>*/}
+                    {/*    <div className="w-5/6 font-light">: {user.nik}</div>*/}
+                    {/*</div>*/}
                     <div className="mt-2">
                         <strong>{current_question.question_type.name}</strong>
                     </div>
@@ -178,23 +178,59 @@ export default function UserExamTake({
                             <div className="mb-3">
                                 <strong>Soal No. {current_question_index + 1}</strong>
                             </div>
-                            <div className="mb-3">{current_question.question}</div>
+                            {
+                                current_question.type === 'text' &&
+                                <div className="mb-3">{current_question.question}</div>
+                            }
+                            {
+                                current_question.type === 'image' && (
+                                    <div className="mb-3">
+                                        <img src={'/storage/' + current_question.question} alt={current_question.question}
+                                             className="w-1/2"/>
+                                    </div>
+                                )
+                            }
 
-                            {current_question.options?.map((option, index) => (
-                                <div key={index} className="flex items-center gap-2">
-                                    <input
-                                        type="radio"
-                                        name={`question-${current_question.id}`}
-                                        id={`option-${index}`}
-                                        value={option.id}
-                                        checked={answers[current_question.id] === option.id}
-                                        onChange={() => handleAnswerChange(option.id)}
-                                    />
-                                    <label htmlFor={`option-${index}`}>
-                                        {option.option}. {option.value}
-                                    </label>
-                                </div>
-                            ))}
+                            {current_question.options?.map((option, index) => {
+                                return option.type === 'text' ? (
+                                    <div key={index} className="flex items-center gap-2">
+                                        <input
+                                            type="radio"
+                                            name={`question-${current_question.id}`}
+                                            id={`option-${index}`}
+                                            value={option.id}
+                                            checked={answers[current_question.id] === option.id}
+                                            onChange={() => handleAnswerChange(option.id)}
+                                        />
+                                        <label htmlFor={`option-${index}`}>
+                                            {option.option}. {option.value}
+                                        </label>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div key={index} className="shadow-lg rounded mb-5">
+                                           <div className="flex gap-2 items-center mb-2">
+                                               <input
+                                                   type="radio"
+                                                   name={`question-${current_question.id}`}
+                                                   id={`option-${index}`}
+                                                   value={option.id}
+                                                   checked={answers[current_question.id] === option.id}
+                                                   onChange={() => handleAnswerChange(option.id)}
+                                               />
+                                               <label htmlFor={`option-${index}`}>
+                                                   {option.option}
+                                               </label>
+                                           </div>
+
+                                            <a href={'/storage/' + option.value} target="_blank">
+                                                <img src={'/storage/' + option.value} alt={option.value}
+                                                     className="w-1/2 shadow-lg"/>
+                                            </a>
+                                        </div>
+                                    </>
+                                )
+                            })}
                         </>
                     )}
                 </div>

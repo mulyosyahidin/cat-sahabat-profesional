@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Question;
 use App\Models\Question_type;
+use App\Services\FileService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -57,12 +58,29 @@ class QuestionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'question' => 'required',
-            'discussion' => 'nullable',
+            'type' => 'required|in:image,text',
+            'question' => 'required_if:type,text|nullable|string',
+            'question_image' => 'required_if:type,image|nullable|image',
+            'discussion' => 'nullable|string',
             'question_type_id' => 'required|exists:question_types,id',
         ]);
 
-        $question = Question::create($request->all());
+        $data = [
+            'discussion' => $request->discussion,
+            'question_type_id' => $request->question_type_id,
+            'type' => $request->type,
+        ];
+
+        if ($request->type == 'text') {
+            $data['question'] = $request->question;
+        } else {
+            $file = FileService::upload('question_image');
+            if ($file) {
+                $data['question'] = $file['path'] ?? null;
+            }
+        }
+
+        $question = Question::create($data);
 
         return redirect()->route('admin.answer-options.index', [
             'question' => $question,
@@ -100,11 +118,31 @@ class QuestionController extends Controller
     public function update(Request $request, Question $question)
     {
         $request->validate([
-            'question' => 'required',
+            'type' => 'required|in:image,text',
+            'question' => 'required_if:type,text|nullable|string',
+            'question_image' => 'required_if:type,image|nullable|image',
             'discussion' => 'nullable',
         ]);
 
-        $question->update($request->all());
+        $data = [
+            'discussion' => $request->discussion,
+            'type' => $request->type,
+        ];
+
+        if ($request->type == 'text') {
+            $data['question'] = $request->question;
+        } else {
+            $file = FileService::upload('question_image');
+            if ($file) {
+                if ($question->type == 'image' && $question->question) {
+                    FileService::delete(storage_path('app/public/' . $question->question));
+                }
+
+                $data['question'] = $file['path'] ?? null;
+            }
+        }
+
+        $question->update($data);
 
         return redirect()->back()->with('success', 'Berhasil memperbarui data pertanyaan');
     }

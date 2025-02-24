@@ -64,7 +64,6 @@ export default function FiveAndZeroType({formation, position, question, question
         });
     };
 
-
     return (
         <>
             <div className="mt-5 flex items-start p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -120,7 +119,13 @@ export default function FiveAndZeroType({formation, position, question, question
                                         >
                                             {option.option}
                                         </div>
-                                        <span className="text-sm text-gray-700">{option.value}</span>
+                                        {
+                                            option.type === 'text' && <span className="text-sm text-gray-700">{option.value}</span>
+                                        }
+
+                                        {
+                                            option.type === 'image' && <a className={'text-blue-600'} target="_blank" href={`/storage/${option.value}`}>lihat gambar</a>
+                                        }
                                     </div>
 
                                     <div className={'flex gap-1'}>

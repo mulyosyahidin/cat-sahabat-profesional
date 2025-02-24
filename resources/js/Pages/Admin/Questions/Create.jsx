@@ -12,24 +12,27 @@ import {Input} from "@/Components/Catalyst/input";
 import InputError from "@/Components/InputError";
 import {Textarea} from "@/Components/Catalyst/textarea";
 import QuestionTypeOverviewDialog from "@/Pages/Admin/QuestionTypes/QuestionTypeOverviewDialog";
+import {Select} from "@/Components/Catalyst/select.jsx";
 
 export default function AdminQuestionCreate({questionType, success}) {
     const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
 
     const {data, setData, post, processing, errors, reset} = useForm({
         question: '',
+        question_image: '',
         discussion: '',
+        type: 'text',
         question_type_id: questionType.id,
     })
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
+        const { name, type, value, files } = e.target;
 
         setData((prevData) => ({
             ...prevData,
-            [name]: value,
+            [name]: type === "file" ? files[0] : value,
         }));
-    }
+    };
 
     const submit = (e) => {
         e.preventDefault();
@@ -70,20 +73,58 @@ export default function AdminQuestionCreate({questionType, success}) {
 
                     <Divider className="my-10" soft/>
 
-                    <section>
-                        <Subheading>Pertanyaan <span
-                            className={'text-red-500 font-bold'}>*</span></Subheading>
-                        <Textarea
-                            aria-label="Pertanyaan"
-                            name={'question'}
-                            value={data.question}
-                            onChange={handleChange}
-                            className="w-full mt-5"
-                        />
-                        <InputError message={errors.question} className="mt-2"/>
+                    <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                        <div className="space-y-1">
+                            <Subheading>Tipe Pertanyaan</Subheading>
+                        </div>
+                        <div>
+                            <Select aria-label="Tipe pertanyaan" name="type" value={data.type} onChange={handleChange}>
+                                <option selected disabled>Pilih tipe</option>
+                                <option value="text">Text</option>
+                                <option value="image">Gambar</option>
+                            </Select>
+                            <InputError message={errors.type} className="mt-2"/>
+                        </div>
                     </section>
 
                     <Divider className="my-10" soft/>
+
+                    {
+                        data.type === 'text' && (
+                            <>
+                                <section>
+                                    <Subheading>Pertanyaan <span
+                                        className={'text-red-500 font-bold'}>*</span></Subheading>
+                                    <Textarea
+                                        aria-label="Pertanyaan"
+                                        name={'question'}
+                                        value={data.question}
+                                        onChange={handleChange}
+                                        className="w-full mt-5"
+                                    />
+                                    <InputError message={errors.question} className="mt-2"/>
+                                </section>
+
+                                <Divider className="my-10" soft/>
+                            </>
+                        )
+                    }
+
+                    {
+                        data.type === 'image' && (
+                            <>
+                                <section>
+                                    <Subheading>Pertanyaan <span
+                                        className={'text-red-500 font-bold'}>*</span></Subheading>
+                                    <Input type="file" aria-label="Pertanyaan" name={'question_image'} onChange={handleChange}
+                                           className="w-full mt-5"/>
+                                    <InputError message={errors.question_image} className="mt-2"/>
+                                </section>
+
+                                <Divider className="my-10" soft/>
+                            </>
+                        )
+                    }
 
                     <section>
                         <Subheading>Pembahasan Soal</Subheading>
@@ -110,7 +151,8 @@ export default function AdminQuestionCreate({questionType, success}) {
                 </form>
             </ApplicationLayout>
 
-            <QuestionTypeOverviewDialog isInfoDialogOpen={isInfoDialogOpen} setIsInfoDialogOpen={setIsInfoDialogOpen} questionType={questionType} />
+            <QuestionTypeOverviewDialog isInfoDialogOpen={isInfoDialogOpen} setIsInfoDialogOpen={setIsInfoDialogOpen}
+                                        questionType={questionType}/>
         </>
     );
 }
