@@ -105,6 +105,11 @@ class ExamController extends Controller
 
     public function finish(Request $request, Exam_session $exam_session)
     {
+        if ($exam_session->status === 'finished') {
+            return redirect()->route('user.exams.result', $exam_session)
+                ->with('warning', 'Ujian sudah selesai sebelumnya.');
+        }
+
         $answers = Exam_question_answer::where('exam_session_id', $exam_session->id)
             ->with([
                 'questionType:id,weighting_type',
@@ -193,6 +198,11 @@ class ExamController extends Controller
 
     public function finishBySystem(Request $request, Exam_session $exam_session)
     {
+        if ($exam_session->status === 'finished') {
+            return redirect()->route('user.exams.result', $exam_session)
+                ->with('warning', 'Ujian sudah selesai sebelumnya.');
+        }
+
         $answers = Exam_question_answer::where('exam_session_id', $exam_session->id)
             ->with([
                 'questionType:id,weighting_type',

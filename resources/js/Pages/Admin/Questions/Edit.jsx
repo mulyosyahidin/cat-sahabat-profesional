@@ -8,6 +8,7 @@ import {Textarea} from "@/Components/Catalyst/textarea";
 import InputError from "@/Components/InputError";
 import {Select} from "@/Components/Catalyst/select.jsx";
 import {Input} from "@/Components/Catalyst/input.jsx";
+import TinyMCEEditor from "@/Components/TinyMCEEditor.jsx";
 
 export default function AdminQuestionEdit({question, success}) {
     const {data, setData, post, processing, errors, reset} = useForm({
@@ -72,12 +73,9 @@ export default function AdminQuestionEdit({question, success}) {
                                 <section>
                                     <Subheading>Pertanyaan <span
                                         className={'text-red-500 font-bold'}>*</span></Subheading>
-                                    <Textarea
-                                        aria-label="Pertanyaan"
-                                        name={'question'}
+                                    <TinyMCEEditor
                                         value={data.question}
-                                        onChange={handleChange}
-                                        className="w-full mt-5"
+                                        onChange={(content) => setData("question", content)}
                                     />
                                     <InputError message={errors.question} className="mt-2"/>
                                 </section>

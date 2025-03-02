@@ -133,3 +133,36 @@ export const timeLeftInMinute = (startedAt, maximumDuration) => {
         return "< 1 menit";
     }
 }
+
+export const removeImagesFromHtml = (html) => {
+    if (!html) return '';
+
+    // Buat elemen div untuk memproses HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    // Hapus semua elemen <img>
+    tempDiv.querySelectorAll('img').forEach(img => img.remove());
+
+    return tempDiv.innerHTML;
+};
+
+export const limitPlainTextTiny = (html, limit = 100) => {
+    if (!html) return '';
+
+    // Buat elemen div untuk memproses HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+
+    // Ambil teks murni tanpa tag HTML
+    let text = tempDiv.textContent || tempDiv.innerText || '';
+
+    // Batasi teks dengan jumlah karakter tertentu, tanpa memotong kata
+    if (text.length > limit) {
+        let truncated = text.substr(0, limit);
+        truncated = truncated.substr(0, Math.min(truncated.length, truncated.lastIndexOf(" "))); // Hindari memotong kata
+        return truncated + '...';
+    }
+
+    return text;
+};

@@ -76,7 +76,7 @@ export default function FiveAndZeroType({formation, position, question, question
             <div className="flex justify-between mt-8">
                 <Subheading level={4}>Pilihan Jawaban</Subheading>
                 <div className={'flex gap-1'}>
-                    <FiveAndZeroTypeAddBulk question={question} setOptions={setOptions} newOptions={newOptions}/>
+                    {/*<FiveAndZeroTypeAddBulk question={question} setOptions={setOptions} newOptions={newOptions}/>*/}
                     <FiveAndZeroTypeAddSingle question={question} setOptions={setOptions}/>
                 </div>
             </div>
@@ -111,51 +111,100 @@ export default function FiveAndZeroType({formation, position, question, question
                                 return 0;
                             })
                             .map((option, index) => (
-                                <div className="flex justify-between" key={index}>
-                                    <div className="flex items-center gap-3">
-                                        <div
-                                            className={`flex items-center justify-center w-8 h-8 text-lg font-bold text-gray-800
-                                    ${option.is_correct ? 'bg-green-500 border-green-600 text-white' : 'bg-gray-200 border-gray-300 text-gray-800'}`}
-                                        >
-                                            {option.option}
-                                        </div>
-                                        {
-                                            option.type === 'text' && <span className="text-sm text-gray-700">{option.value}</span>
-                                        }
+                                <>
+                                    {
+                                        option.type === 'image' && (
+                                            <div
+                                                className="rounded-lg shadow-md bg-white p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                                                <div className="flex justify-between" key={index}>
+                                                    <div className="flex items-center gap-3">
+                                                        <div
+                                                            className={`flex items-center justify-center w-8 h-8 text-lg font-bold text-gray-800 ${option.is_correct ? 'bg-green-500 border-green-600 text-white' : 'bg-gray-200 border-gray-300 text-gray-800'}`}
+                                                        >
+                                                            {option.option}
+                                                        </div>
+                                                        <a className={'text-blue-600'} target="_blank"
+                                                           href={`/storage/${option.value}`}>lihat gambar</a>
+                                                    </div>
 
-                                        {
-                                            option.type === 'image' && <a className={'text-blue-600'} target="_blank" href={`/storage/${option.value}`}>lihat gambar</a>
-                                        }
-                                    </div>
+                                                    <div className={'flex gap-1'}>
+                                                        <Button
+                                                            outline
+                                                            size="small"
+                                                            className={`${option.is_correct ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                                            disabled={option.is_correct}
+                                                            onClick={() => handleOpenMarkAsCorrectDialog(option)}
+                                                        >
+                                                            <CheckIcon/>
+                                                        </Button>
+                                                        <Button
+                                                            outline={true}
+                                                            href={route('admin.answer-options.edit', [question.id, option.id])}
+                                                            size="small"
+                                                            className="cursor-pointer"
+                                                        >
+                                                            <PencilSquareIcon/>
+                                                        </Button>
+                                                        <Button
+                                                            outline={true}
+                                                            size="small"
+                                                            className="cursor-pointer text-red-500"
+                                                            onClick={() => handleOpenDeleteDialog(option)}
+                                                        >
+                                                            <TrashIcon/>
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    }
 
-                                    <div className={'flex gap-1'}>
-                                        <Button
-                                            outline
-                                            size="small"
-                                            className={`${option.is_correct ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                                            disabled={option.is_correct}
-                                            onClick={() => handleOpenMarkAsCorrectDialog(option)}
-                                        >
-                                            <CheckIcon/>
-                                        </Button>
-                                        <Button
-                                            outline={true}
-                                            href={route('admin.answer-options.edit', [question.id, option.id])}
-                                            size="small"
-                                            className="cursor-pointer"
-                                        >
-                                            <PencilSquareIcon/>
-                                        </Button>
-                                        <Button
-                                            outline={true}
-                                            size="small"
-                                            className="cursor-pointer text-red-500"
-                                            onClick={() => handleOpenDeleteDialog(option)}
-                                        >
-                                            <TrashIcon/>
-                                        </Button>
-                                    </div>
-                                </div>
+                                    {
+                                        option.type === 'text' && (
+                                            <div
+                                                className="rounded-lg shadow-md bg-white p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                                                <div className="flex justify-between mb-3" key={index}>
+                                                    <div className="flex items-center gap-3">
+                                                        <div
+                                                            className={`flex items-center justify-center w-8 h-8 text-lg font-bold text-gray-800 ${option.is_correct ? 'bg-green-500 border-green-600 text-white' : 'bg-gray-200 border-gray-300 text-gray-800'}`}
+                                                        >
+                                                            {option.option}
+                                                        </div>
+                                                    </div>
+
+                                                    <div className={'flex gap-1'}>
+                                                        <Button
+                                                            outline
+                                                            size="small"
+                                                            className={`${option.is_correct ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                                                            disabled={option.is_correct}
+                                                            onClick={() => handleOpenMarkAsCorrectDialog(option)}
+                                                        >
+                                                            <CheckIcon/>
+                                                        </Button>
+                                                        <Button
+                                                            outline={true}
+                                                            href={route('admin.answer-options.edit', [question.id, option.id])}
+                                                            size="small"
+                                                            className="cursor-pointer"
+                                                        >
+                                                            <PencilSquareIcon/>
+                                                        </Button>
+                                                        <Button
+                                                            outline={true}
+                                                            size="small"
+                                                            className="cursor-pointer text-red-500"
+                                                            onClick={() => handleOpenDeleteDialog(option)}
+                                                        >
+                                                            <TrashIcon/>
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                                <div dangerouslySetInnerHTML={{__html: option.value}}/>
+                                            </div>
+                                        )
+                                    }
+                                </>
                             ))}
                     </div>
                 </>

@@ -49,6 +49,7 @@ class QuestionController extends Controller
 
         return Inertia::render('Admin/Questions/Create', [
             'questionType' => $questionType,
+            'success' => session('success'),
         ]);
     }
 

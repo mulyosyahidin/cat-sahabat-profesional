@@ -27,8 +27,9 @@ class ExamParticipantController extends Controller
                         ->orWhere('nik', 'like', '%' . $searchQuery . '%');
                 });
             })
-            ->orderBy(Exam_session::select('total_score')
-                ->whereColumn('exam_sessions.exam_participant_id', 'exam_participants.id'), 'desc')
+            ->orderBy(Exam_session::whereColumn('exam_sessions.exam_participant_id', 'exam_participants.id')
+                ->selectRaw('MAX(total_score)')
+                , 'desc')
             ->paginate();
 
         $totalParticipants = $exam->participants()->count();

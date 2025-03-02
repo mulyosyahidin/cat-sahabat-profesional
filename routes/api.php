@@ -6,3 +6,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+Route::post('/file-upload', [\App\Http\Controllers\API\FileController::class, 'upload'])->name('api.file-upload');

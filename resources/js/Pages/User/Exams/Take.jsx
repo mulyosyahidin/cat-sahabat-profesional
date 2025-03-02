@@ -180,7 +180,7 @@ export default function UserExamTake({
                             </div>
                             {
                                 current_question.type === 'text' &&
-                                <div className="mb-3">{current_question.question}</div>
+                                <div className="mb-3" dangerouslySetInnerHTML={{__html: current_question.question}} />
                             }
                             {
                                 current_question.type === 'image' && (
@@ -191,46 +191,39 @@ export default function UserExamTake({
                                 )
                             }
 
-                            {current_question.options?.map((option, index) => {
-                                return option.type === 'text' ? (
-                                    <div key={index} className="flex items-center gap-2">
-                                        <input
-                                            type="radio"
-                                            name={`question-${current_question.id}`}
-                                            id={`option-${index}`}
-                                            value={option.id}
-                                            checked={answers[current_question.id] === option.id}
-                                            onChange={() => handleAnswerChange(option.id)}
-                                        />
-                                        <label htmlFor={`option-${index}`}>
-                                            {option.option}. {option.value}
-                                        </label>
-                                    </div>
-                                ) : (
-                                    <>
-                                        <div key={index} className="shadow-lg rounded mb-5">
-                                           <div className="flex gap-2 items-center mb-2">
-                                               <input
-                                                   type="radio"
-                                                   name={`question-${current_question.id}`}
-                                                   id={`option-${index}`}
-                                                   value={option.id}
-                                                   checked={answers[current_question.id] === option.id}
-                                                   onChange={() => handleAnswerChange(option.id)}
-                                               />
-                                               <label htmlFor={`option-${index}`}>
-                                                   {option.option}
-                                               </label>
-                                           </div>
+                            <div className="border-t border-gray-300 my-4"></div>
 
-                                            <a href={'/storage/' + option.value} target="_blank">
-                                                <img src={'/storage/' + option.value} alt={option.value}
-                                                     className="w-1/2 shadow-lg"/>
-                                            </a>
+                            {current_question.options
+                                ?.slice()
+                                .sort((a, b) => a.option.localeCompare(b.option))
+                                .map((option, index) => {
+                                    return (
+                                        <div key={index} className="rounded-lg shadow-md bg-white p-6 border border-gray-200 hover:shadow-lg transition-shadow mb-2">
+                                            <div className="flex gap-2 items-center mb-2">
+                                                <input
+                                                    type="radio"
+                                                    name={`question-${current_question.id}`}
+                                                    id={`option-${index}`}
+                                                    value={option.id}
+                                                    checked={answers[current_question.id] === option.id}
+                                                    onChange={() => handleAnswerChange(option.id)}
+                                                />
+                                                <label htmlFor={`option-${index}`}>
+                                                    {option.option}
+                                                </label>
+                                            </div>
+
+                                            {option.type === 'image' && (
+                                                <a href={'/storage/' + option.value} target="_blank">
+                                                    <img src={'/storage/' + option.value} alt={option.value}
+                                                         className="w-1/2 shadow-lg"/>
+                                                </a>
+                                            )}
+
+                                            {option.type === 'text' && <div dangerouslySetInnerHTML={{ __html: option.value }} />}
                                         </div>
-                                    </>
-                                )
-                            })}
+                                    );
+                                })}
                         </>
                     )}
                 </div>

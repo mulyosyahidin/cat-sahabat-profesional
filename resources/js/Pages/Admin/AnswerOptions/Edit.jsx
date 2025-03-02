@@ -11,6 +11,7 @@ import {Divider} from "@/Components/Catalyst/divider";
 import {Input} from "@/Components/Catalyst/input";
 import InputError from "@/Components/InputError";
 import {Select} from "@/Components/Catalyst/select.jsx";
+import TinyMCEEditor from "@/Components/TinyMCEEditor.jsx";
 
 export default function AdminAnswerOptionsEdit({question, answerOption, success}) {
     const {data, setData, post, processing, errors, reset} = useForm({
@@ -87,15 +88,15 @@ export default function AdminAnswerOptionsEdit({question, answerOption, success}
                     {
                         data.type === 'text' && (
                             <>
-                                <section className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-                                    <div className="space-y-1">
-                                        <Subheading>Jawaban</Subheading>
-                                    </div>
-                                    <div>
-                                        <Input aria-label="Isi jawaban" name="value" value={data.value}
-                                               onChange={handleChange}/>
-                                        <InputError message={errors.value} className="mt-2"/>
-                                    </div>
+                                <section>
+                                    <Subheading>Jawaban</Subheading>
+
+                                    <TinyMCEEditor
+                                        value={data.value}
+                                        onChange={(content) => setData("value", content)}
+                                    />
+
+                                    <InputError message={errors.value} className="mt-2"/>
                                 </section>
 
                                 <Divider className="my-10" soft/>

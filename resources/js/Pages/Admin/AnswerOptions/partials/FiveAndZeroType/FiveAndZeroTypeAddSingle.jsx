@@ -6,6 +6,7 @@ import InputError from "@/Components/InputError";
 import {useState} from "react";
 import {useForm} from "@inertiajs/react";
 import {Select} from "@/Components/Catalyst/select.jsx";
+import TinyMCEEditor from "@/Components/TinyMCEEditor.jsx";
 
 export default function FiveAndZeroTypeAddSingle({question, setOptions}) {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -67,7 +68,7 @@ export default function FiveAndZeroTypeAddSingle({question, setOptions}) {
                 Tambah
             </Button>
 
-            <Dialog open={isAddDialogOpen} onClose={() => null} size={'2xl'}>
+            <Dialog open={isAddDialogOpen} onClose={() => null} size={'5xl'}>
                 <DialogTitle>Tambah Pilihan Jawaban</DialogTitle>
                 <DialogBody>
 
@@ -85,10 +86,10 @@ export default function FiveAndZeroTypeAddSingle({question, setOptions}) {
 
                     <section className="grid gap-x-8 gap-y-6 sm:grid-cols-12 mt-4">
                         <div className="sm:col-span-4 space-y-1">
-                            <Subheading>Tipe Pertanyaan</Subheading>
+                            <Subheading>Tipe Jawaban</Subheading>
                         </div>
                         <div className="sm:col-span-8">
-                            <Select aria-label="Tipe pertanyaan" name="type" value={data.type} onChange={handleChange}>
+                            <Select aria-label="Tipe jawaban" name="type" value={data.type} onChange={handleChange}>
                                 <option selected disabled>Pilih tipe</option>
                                 <option value="text">Text</option>
                                 <option value="image">Gambar</option>
@@ -99,13 +100,10 @@ export default function FiveAndZeroTypeAddSingle({question, setOptions}) {
 
                     {
                         data.type === 'text' && (
-                            <section className="grid gap-x-8 gap-y-6 sm:grid-cols-12 mt-4">
-                                <div className="sm:col-span-4 space-y-1">
+                            <section className="flex flex-col sm:flex-row sm:items-start gap-6 mt-4">
+                                <div className="w-full space-y-1">
                                     <Subheading>Jawaban</Subheading>
-                                </div>
-
-                                <div className="sm:col-span-8">
-                                    <Input aria-label="Jawaban" name="value" value={data.value} onChange={handleChange}/>
+                                    <TinyMCEEditor value={data.value} onChange={(content) => setData("value", content)} />
                                     <InputError message={errors.value} className="mt-2"/>
                                 </div>
                             </section>

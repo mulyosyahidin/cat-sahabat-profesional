@@ -2,9 +2,7 @@ import {Head, useForm} from "@inertiajs/react";
 import ApplicationLayout from "@/Layouts/ApplicationLayout";
 import BackButton from "@/Components/BackButton";
 import {InformationCircleIcon} from "@heroicons/react/24/outline/index.js";
-import {useState} from "react";
-import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
-import {Table, TableBody, TableCell, TableRow} from "@/Components/Catalyst/table";
+import {useRef, useState} from "react";
 import {Button} from "@/Components/Catalyst/button";
 import {Heading, Subheading} from "@/Components/Catalyst/heading";
 import {Divider} from "@/Components/Catalyst/divider";
@@ -13,6 +11,7 @@ import InputError from "@/Components/InputError";
 import {Textarea} from "@/Components/Catalyst/textarea";
 import QuestionTypeOverviewDialog from "@/Pages/Admin/QuestionTypes/QuestionTypeOverviewDialog";
 import {Select} from "@/Components/Catalyst/select.jsx";
+import TinyMCEEditor from "@/Components/TinyMCEEditor.jsx";
 
 export default function AdminQuestionCreate({questionType, success}) {
     const [isInfoDialogOpen, setIsInfoDialogOpen] = useState(false);
@@ -23,7 +22,7 @@ export default function AdminQuestionCreate({questionType, success}) {
         discussion: '',
         type: 'text',
         question_type_id: questionType.id,
-    })
+    });
 
     const handleChange = (e) => {
         const { name, type, value, files } = e.target;
@@ -95,12 +94,9 @@ export default function AdminQuestionCreate({questionType, success}) {
                                 <section>
                                     <Subheading>Pertanyaan <span
                                         className={'text-red-500 font-bold'}>*</span></Subheading>
-                                    <Textarea
-                                        aria-label="Pertanyaan"
-                                        name={'question'}
+                                    <TinyMCEEditor
                                         value={data.question}
-                                        onChange={handleChange}
-                                        className="w-full mt-5"
+                                        onChange={(content) => setData("question", content)}
                                     />
                                     <InputError message={errors.question} className="mt-2"/>
                                 </section>

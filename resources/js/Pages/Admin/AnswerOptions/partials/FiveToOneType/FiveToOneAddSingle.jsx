@@ -5,6 +5,7 @@ import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catal
 import {Subheading} from "@/Components/Catalyst/heading";
 import {Input} from "@/Components/Catalyst/input";
 import InputError from "@/Components/InputError";
+import TinyMCEEditor from "@/Components/TinyMCEEditor.jsx";
 
 export default function FiveToOneAddSingle({question, setOptions}) {
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -42,7 +43,8 @@ export default function FiveToOneAddSingle({question, setOptions}) {
                     updatedOptions.push({
                         option: data.option,
                         value: data.value,
-                        is_correct: data.score == 5,
+                        type: data.type,
+                        is_correct: data.score === 5,
                         score: data.score,
                         id: response.props.newOptionId,
                     });
@@ -62,7 +64,7 @@ export default function FiveToOneAddSingle({question, setOptions}) {
                 Tambah
             </Button>
 
-            <Dialog open={isAddDialogOpen} onClose={() => null} size={'2xl'}>
+            <Dialog open={isAddDialogOpen} onClose={() => null} size={'5xl'}>
                 <DialogTitle>Tambah Pilihan Jawaban</DialogTitle>
                 <DialogBody>
 
@@ -80,18 +82,6 @@ export default function FiveToOneAddSingle({question, setOptions}) {
 
                     <section className="grid gap-x-8 gap-y-6 sm:grid-cols-12 mt-4">
                         <div className="sm:col-span-4 space-y-1">
-                            <Subheading>Jawaban</Subheading>
-                        </div>
-
-                        <div className="sm:col-span-8">
-                            <Input aria-label="Jawaban" name="value" value={data.value} onChange={handleChange}
-                                   required/>
-                            <InputError message={errors.value} className="mt-2"/>
-                        </div>
-                    </section>
-
-                    <section className="grid gap-x-8 gap-y-6 sm:grid-cols-12 mt-4">
-                        <div className="sm:col-span-4 space-y-1">
                             <Subheading>Nilai</Subheading>
                         </div>
 
@@ -100,6 +90,12 @@ export default function FiveToOneAddSingle({question, setOptions}) {
                                    required/>
                             <InputError message={errors.score} className="mt-2"/>
                         </div>
+                    </section>
+
+                    <section className="mt-3">
+                        <Subheading className="mb-2">Jawaban</Subheading>
+                        <TinyMCEEditor value={data.value} onChange={(value) => setData('value', value)}/>
+                        <InputError message={errors.value} className="mt-2"/>
                     </section>
 
                 </DialogBody>

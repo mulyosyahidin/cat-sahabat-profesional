@@ -24,9 +24,7 @@ export default function AdminAnswerOptionsIndex({question, newOptionId, success}
                     question.type === 'text' && (
                         <div className="mt-8 shadow p-5 rounded-lg">
                             <Subheading level={4}>Pertanyaan</Subheading>
-                            <div className="mt-2">
-                                {question.question}
-                            </div>
+                            <div className="mt-2" dangerouslySetInnerHTML={{__html: question.question}} />
                         </div>
                     )
                 }

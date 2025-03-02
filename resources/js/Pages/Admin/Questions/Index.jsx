@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/outline/index.js";
 import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
 import {Button} from "@/Components/Catalyst/button";
-import {limitPlainText} from "@/utils/utils";
+import {limitPlainText, limitPlainTextTiny, removeImagesFromHtml} from "@/utils/utils";
 import {
     Pagination,
     PaginationList,
@@ -145,7 +145,9 @@ export default function AdminFormationPositionQuestionTypeQuestionIndex({questio
                                     <TableCell
                                         className="text-zinc-500">
                                         {
-                                            question.type === 'text' && limitPlainText(question.question, 50)
+                                            question.type === 'text' && (
+                                                <span dangerouslySetInnerHTML={{__html: limitPlainTextTiny(removeImagesFromHtml(question.question))}}/>
+                                            )
                                         }
 
                                         {

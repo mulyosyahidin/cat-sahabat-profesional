@@ -58,9 +58,9 @@ export default function FiveToOneType({formation, position, question, questionTy
                     options.length < 5 && (
                         <>
                             <div className={'flex gap-1'}>
-                                {options.length === 0 && (
-                                    <FiveToOneAddBulk question={question} options={options} setOptions={setOptions}/>
-                                )}
+                                {/*{options.length === 0 && (*/}
+                                {/*    <FiveToOneAddBulk question={question} options={options} setOptions={setOptions}/>*/}
+                                {/*)}*/}
                                 {options.length > 0 && (
                                     <FiveToOneAddSingle question={question} setOptions={setOptions}/>
                                 )}
@@ -99,44 +99,94 @@ export default function FiveToOneType({formation, position, question, questionTy
                                 return 0;
                             })
                             .map((option, index) => (
-                                <div className="flex justify-between" key={index}>
-                                    <div className="flex items-center gap-3">
-                                        <div className="flex gap-1">
-                                            <div
-                                                className={`flex items-center justify-center w-8 h-8 text-lg font-bold text-gray-800
-                                                ${option.is_correct ? 'bg-green-500 border-green-600 text-white' : 'bg-gray-200 border-gray-300 text-gray-800'}`}
-                                            >
-                                                {option.option}
-                                            </div>
-                                            <div
-                                                className={`flex items-center justify-center w-8 h-8 text-lg font-bold text-gray-800
-                                                ${option.is_correct ? 'bg-green-500 border-green-600 text-white' : 'bg-gray-200 border-gray-300 text-gray-800'}`}
-                                            >
-                                                {option.score}
-                                            </div>
-                                        </div>
-                                        <span className="text-sm text-gray-700">{option.value}</span>
-                                    </div>
+                                <div
+                                    className="rounded-lg shadow-md bg-white p-6 border border-gray-200 hover:shadow-lg transition-shadow">
+                                   {
+                                       option.type === 'image' && (
+                                           <div className="flex justify-between" key={index}>
+                                               <div className="flex items-center gap-3">
+                                                   <div className="flex gap-1">
+                                                       <div
+                                                           className={`flex items-center justify-center w-8 h-8 text-lg font-bold text-gray-800 ${option.is_correct ? 'bg-green-500 border-green-600 text-white' : 'bg-gray-200 border-gray-300 text-gray-800'}`}
+                                                       >
+                                                           {option.option}
+                                                       </div>
+                                                       <div
+                                                           className={`flex items-center justify-center w-8 h-8 text-lg font-bold text-gray-800 ${option.is_correct ? 'bg-green-500 border-green-600 text-white' : 'bg-gray-200 border-gray-300 text-gray-800'}`}
+                                                       >
+                                                           {option.score}
+                                                       </div>
+                                                   </div>
+                                                   <a className={'text-blue-600'} target="_blank"
+                                                      href={`/storage/${option.value}`}>lihat gambar</a>
+                                               </div>
 
-                                    <div className={'flex gap-1'}>
-                                        <Button
-                                            outline={true}
-                                            href={route('admin.answer-options.edit', [question.id, option.id])}
-                                            size="small"
-                                            className="cursor-pointer"
-                                        >
-                                            <PencilSquareIcon/>
-                                        </Button>
-                                        <Button
-                                            outline={true}
-                                            size="small"
-                                            className="cursor-pointer text-red-500"
-                                            onClick={() => handleOpenDeleteDialog(option)}
-                                        >
-                                            <TrashIcon/>
-                                        </Button>
-                                    </div>
-                                </div>
+                                               <div className={'flex gap-1'}>
+                                                   <Button
+                                                       outline={true}
+                                                       href={route('admin.answer-options.edit', [question.id, option.id])}
+                                                       size="small"
+                                                       className="cursor-pointer"
+                                                   >
+                                                       <PencilSquareIcon/>
+                                                   </Button>
+                                                   <Button
+                                                       outline={true}
+                                                       size="small"
+                                                       className="cursor-pointer text-red-500"
+                                                       onClick={() => handleOpenDeleteDialog(option)}
+                                                   >
+                                                       <TrashIcon/>
+                                                   </Button>
+                                               </div>
+                                           </div>
+                                       )
+                                   }
+
+                                    {
+                                        option.type === 'text' && (
+                                           <>
+                                               <div className="flex justify-between mb-3" key={index}>
+                                                   <div className="flex items-center gap-3">
+                                                       <div className="flex gap-1">
+                                                           <div
+                                                               className={`flex items-center justify-center w-8 h-8 text-lg font-bold text-gray-800 ${option.is_correct ? 'bg-green-500 border-green-600 text-white' : 'bg-gray-200 border-gray-300 text-gray-800'}`}
+                                                           >
+                                                               {option.option}
+                                                           </div>
+                                                           <div
+                                                               className={`flex items-center justify-center w-8 h-8 text-lg font-bold text-gray-800 ${option.is_correct ? 'bg-green-500 border-green-600 text-white' : 'bg-gray-200 border-gray-300 text-gray-800'}`}
+                                                           >
+                                                               {option.score}
+                                                           </div>
+                                                       </div>
+                                                   </div>
+
+                                                   <div className={'flex gap-1'}>
+                                                       <Button
+                                                           outline={true}
+                                                           href={route('admin.answer-options.edit', [question.id, option.id])}
+                                                           size="small"
+                                                           className="cursor-pointer"
+                                                       >
+                                                           <PencilSquareIcon/>
+                                                       </Button>
+                                                       <Button
+                                                           outline={true}
+                                                           size="small"
+                                                           className="cursor-pointer text-red-500"
+                                                           onClick={() => handleOpenDeleteDialog(option)}
+                                                       >
+                                                           <TrashIcon/>
+                                                       </Button>
+                                                   </div>
+                                               </div>
+
+                                               <div dangerouslySetInnerHTML={{__html: option.value}}/>
+                                           </>
+                                        )
+                                    }
+                               </div>
                             ))}
                     </div>
                 </>
