@@ -1,100 +1,116 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import {Head, Link, useForm} from '@inertiajs/react';
+import {SlimLayout} from "@/Layouts/SlimLayout";
+import {TextField} from "@/Components/Salient/Fields";
+import Logo from "@/Components/Logo";
+import {Button} from "@/Components/Salient/Buttons";
+import InputError from "@/Components/InputError";
+import Checkbox from "@/Components/Checkbox";
 
-export default function Login({ status, canResetPassword }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
+export default function Login({status, canResetPassword}) {
+    const {data, setData, post, processing, errors, reset} = useForm({
         email: '',
         password: '',
         remember: false,
     });
 
+    const handleChange = (e) => {
+        const {name, value, type, checked} = e.target;
+
+        setData((prevData) => ({
+            ...prevData,
+            [name]: type === 'checkbox' ? checked : value,
+        }));
+    };
+
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('login'), {
-            onFinish: () => reset('password'),
-        });
+        post(route('login'));
     };
 
     return (
-        <GuestLayout>
-            <Head title="Log in" />
+        <SlimLayout>
+            <Head title="Login"/>
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
+            <div className="flex">
+                <Link href="/" aria-label="Home">
+                    <Logo className="h-10 w-auto"/>
+                </Link>
+            </div>
+            <h2 className="mt-20 text-lg font-semibold text-gray-900">
+                Login dengan email dan password
+            </h2>
+
+            {status ? (
+                <div className="mb-4 mt-2 text-sm font-medium text-green-600">
                     {status}
                 </div>
+            ) : (
+                <p className="mt-2 text-sm text-gray-700">
+                    Belum punya akun?{' '}
+                    <a
+                        href="/register"
+                        className="font-medium text-blue-600 hover:underline"
+                    >
+                        Daftar disini
+                    </a>{' '}
+                </p>
             )}
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+            <form onSubmit={submit} className="mt-10 grid grid-cols-1">
+                <TextField
+                    label="Email"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    onChange={handleChange}
+                    required
+                />
+                <InputError message={errors.email} className="mt-2"/>
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
+                <TextField
+                    label="Password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    className={'mt-8'}
+                    onChange={handleChange}
+                    required
+                />
+                <InputError message={errors.password} className="mt-2"/>
 
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
+                <div className="mt-4 flex justify-between items-center">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
                             checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
+                            onChange={handleChange}
                         />
                         <span className="ms-2 text-sm text-gray-600 dark:text-gray-400">
-                            Remember me
+                            Ingat Saya
                         </span>
                     </label>
+                    {/* Link untuk Lupa Password */}
+                    {canResetPassword && (
+                        <div>
+                            <Link
+                                href="/forgot-password"
+                                className="text-sm text-blue-600 hover:underline"
+                            >
+                                Lupa password?
+                            </Link>
+                        </div>
+                    )}
                 </div>
 
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
-                        >
-                            Forgot your password?
-                        </Link>
-                    )}
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
+                <div className={'mt-8'}>
+                    <Button type="submit" variant="solid" color="blue" className="w-full">
+                        <span>
+                            Login
+                        </span>
+                    </Button>
                 </div>
             </form>
-        </GuestLayout>
+        </SlimLayout>
     );
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Position;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -18,9 +19,13 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): Response
+    public function create()
     {
-        return Inertia::render('Auth/Register');
+        $activeFormationId = 1;
+
+        $positions = Position::where('formation_id', $activeFormationId)->get();
+
+        return view('auth.register', compact('positions'));
     }
 
     /**
@@ -32,20 +37,35 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'nik' => 'required|unique:users,nik',
+            'password' => ['required'],
+            'phone_number' => ['nullable', 'string', 'max:16'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'g-recaptcha-response' => [
+                config('app.env') === 'production' ? 'required' : 'nullable',
+            ],
+        ], [
+            'g-recaptcha-response.required' => 'The reCAPTCHA verification failed. Please try again.',
         ]);
+
+        $email = str_replace(' ', '', $request->nik) . '@cbt.app';
 
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => $email,
+            'nik' => $request->nik,
             'password' => Hash::make($request->password),
+        ]);
+
+        $user->participantProfile()->create([
+            'phone_number' => $request->phone_number,
+            'address' => $request->address,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('user.welcome', absolute: false));
     }
 }

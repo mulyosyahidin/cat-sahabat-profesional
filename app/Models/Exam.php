@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Exam extends Model
+{
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<int, string>
+     */
+    protected $fillable = [
+        'formation_id',
+        'name',
+        'date',
+        'description',
+        'token',
+        'is_open',
+    ];
+
+    /**
+     * Get the formation that owns the Exam
+     *
+     * @return BelongsTo
+     */
+    public function formation(): BelongsTo
+    {
+        return $this->BelongsTo(Formation::class);
+    }
+
+    /**
+     * Get all of the participants for the Exam
+     *
+     * @return HasMany
+     */
+    public function participants(): HasMany
+    {
+        return $this->hasMany(Exam_participant::class);
+    }
+}

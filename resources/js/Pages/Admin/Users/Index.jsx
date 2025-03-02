@@ -1,0 +1,253 @@
+import ApplicationLayout from "@/Layouts/ApplicationLayout";
+import {Head, Link, router, useForm} from "@inertiajs/react";
+import {useCallback, useMemo, useState} from "react";
+import {Heading, Subheading} from "@/Components/Catalyst/heading";
+import {Button} from "@/Components/Catalyst/button";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/Components/Catalyst/table";
+import {Dialog, DialogActions, DialogBody, DialogTitle} from "@/Components/Catalyst/dialog";
+import {
+    Pagination,
+    PaginationList,
+    PaginationNext,
+    PaginationPage,
+    PaginationPrevious
+} from "@/Components/Catalyst/pagination";
+import {Input} from "@/Components/Catalyst/input.jsx";
+import {EyeIcon, MagnifyingGlassIcon, PencilSquareIcon, TrashIcon} from "@heroicons/react/24/outline/index.js";
+import InputError from "@/Components/InputError.jsx";
+
+export default function AdminUsersIndex({users, meta, success, search_query, count}) {
+    const [currentPage, setCurrentPage] = useState(meta.current_page);
+    const [search, setSearch] = useState(search_query);
+    const [filteredUsers, setFilteredUsers] = useState(users);
+
+    const {data, setData, post, delete: destroy, processing, errors, reset} = useForm({
+        file: null,
+    });
+
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [deleteId, setDeleteId] = useState(null);
+
+    const [isImportDialogOpen, setIsImportDialogOpen] = useState(false);
+
+    const handlePageChange = useCallback((page) => {
+        setCurrentPage(page);
+
+        router.get(route('admin.users.index', {page}));
+    }, []);
+
+    const paginationPages = useMemo(() => {
+        return [...Array(meta.total_pages).keys()].map(page => ({
+            page,
+            isCurrent: meta.current_page === page + 1
+        }));
+    }, [meta]);
+
+    const performSearch = () => {
+        router.get(route('admin.users.index', {search}), {
+            preserveScroll: true,
+            onSuccess: (response) => {
+                setFilteredUsers(response.props.users);
+            }
+        });
+    };
+
+    const handleOpenDeleteDialog = (id) => {
+        setDeleteId(id);
+        setIsDeleteDialogOpen(true);
+    }
+
+    const handleDelete = () => {
+        router.delete(route('admin.users.destroy', deleteId), {
+            onSuccess: () => {
+                setFilteredUsers(prev => prev.filter(user => user.id !== deleteId)); // Hapus user dari state
+                setIsDeleteDialogOpen(false);
+            },
+        });
+    }
+
+    const handleImport = () => {
+        post(route('admin.users.import'), {
+            onSuccess: () => {
+                setIsImportDialogOpen(false);
+                reset();
+            },
+        });
+    }
+
+    return (
+        <>
+            <Head title={'Kelola User'} />
+            <ApplicationLayout>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <Heading>Kelola User</Heading>
+                        <Subheading>{count} User</Subheading>
+                    </div>
+
+                    <Button
+                        onClick={() => setIsImportDialogOpen(true)}
+                        className={'cursor-pointer'}>Import User</Button>
+                </div>
+
+                {success && (
+                    <div className="mt-2 text-sm font-medium text-green-600">
+                        {success}
+                    </div>
+                )}
+
+                <div className='mt-5 flex gap-2'>
+                    <Input
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder={'Cari User'}
+                        value={search}
+                        onKeyPress={(e) => {
+                            if (e.key === 'Enter') {
+                                performSearch();
+                            }
+                        }}
+                    />
+                    <Button onClick={performSearch} className={'cursor-pointer'}>
+                        <MagnifyingGlassIcon className={'w-5 h-5'} />
+                    </Button>
+                </div>
+
+                <Table className="mt-8 [--gutter:theme(spacing.6)] lg:[--gutter:theme(spacing.10)]">
+                    <TableHead>
+                        <TableRow>
+                            <TableHeader>#</TableHeader>
+                            <TableHeader>Nama</TableHeader>
+                            <TableHeader>NIK</TableHeader>
+                            <TableHeader>Email</TableHeader>
+                            <TableHeader></TableHeader>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {filteredUsers.length === 0 && (
+                            <TableRow>
+                                <TableCell colSpan="4" className="text-center">Tidak ada data untuk ditampilkan</TableCell>
+                            </TableRow>
+                        )}
+
+                        {filteredUsers.map((user, index) => {
+                            const itemsPerPage = meta.per_page;
+                            const startIndex = (meta.current_page - 1) * itemsPerPage;
+
+                            return (
+                                <TableRow key={user.id}>
+                                    <TableCell>{startIndex + index + 1}</TableCell>
+                                    <TableCell className="text-zinc-500">{user.name}</TableCell>
+                                    <TableCell className="text-zinc-500">{user.nik}</TableCell>
+                                    <TableCell className="text-zinc-500">{user.email}</TableCell>
+                                    <TableCell className="flex justify-end gap-1">
+                                        <Button
+                                            outline={true}
+                                            size="small"
+                                            className="cursor-pointer"
+                                            href={route('admin.users.show', user.id)}
+                                        >
+                                            <EyeIcon />
+                                        </Button>
+
+                                        <Button
+                                            outline={true}
+                                            size="small"
+                                            className="cursor-pointer"
+                                            href={route('admin.users.edit', user.id)}
+                                        >
+                                            <PencilSquareIcon />
+                                        </Button>
+
+                                        <Button
+                                            outline={true}
+                                            size="small"
+                                            className="cursor-pointer text-red-500"
+                                            onClick={() => handleOpenDeleteDialog(user.id)}
+                                        >
+                                            <TrashIcon />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            );
+                        })}
+                    </TableBody>
+                </Table>
+
+                {meta.total_items > meta.per_page && (
+                    <Pagination className="mt-6">
+                        <PaginationPrevious
+                            href={meta.current_page > 1 ? `?page=${meta.current_page - 1}` : null}
+                            onClick={() => handlePageChange(meta.current_page - 1)}
+                        />
+                        <PaginationList>
+                            {paginationPages.map(({page, isCurrent}) => (
+                                <PaginationPage
+                                    key={page}
+                                    href={`?page=${page + 1}`}
+                                    current={isCurrent}
+                                    onClick={() => handlePageChange(page + 1)}
+                                >
+                                    {page + 1}
+                                </PaginationPage>
+                            ))}
+                        </PaginationList>
+                        <PaginationNext
+                            href={meta.current_page < meta.total_pages ? `?page=${meta.current_page + 1}` : null}
+                            onClick={() => handlePageChange(meta.current_page + 1)}
+                        />
+                    </Pagination>
+                )}
+            </ApplicationLayout>
+
+            <Dialog open={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}>
+                <DialogTitle>Hapus User</DialogTitle>
+                <DialogBody>
+                    <p>Apakah Anda yakin ingin menghapus user ini? Menghapus user juga akan menghapus data lain
+                        yang terkait.</p>
+                </DialogBody>
+                <DialogActions>
+                    <Button plain className="cursor-pointer" onClick={() => setIsDeleteDialogOpen(false)}>
+                        Batal
+                    </Button>
+                    <Button
+                        color={'rose'}
+                        className="cursor-pointer text-red-500"
+                        onClick={handleDelete}
+                    >
+                        Hapus
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+            <Dialog open={isImportDialogOpen} onClose={() => setIsImportDialogOpen(false)}>
+                <DialogTitle>Import User</DialogTitle>
+                <DialogBody>
+                    <section className="mb-5 mt-5">
+                        <Input type="file" name="file" onChange={(e) => setData('file', e.target.files[0])}/>
+
+                        {errors.file ? (
+                            <InputError message={errors.file} className="mt-2"/>
+                        ) : (
+                            <small className="text-zinc-500">
+                                Download template import <a href="/assets/files/template_import_user.xlsx"
+                                                                 className={'text-blue-500'}>disini</a>.
+                            </small>
+                        )}
+                    </section>
+                </DialogBody>
+                <DialogActions>
+                    <Button plain className="cursor-pointer" onClick={() => setIsImportDialogOpen(false)}>
+                        Batal
+                    </Button>
+                    <Button
+                        className="cursor-pointer"
+                        onClick={handleImport}
+                        disabled={processing}
+                    >
+                        Import
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
+}
