@@ -33,7 +33,7 @@ class LoginRequest extends FormRequest
             'no_hp' => ['required', 'string'],
             'password' => ['required', 'string'],
             'g-recaptcha-response' => [
-                config('app.env') === 'production' ? 'required' : 'nullable',
+                config('google.recaptcha.enabled') ? 'required' : 'nullable',
             ],
         ];
     }
