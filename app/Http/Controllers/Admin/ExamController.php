@@ -29,7 +29,7 @@ class ExamController extends Controller
                     $query->where('name', 'like', '%' . $search . '%');
                 });
             })
-            ->latest()
+            ->orderBy('date', 'desc')
             ->paginate();
 
         return Inertia::render('Admin/Exams/Index', [

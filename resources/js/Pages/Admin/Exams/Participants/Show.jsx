@@ -133,7 +133,7 @@ export default function AdminParticipantShow({
                         <TableRow key={5}>
                             <TableCell>Jabatan Dilamar</TableCell>
                             <TableCell>
-                                <strong>{examParticipant.position.name}</strong>
+                                <strong>{examParticipant?.position?.name}</strong>
                             </TableCell>
                         </TableRow>
 
