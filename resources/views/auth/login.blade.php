@@ -132,7 +132,7 @@
                         @enderror
                     </div>
                 </div>
-                @if(config('google.recaptcha.enabled') == 'production')
+                @if(config('google.recaptcha.enabled'))
                     <div class="form-group @error('g-recaptcha-response') has-error @enderror">
                         <label for="" class="col-sm-2 control-label">Verifikasi</label>
                         <div class="col-sm-10">

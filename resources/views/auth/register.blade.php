@@ -194,11 +194,11 @@
                     </div>
                 </div>
 
-                @if(config('app.env') == 'production')
+                @if(config('google.recaptcha.enabled'))
                     <div class="form-group @error('g-recaptcha-response') has-error @enderror">
                         <label for="" class="col-sm-2 control-label">Verifikasi</label>
                         <div class="col-sm-10">
-                            <div class="g-recaptcha" data-sitekey="6LcEzZUqAAAAAFr63efEGb81fDbz4cCri8FfSeAO"></div>
+                            <div class="g-recaptcha" data-sitekey="{{ config('google.recaptcha.site_key') }}"></div>
                             @error('g-recaptcha-response')
                             <span class="help-block">{{ $message }}</span>
                             @enderror
