@@ -38,5 +38,5 @@ jobs:
             php artisan config:clear
             php artisan cache:clear
             php artisan config:cache
-            php artisan migrate
+            php artisan migrate --force
           EOF
